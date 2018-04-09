@@ -5,18 +5,3 @@ C:\users\sijoh0500\Work Folders\Documents\Visual Studio 2015\Projects\UCSTest\UC
 C:\users\sijoh0500\Work Folders\Documents\Visual Studio 2015\Projects\UCSTest\UCSTest\obj\Debug\UCSTest.csprojResolveAssemblyReference.cache
 C:\users\sijoh0500\Work Folders\Documents\Visual Studio 2015\Projects\UCSTest\UCSTest\obj\Debug\UCSTest.exe
 C:\users\sijoh0500\Work Folders\Documents\Visual Studio 2015\Projects\UCSTest\UCSTest\obj\Debug\UCSTest.pdb
-C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\bin\Debug\UCSTest.exe.config
-C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\bin\Debug\UCSTest.exe
-C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\bin\Debug\UCSTest.pdb
-C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\bin\Debug\AdkNetWrapper.dll
-C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\obj\Debug\UCSTest.csprojResolveAssemblyReference.cache
-C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\obj\Debug\UCSTest.csproj.CoreCompileInputs.cache
-C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\obj\Debug\UCSTest.csproj.CopyComplete
-C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\obj\Debug\UCSTest.exe
-C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\obj\Debug\UCSTest.pdb
-C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\bin\Debug\fakturaDB.mdf
-C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\bin\Debug\fakturaDB_log.ldf
-C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\bin\Debug\EntityFramework.dll
-C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\bin\Debug\EntityFramework.SqlServer.dll
-C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\bin\Debug\EntityFramework.xml
-C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\bin\Debug\EntityFramework.SqlServer.xml
