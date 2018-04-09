@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +14,8 @@ namespace UCSTest
         List<KundFakturaHuvud> KundFakturor;
         List<LevFakturaHuvud> LevFakturor;
         Adk.Api.ADKERROR error;
+        SqlConnection sqlCon = new SqlConnection(
+            @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\fakturaDB.mdf;Integrated Security=True");
         String ftg = @"C:\ProgramData\SPCS\SPCS Administration\Företag\Ovnbol2000";
         String sys = @"C:\ProgramData\SPCS\SPCS Administration\Gemensamma filer";
         int pData;
@@ -157,20 +161,40 @@ namespace UCSTest
                     Double prisPerEnhet = new Double();
                     String artikelNummer = new String(' ', 16); // internt artikelnummer
                     String levArtikelNummer = new String(' ', 16); // Leverantörens artikelnummer
+                    double test = 0.00;
 
 
                     error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_TEXT, ref information, 60);
                     error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_QUANTITY1, ref kvantitet);
-                    error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PRICE_EACH_CURRENT_CURRENCY, ref prisPerEnhet);
-                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER, ref artikelNummer, 16);
-                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_SUPPLIER_ARTICLE_NUMBER, ref levArtikelNummer, 16);
+                    error = AdkNetWrapper.Api.AdkGetStr(radReferens,
+                        AdkNetWrapper.Api.ADK_OOI_ROW_SUPPLIER_ARTICLE_NUMBER, ref levArtikelNummer, 16);
+                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER,
+                        ref artikelNummer, 16);
+                    
+                    error = AdkNetWrapper.Api.AdkGetDouble(radReferens,
+                        AdkNetWrapper.Api.ADK_OOI_ROW_PRICE_EACH_CURRENT_CURRENCY, ref prisPerEnhet);
+
+                    if (prisPerEnhet == 0 || prisPerEnhet == null)
+                    {
+                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens,
+                            AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_CURRENT_CURRENCY, ref prisPerEnhet);
+                        
+                    }
+
+                    if (kvantitet == 0 || kvantitet == null)
+                        enFakturaRad.TotalKostnad = prisPerEnhet;
+                    else
+                    {
+                        enFakturaRad.TotalKostnad = prisPerEnhet * kvantitet;
+                    }
 
                     enFakturaRad.Information = information;
                     enFakturaRad.Kvantitet = kvantitet;
                     enFakturaRad.PrisPerEnhet = prisPerEnhet;
-                    enFakturaRad.TotalKostnad = prisPerEnhet * kvantitet;
                     enFakturaRad.ArtikelNummer = artikelNummer;
                     enFakturaRad.LevArtikelNummer = levArtikelNummer;
+                    Console.WriteLine("Testa: {0}", test);
+
 
 
                 }
@@ -229,7 +253,7 @@ namespace UCSTest
 
             // Else?
             // while (error.lRc == Adk.Api.ADKE_OK) // Snurra som borde fortgå så länge det finns fakturor
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 16; i++)
             {
 
                 
@@ -309,8 +333,54 @@ namespace UCSTest
                 // Lägger till fakturan till listan med kundfakturor
                 KundFakturor.Add(kFaktura);
 
-                // Anropar metod som hämtar information om de olika raderna i fakturorna
-                GetKundFakturaRad(kFaktura, pData);
+                #region Sql Connection för Fakturahuvud
+
+                SqlCommand cmdAddInvoice = new SqlCommand("sp_add_invoice", sqlCon);
+
+                cmdAddInvoice.CommandType = CommandType.StoredProcedure;
+
+                SqlParameter param1 = new SqlParameter("@fakturaNummer", (int)fakturaNr);
+                SqlParameter param2 = new SqlParameter("@fakturaTyp", fakturaTyp);
+                SqlParameter param3 = new SqlParameter("@kundNummer", kundNr);
+                SqlParameter param4 = new SqlParameter("@säljare", säljare);
+                SqlParameter param5 = new SqlParameter("@kundNamn", kundNamn);
+                SqlParameter param6 = new SqlParameter("@kundStad", kundStad);
+                SqlParameter param7 = new SqlParameter("@kundLand", kundLand);
+                SqlParameter param8 = new SqlParameter("@fakturaDatum", fakturaDatum);
+                SqlParameter param9 = new SqlParameter("@totalKostnad", totalKostnad);
+                SqlParameter param10 = new SqlParameter("@förfalloDatum", "");
+                SqlParameter param11 = new SqlParameter("@slutDatum", "");
+
+                var returnParam = cmdAddInvoice.Parameters.Add("@ReturnValue", SqlDbType.Int);
+                returnParam.Direction = ParameterDirection.ReturnValue;
+
+                cmdAddInvoice.Parameters.Add(param1);
+                cmdAddInvoice.Parameters.Add(param2);
+                cmdAddInvoice.Parameters.Add(param3);
+                cmdAddInvoice.Parameters.Add(param4);
+                cmdAddInvoice.Parameters.Add(param5);
+                cmdAddInvoice.Parameters.Add(param6);
+                cmdAddInvoice.Parameters.Add(param7);
+                cmdAddInvoice.Parameters.Add(param8);
+                cmdAddInvoice.Parameters.Add(param9);
+                cmdAddInvoice.Parameters.Add(param10);
+                cmdAddInvoice.Parameters.Add(param11);
+
+
+                sqlCon.Open();
+                cmdAddInvoice.ExecuteNonQuery();
+                var returnFromSp = returnParam.Value;
+                sqlCon.Close();
+                Console.WriteLine("Returned value from sp is: {0}, and is of type: {1}", returnFromSp.ToString(), returnFromSp.GetType());
+                if (int.Parse(returnFromSp.ToString()) != 0)
+                {
+                    // Anropar metod som hämtar information om de olika raderna i fakturorna
+                    GetKundFakturaRad(kFaktura, pData);
+
+
+                }
+
+                #endregion
 
                 // Sätter vidare pekaren på nästa instans
                 error = AdkNetWrapper.Api.AdkNext(pData);
@@ -406,6 +476,33 @@ namespace UCSTest
 
                 }
                 Faktura.fakturaRader.Add(enFakturaRad);
+
+                #region Sql Connection lägg till kundfaktura rader
+
+                SqlCommand cmdAddRow = new SqlCommand("sp_add_FakturaRad", sqlCon);
+                cmdAddRow.CommandType = CommandType.StoredProcedure;
+
+                SqlParameter param1 = new SqlParameter("@artikelNummer", int.Parse(enFakturaRad.ArtikelNummer));
+                SqlParameter param2 = new SqlParameter("@benämning", enFakturaRad.Benämning);
+                SqlParameter param3 = new SqlParameter("@levAntal", enFakturaRad.LevAntal.ToString());
+                SqlParameter param4 = new SqlParameter("@enhetsTyp", enFakturaRad.EnhetsTyp);
+                SqlParameter param5 = new SqlParameter("@styckPris", enFakturaRad.StyckPris.ToString());
+                SqlParameter param6 = new SqlParameter("@totalKostnad", enFakturaRad.TotalKostnad);
+                SqlParameter param7 = new SqlParameter("@fakturaNummer", (int)Faktura.FakturaNummer);
+
+                cmdAddRow.Parameters.Add(param7);
+                cmdAddRow.Parameters.Add(param1);
+                cmdAddRow.Parameters.Add(param2);
+                cmdAddRow.Parameters.Add(param3);
+                cmdAddRow.Parameters.Add(param4);
+                cmdAddRow.Parameters.Add(param5);
+                cmdAddRow.Parameters.Add(param6);
+
+                sqlCon.Open();
+                cmdAddRow.ExecuteNonQuery();
+                sqlCon.Close();
+
+#endregion
             }
 
 
