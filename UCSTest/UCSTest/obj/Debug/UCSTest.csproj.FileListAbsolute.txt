@@ -1,0 +1,7 @@
+c:\users\sijoh0500\work folders\documents\visual studio 2015\Projects\UCSTest\UCSTest\bin\Debug\UCSTest.exe.config
+C:\users\sijoh0500\Work Folders\Documents\Visual Studio 2015\Projects\UCSTest\UCSTest\bin\Debug\UCSTest.exe
+C:\users\sijoh0500\Work Folders\Documents\Visual Studio 2015\Projects\UCSTest\UCSTest\bin\Debug\UCSTest.pdb
+C:\users\sijoh0500\Work Folders\Documents\Visual Studio 2015\Projects\UCSTest\UCSTest\bin\Debug\AdkNetWrapper.dll
+C:\users\sijoh0500\Work Folders\Documents\Visual Studio 2015\Projects\UCSTest\UCSTest\obj\Debug\UCSTest.csprojResolveAssemblyReference.cache
+C:\users\sijoh0500\Work Folders\Documents\Visual Studio 2015\Projects\UCSTest\UCSTest\obj\Debug\UCSTest.exe
+C:\users\sijoh0500\Work Folders\Documents\Visual Studio 2015\Projects\UCSTest\UCSTest\obj\Debug\UCSTest.pdb
