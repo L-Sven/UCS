@@ -16,7 +16,9 @@ namespace UCSTest
         static void Main(string[] args)
         {
 
-            VismaData go = new VismaData();
+            VismaData go = new VismaData(
+                @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\USERS\SVEN_\ONEDRIVE\DOKUMENT\SOURCETREE\UCS\UCSTEST\UCSTEST\FAKTURADB.MDF;Integrated Security=True"
+            );
         }
 
         
