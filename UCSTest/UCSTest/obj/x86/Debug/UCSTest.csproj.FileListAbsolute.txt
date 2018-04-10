@@ -5,3 +5,12 @@ C:\users\sijoh0500\Work Folders\Documents\Visual Studio 2015\Projects\UCSTest\UC
 C:\users\sijoh0500\Work Folders\Documents\Visual Studio 2015\Projects\UCSTest\UCSTest\obj\x86\Debug\UCSTest.exe
 C:\users\sijoh0500\Work Folders\Documents\Visual Studio 2015\Projects\UCSTest\UCSTest\obj\x86\Debug\UCSTest.pdb
 C:\users\sijoh0500\Work Folders\Documents\Visual Studio 2015\Projects\UCSTest\UCSTest\obj\x86\Debug\UCSTest.csprojResolveAssemblyReference.cache
+C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\bin\x86\Debug\UCSTest.exe.config
+C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\obj\x86\Debug\UCSTest.exe
+C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\obj\x86\Debug\UCSTest.pdb
+C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\bin\x86\Debug\UCSTest.exe
+C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\bin\x86\Debug\UCSTest.pdb
+C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\bin\x86\Debug\AdkNetWrapper.dll
+C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\obj\x86\Debug\UCSTest.csprojResolveAssemblyReference.cache
+C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\bin\x86\Debug\fakturaDB.mdf
+C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\bin\x86\Debug\fakturaDB_log.ldf

@@ -15,7 +15,7 @@ namespace UCSTest
         List<LevFakturaHuvud> LevFakturor;
         Adk.Api.ADKERROR error;
         SqlConnection sqlCon = new SqlConnection(
-            @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\fakturaDB.mdf;Integrated Security=True");
+            @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\fakturaDB.mdf;Integrated Security=True");
         String ftg = @"C:\ProgramData\SPCS\SPCS Administration\Företag\Ovnbol2000";
         String sys = @"C:\ProgramData\SPCS\SPCS Administration\Gemensamma filer";
         int pData;
