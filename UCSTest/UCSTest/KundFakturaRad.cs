@@ -15,6 +15,8 @@ namespace UCSTest
         public string EnhetsTyp { get; set; } = "";
         public double StyckPris { get; set; }
         public double TotalKostnad { get; set; }
+        public string Projekt { get; set; } = "";
+
 
 
     }
