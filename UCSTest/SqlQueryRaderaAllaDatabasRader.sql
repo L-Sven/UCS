@@ -6,3 +6,12 @@ DELETE FROM KundFakturaHuvud;
 DELETE FROM LevFakturaHuvud;
 DELETE FROM KundFakturaRad;
 DELETE FROM LevFakturaRad;
+
+DBCC CHECKIDENT (KundFakturahuvud, RESEED, 0)
+DBCC CHECKIDENT (KundFakturaRad, RESEED, 0)
+DBCC CHECKIDENT (LevFakturaHuvud, RESEED, 0)
+DBCC CHECKIDENT (LevFakturaRad, RESEED, 0)
+DBCC CHECKIDENT (Leverantörer, RESEED, 0)
+DBCC CHECKIDENT (Kunder, RESEED, 0)
+DBCC CHECKIDENT (LevFakHuvud_LevFakRad, RESEED, 0)
+DBCC CHECKIDENT (KundFakHuvud_KundFakRad, RESEED, 0)

@@ -60,7 +60,7 @@ namespace UCSTest
             }
 
             //while (error.lRc == Adk.Api.ADKE_OK) // Snurra som borde fortgå så länge det finns fakturor
-            for (int i = 0; i < 8; i++) // Test som bara kör 3 varv
+            for (int i = 0; i < 30; i++) // Test som bara kör 30 varv
             {
 
                 LevFakturaHuvud lFakturaHuvud = new LevFakturaHuvud(); 
@@ -71,6 +71,7 @@ namespace UCSTest
                 int tmpDatum = new int(); // Temporär datumhållare då data hämtas som 8 siffror
                 String fakturaDatum = new String(' ', 11); // ADK_SUP_INV_HEAD_INVOICE_DATE
                 String valutaKod = new String(' ', 4); // Valutakod ADK_SUP_INV_HEAD_CURRENCY_CODE 
+                double valutaKurs = 0.00;
                 String fakturaTyp = new String(' ', 12); // fakturatyp F = vanlig faktura, K = kreditfaktura ADK_SUP_INV_HEAD_TYPE_OF_INVOICE
                 Double totalKostnad = new Double(); // ADK_SUP_INV_HEAD_TOTAL
 
@@ -82,15 +83,17 @@ namespace UCSTest
                 error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_INVOICE_DATE, ref tmpDatum);
                 error = AdkNetWrapper.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_CODE, ref valutaKod, 4);
+                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_RATE, ref valutaKurs);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_TYPE_OF_INVOICE, ref fakturaTyp, 12);
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_TOTAL, ref totalKostnad);
-
+                
                 lFakturaHuvud.LopNummer = lopNummer;
                 lFakturaHuvud.LevNummer = levNummer;
                 lFakturaHuvud.LevNamn = levNamn;
                 lFakturaHuvud.FakturaNummer = fakturaNummer;
                 lFakturaHuvud.FakturaDatum = fakturaDatum;
                 lFakturaHuvud.ValutaKod = valutaKod;
+                lFakturaHuvud.ValutaKurs = decimal.Parse(valutaKurs.ToString());
                 lFakturaHuvud.FakturaTyp = fakturaTyp;
                 lFakturaHuvud.TotalKostnad = totalKostnad;
 
@@ -108,9 +111,10 @@ namespace UCSTest
                 SqlParameter param3 = new SqlParameter("@levNummer", levNummer);
                 SqlParameter param4 = new SqlParameter("@lopNummer", lopNummer);
                 SqlParameter param5 = new SqlParameter("@levNamn", levNamn);
-                SqlParameter param6 = new SqlParameter("@valutaKod", valutaKod);
                 SqlParameter param8 = new SqlParameter("@fakturaDatum", fakturaDatum);
                 SqlParameter param9 = new SqlParameter("@totalKostnad", totalKostnad);
+                SqlParameter param10 =  new SqlParameter("@valutaKod", valutaKod);
+                SqlParameter param11 = new SqlParameter("@valutaKurs", decimal.Parse(valutaKurs.ToString()));
 
                 var returnParam = cmdAddInvoice.Parameters.Add("@ReturnValue", SqlDbType.Int);
                 returnParam.Direction = ParameterDirection.ReturnValue;
@@ -120,21 +124,21 @@ namespace UCSTest
                 cmdAddInvoice.Parameters.Add(param3);
                 cmdAddInvoice.Parameters.Add(param4);
                 cmdAddInvoice.Parameters.Add(param5);
-                cmdAddInvoice.Parameters.Add(param6);
                 cmdAddInvoice.Parameters.Add(param8);
                 cmdAddInvoice.Parameters.Add(param9);
-
+                cmdAddInvoice.Parameters.Add(param10);
+                cmdAddInvoice.Parameters.Add(param11);
 
                 sqlCon.Open();
                 cmdAddInvoice.ExecuteNonQuery();
                 var returnFromSp = returnParam.Value;
                 sqlCon.Close();
                 Console.WriteLine("Returned value from sp is: {0}, and is of type: {1}", returnFromSp.ToString(), returnFromSp.GetType());
-                if (int.Parse(returnFromSp.ToString()) != 0)
-                {
-                    // Anropar metod som hämtar information om de olika raderna i leverantörsfakturan
-                    GetLevFakturaRad(lFakturaHuvud, pData);
-                }
+                //if (int.Parse(returnFromSp.ToString()) != 0)
+                //{
+                //    // Anropar metod som hämtar information om de olika raderna i leverantörsfakturan
+                //    GetLevFakturaRad(lFakturaHuvud, pData);
+                //}
 
                 GetLevFakturaRad(lFakturaHuvud, pData);
 
@@ -397,8 +401,6 @@ namespace UCSTest
                 // Lägger till fakturan till listan med kundfakturor
                 KundFakturor.Add(kFaktura);
 
-
-
                 #region Sql Connection för Fakturahuvud
 
                 SqlCommand cmdAddInvoice = new SqlCommand("sp_add_customerInvoice", sqlCon);
@@ -416,8 +418,10 @@ namespace UCSTest
                 SqlParameter param9 = new SqlParameter("@totalKostnad", totalKostnad);
                 SqlParameter param10 = new SqlParameter("@förfalloDatum", "");
                 SqlParameter param11 = new SqlParameter("@slutDatum", "");
+                SqlParameter param12 = new SqlParameter("@valutaKod", valutaKod);
+                SqlParameter param13 = new SqlParameter("@valutaKurs", valutaKurs);
 
-                var returnParam = cmdAddInvoice.Parameters.Add("@ReturnValue", SqlDbType.Int);
+                SqlParameter returnParam = cmdAddInvoice.Parameters.Add("@ReturnValue", SqlDbType.Int);
                 returnParam.Direction = ParameterDirection.ReturnValue;
 
                 cmdAddInvoice.Parameters.Add(param1);
@@ -431,6 +435,8 @@ namespace UCSTest
                 cmdAddInvoice.Parameters.Add(param9);
                 cmdAddInvoice.Parameters.Add(param10);
                 cmdAddInvoice.Parameters.Add(param11);
+                cmdAddInvoice.Parameters.Add(param12);
+                cmdAddInvoice.Parameters.Add(param13);
 
                 sqlCon.Open();
                 cmdAddInvoice.ExecuteNonQuery();

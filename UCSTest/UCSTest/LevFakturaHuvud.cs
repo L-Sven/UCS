@@ -15,6 +15,7 @@ namespace UCSTest
         public string FakturaNummer { get; set; } = "";
         public string FakturaDatum { get; set; } = "";
         public string ValutaKod { get; set; } = "";
+        public decimal ValutaKurs { get; set; }
         public string FakturaTyp { get; set; } = "";
         public double TotalKostnad { get; set; }
     }
