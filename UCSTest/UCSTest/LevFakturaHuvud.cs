@@ -18,5 +18,6 @@ namespace UCSTest
         public decimal ValutaKurs { get; set; }
         public string FakturaTyp { get; set; } = "";
         public double TotalKostnad { get; set; }
+        public string ProjektHuvud { get; set; } = "";
     }
 }

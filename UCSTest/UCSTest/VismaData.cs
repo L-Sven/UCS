@@ -74,6 +74,7 @@ namespace UCSTest
                 double valutaKurs = 0.00;
                 String fakturaTyp = new String(' ', 12); // fakturatyp F = vanlig faktura, K = kreditfaktura ADK_SUP_INV_HEAD_TYPE_OF_INVOICE
                 Double totalKostnad = new Double(); // ADK_SUP_INV_HEAD_TOTAL
+                String projektHuvud = new String(' ', 10);
 
 
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_GIVEN_NUMBER, ref lopNummer);
@@ -86,7 +87,8 @@ namespace UCSTest
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_RATE, ref valutaKurs);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_TYPE_OF_INVOICE, ref fakturaTyp, 12);
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_TOTAL, ref totalKostnad);
-                
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_PROJECT, ref projektHuvud, 10);
+
                 lFakturaHuvud.LopNummer = lopNummer;
                 lFakturaHuvud.LevNummer = levNummer;
                 lFakturaHuvud.LevNamn = levNamn;
@@ -96,6 +98,7 @@ namespace UCSTest
                 lFakturaHuvud.ValutaKurs = decimal.Parse(valutaKurs.ToString());
                 lFakturaHuvud.FakturaTyp = fakturaTyp;
                 lFakturaHuvud.TotalKostnad = totalKostnad;
+                lFakturaHuvud.ProjektHuvud = projektHuvud;
 
                 // Lägger till fakturan till listan med Leverantörsfakturor
                 LevFakturor.Add(lFakturaHuvud);
@@ -115,6 +118,7 @@ namespace UCSTest
                 SqlParameter param9 = new SqlParameter("@totalKostnad", totalKostnad);
                 SqlParameter param10 =  new SqlParameter("@valutaKod", valutaKod);
                 SqlParameter param11 = new SqlParameter("@valutaKurs", decimal.Parse(valutaKurs.ToString()));
+                SqlParameter param12=  new SqlParameter("@projektHuvud", lFakturaHuvud.ProjektHuvud);
 
                 var returnParam = cmdAddInvoice.Parameters.Add("@ReturnValue", SqlDbType.Int);
                 returnParam.Direction = ParameterDirection.ReturnValue;
@@ -128,6 +132,7 @@ namespace UCSTest
                 cmdAddInvoice.Parameters.Add(param9);
                 cmdAddInvoice.Parameters.Add(param10);
                 cmdAddInvoice.Parameters.Add(param11);
+                cmdAddInvoice.Parameters.Add(param12);
 
                 sqlCon.Open();
                 cmdAddInvoice.ExecuteNonQuery();
@@ -206,6 +211,7 @@ namespace UCSTest
                     String artikelNummer = new String(' ', 16); // internt artikelnummer
                     String levArtikelNummer = new String(' ', 16); // Leverantörens artikelnummer
                     double test = 0.00;
+                    String projektRad = new String(' ', 10);
 
 
                     error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_TEXT, ref information, 60);
@@ -214,7 +220,8 @@ namespace UCSTest
                         AdkNetWrapper.Api.ADK_OOI_ROW_SUPPLIER_ARTICLE_NUMBER, ref levArtikelNummer, 16);
                     error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER,
                         ref artikelNummer, 16);
-                    
+                    error = AdkNetWrapper.Api.AdkGetStr(radReferens,
+                        AdkNetWrapper.Api.ADK_OOI_ROW_PROJECT, ref projektRad, 10);
                     error = AdkNetWrapper.Api.AdkGetDouble(radReferens,
                         AdkNetWrapper.Api.ADK_OOI_ROW_PRICE_EACH_CURRENT_CURRENCY, ref prisPerEnhet);
 
@@ -237,12 +244,13 @@ namespace UCSTest
                     enFakturaRad.PrisPerEnhet = prisPerEnhet;
                     enFakturaRad.ArtikelNummer = artikelNummer;
                     enFakturaRad.LevArtikelNummer = levArtikelNummer;
+                    enFakturaRad.ProjektRad = projektRad;
                     Console.WriteLine("Testa: {0}", test);
                 }
 
                 lFaktura.fakturaRader.Add(enFakturaRad);
 
-                #region Sql Connection lägg till levFaktura rader
+                #region ===== Sql Connection lägg till levFaktura rader =====
 
                 SqlCommand cmdAddRow = new SqlCommand("sp_add_levInvoiceRow", sqlCon);
                 cmdAddRow.CommandType = CommandType.StoredProcedure;
@@ -254,14 +262,17 @@ namespace UCSTest
                 SqlParameter param5 = new SqlParameter("@prisPerEnhet", decimal.Parse(enFakturaRad.PrisPerEnhet.ToString()));
                 SqlParameter param6 = new SqlParameter("@totalKostnad", decimal.Parse(enFakturaRad.TotalKostnad.ToString()));
                 SqlParameter param7 = new SqlParameter("@fakturaNummer", lFaktura.FakturaNummer);
+                SqlParameter param8 = new SqlParameter("@projektRad", enFakturaRad.ProjektRad);
 
-                cmdAddRow.Parameters.Add(param7);
+                
                 cmdAddRow.Parameters.Add(param1);
                 cmdAddRow.Parameters.Add(param2);
                 cmdAddRow.Parameters.Add(param3);
                 cmdAddRow.Parameters.Add(param4);
                 cmdAddRow.Parameters.Add(param5);
                 cmdAddRow.Parameters.Add(param6);
+                cmdAddRow.Parameters.Add(param7);
+                cmdAddRow.Parameters.Add(param8);
 
                 sqlCon.Open();
                 cmdAddRow.ExecuteNonQuery();

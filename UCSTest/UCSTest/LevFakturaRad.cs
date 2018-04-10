@@ -15,6 +15,7 @@ namespace UCSTest
         public double TotalKostnad { get; set; }
         public string ArtikelNummer { get; set; } = "";
         public string LevArtikelNummer { get; set; } = "";
+        public string ProjektRad { get; set; } = "";
 
 
     }
