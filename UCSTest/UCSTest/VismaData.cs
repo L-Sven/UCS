@@ -25,8 +25,8 @@ namespace UCSTest
         {
             KundFakturor = new List<KundFakturaHuvud>();
             LevFakturor = new List<LevFakturaHuvud>();
-            //GetKundFakturaHuvudData();
-            GetLevFakturaHuvudData();
+            GetKundFakturaHuvudData();
+            //GetLevFakturaHuvudData();
             
         }
 
@@ -60,8 +60,8 @@ namespace UCSTest
                 Console.WriteLine(errortext);
             }
 
-            //while (error.lRc == Adk.Api.ADKE_OK) // Snurra som borde fortgå så länge det finns fakturor
-            for (int i = 0; i < 30; i++) // Test som bara kör 30 varv
+            while (error.lRc == Adk.Api.ADKE_OK) // Snurra som borde fortgå så länge det finns fakturor
+           // for (int i = 0; i < 30; i++) // Test som bara kör 30 varv
             {
 
                 LevFakturaHuvud lFakturaHuvud = new LevFakturaHuvud(); 
@@ -342,8 +342,8 @@ namespace UCSTest
 
 
             // Else?
-            // while (error.lRc == Adk.Api.ADKE_OK) // Snurra som borde fortgå så länge det finns fakturor
-            for (int i = 0; i < 16; i++)
+            while (error.lRc == Adk.Api.ADKE_OK) // Snurra som borde fortgå så länge det finns fakturor
+            //for (int i = 0; i < 16; i++)
             {
 
                 
@@ -497,10 +497,11 @@ namespace UCSTest
             // Stänger företaget
             AdkNetWrapper.Api.AdkClose();
 
+            /*
             int räknare = 1;
-
             // Loopar igenom kundfakturor och gör testutskrifter
             foreach (var faktura in KundFakturor)
+                
             {
                 Console.WriteLine(räknare+" "+faktura.KundNamn
                     +" KudNr: "+faktura.KundNummer
@@ -526,7 +527,7 @@ namespace UCSTest
                 Console.WriteLine();
                 
             }
-
+            */
             // Ser till så att konsolen inte stänger av sig så fort programmet har körts
             //Console.ReadLine();
 
