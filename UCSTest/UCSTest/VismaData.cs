@@ -543,9 +543,10 @@ namespace UCSTest
                     Double kvantitet = new Double();
                     error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_QUANTITY1, ref kvantitet);
 
-                    // Lägg in kontroll för krediterade varor/tjänster för att sätta kvaniteten till negativ
+                    
                     enFakturaRad.LevAntal = kvantitet;
 
+                    // Om krediterade faktura
                     if (Faktura.FakturaTyp.ToUpper() == "K")
                     {
                         enFakturaRad.LevAntal = kvantitet * -1;
@@ -555,7 +556,16 @@ namespace UCSTest
                         enFakturaRad.LevAntal = kvantitet;
                     }
 
-                    if (kvantitet != 0)
+                    
+
+                    if (enFakturaRad.ArtikelNummer == "Avtalsperiod")
+                    {
+                        String text = new String(' ', 60);
+                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_TEXT, ref text, 60);
+                        enFakturaRad.Benämning = text.Replace(";", "");
+                    }
+
+                    else 
                     {
                         String text = new String(' ', 60);
                         error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_TEXT, ref text, 60);
@@ -577,14 +587,7 @@ namespace UCSTest
 
                     }
 
-                    if (enFakturaRad.ArtikelNummer == "Avtalsperiod")
-                    {
-                        String text = new String(' ', 60);
-                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_TEXT, ref text, 60);
-                        enFakturaRad.Benämning = text.Replace(";", "");
-                    }
 
-                    
                 }
 
 
