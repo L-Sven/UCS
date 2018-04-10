@@ -15,7 +15,7 @@ namespace UCSTest
         List<LevFakturaHuvud> LevFakturor;
         Adk.Api.ADKERROR error;
         SqlConnection sqlCon = new SqlConnection(
-            @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\fakturaDB.mdf;Integrated Security=True");
+            @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\fakturaDB.mdf;Integrated Security=True");
         String ftg = @"C:\ProgramData\SPCS\SPCS Administration\Företag\Ovnbol2000";
         String sys = @"C:\ProgramData\SPCS\SPCS Administration\Gemensamma filer";
         int pData;
@@ -25,7 +25,7 @@ namespace UCSTest
             KundFakturor = new List<KundFakturaHuvud>();
             LevFakturor = new List<LevFakturaHuvud>();
             GetKundFakturaHuvudData();
-            GetLevFakturaHuvudData();
+            //GetLevFakturaHuvudData();
             
         }
 
@@ -340,9 +340,12 @@ namespace UCSTest
                 String valutaKod = new String(' ', 4);
                 Double valutaKurs = new Double();
                 Double valutaEnhet = new Double();
+                Double cargoAmount = new Double();
+                Double dispatchFee = new Double();
+                
                 // String projektKod = new String(' ', 10);
 
-                
+
                 // Hämtar en sträng om customerns namn i pData
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_NAME, ref kundNamn, 50);
 
@@ -369,6 +372,8 @@ namespace UCSTest
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CURRENCY_RATE, ref valutaKurs);
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CURRENCY_UNIT, ref valutaEnhet);               
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kundReferens, 50);
+                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CARGO_AMOUNT, ref cargoAmount);
+                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DISPATCH_FEE, ref dispatchFee);
                 // error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_PROJECT_C, ref projektKod, 10);
 
                 /* Följande konverterare finns i exemplet, men datumet funkar fint för mig redan
@@ -397,6 +402,8 @@ namespace UCSTest
                 kFaktura.ValutaKod = valutaKod;
                 kFaktura.ValutaKurs = valutaKurs;
                 kFaktura.ValutaEnhet = valutaEnhet;
+                kFaktura.Cargo_amount = cargoAmount;
+                kFaktura.Dispatch_fee = dispatchFee;
 
                 // Lägger till fakturan till listan med kundfakturor
                 KundFakturor.Add(kFaktura);
@@ -420,6 +427,8 @@ namespace UCSTest
                 SqlParameter param11 = new SqlParameter("@slutDatum", "");
                 SqlParameter param12 = new SqlParameter("@valutaKod", valutaKod);
                 SqlParameter param13 = new SqlParameter("@valutaKurs", valutaKurs);
+                SqlParameter param14 = new SqlParameter("@fraktAvgift", cargoAmount);
+                SqlParameter param15 = new SqlParameter("@administrationsAvgift", dispatchFee);
 
                 SqlParameter returnParam = cmdAddInvoice.Parameters.Add("@ReturnValue", SqlDbType.Int);
                 returnParam.Direction = ParameterDirection.ReturnValue;
@@ -437,6 +446,8 @@ namespace UCSTest
                 cmdAddInvoice.Parameters.Add(param11);
                 cmdAddInvoice.Parameters.Add(param12);
                 cmdAddInvoice.Parameters.Add(param13);
+                cmdAddInvoice.Parameters.Add(param14);
+                cmdAddInvoice.Parameters.Add(param15);
 
                 sqlCon.Open();
                 cmdAddInvoice.ExecuteNonQuery();
@@ -452,7 +463,7 @@ namespace UCSTest
                 }
 
                 #endregion
-
+                GetKundFakturaRad(kFaktura, pData);
 
                 // Sätter vidare pekaren på nästa instans
                 error = AdkNetWrapper.Api.AdkNext(pData);
@@ -524,6 +535,15 @@ namespace UCSTest
                     // Lägg in kontroll för krediterade varor/tjänster för att sätta kvaniteten till negativ
                     enFakturaRad.LevAntal = kvantitet;
 
+                    if (Faktura.FakturaTyp.ToUpper() == "K")
+                    {
+                        enFakturaRad.LevAntal = kvantitet * -1;
+                    }
+                    else
+                    {
+                        enFakturaRad.LevAntal = kvantitet;
+                    }
+
                     if (kvantitet != 0)
                     {
                         String text = new String(' ', 60);
@@ -539,11 +559,24 @@ namespace UCSTest
                         String enhetsTyp = new String(' ', 4);
                         error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_UNIT, ref enhetsTyp, 4);
                         enFakturaRad.EnhetsTyp = enhetsTyp;
-                                               
+
+                        String PROJECT = new String(' ', 6);
+                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROJECT, ref PROJECT, 6);
+                        enFakturaRad.Projekt = PROJECT;
+
+                    }
+
+                    if (enFakturaRad.ArtikelNummer == "Avtalsperiod")
+                    {
+                        String text = new String(' ', 60);
+                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_TEXT, ref text, 60);
+                        enFakturaRad.Benämning = text.Replace(";", "");
                     }
 
                     
                 }
+
+
                 Faktura.fakturaRader.Add(enFakturaRad);
 
                 
@@ -552,21 +585,23 @@ namespace UCSTest
                 SqlCommand cmdAddRow = new SqlCommand("sp_add_customerInvoiceRow", sqlCon);
                 cmdAddRow.CommandType = CommandType.StoredProcedure;
 
-                SqlParameter param1 = new SqlParameter("@artikelNummer", int.Parse(enFakturaRad.ArtikelNummer));
+                SqlParameter param1 = new SqlParameter("@artikelNummer", enFakturaRad.ArtikelNummer);
                 SqlParameter param2 = new SqlParameter("@benämning", enFakturaRad.Benämning);
                 SqlParameter param3 = new SqlParameter("@levAntal", enFakturaRad.LevAntal.ToString());
                 SqlParameter param4 = new SqlParameter("@enhetsTyp", enFakturaRad.EnhetsTyp);
                 SqlParameter param5 = new SqlParameter("@styckPris", enFakturaRad.StyckPris.ToString());
                 SqlParameter param6 = new SqlParameter("@totalKostnad", enFakturaRad.TotalKostnad);
                 SqlParameter param7 = new SqlParameter("@fakturaNummer", (int)Faktura.FakturaNummer);
-
-                cmdAddRow.Parameters.Add(param7);
+                SqlParameter param8 = new SqlParameter("@projekt", enFakturaRad.Projekt);
+               
                 cmdAddRow.Parameters.Add(param1);
                 cmdAddRow.Parameters.Add(param2);
                 cmdAddRow.Parameters.Add(param3);
                 cmdAddRow.Parameters.Add(param4);
                 cmdAddRow.Parameters.Add(param5);
                 cmdAddRow.Parameters.Add(param6);
+                cmdAddRow.Parameters.Add(param7);
+                cmdAddRow.Parameters.Add(param8);
 
                 sqlCon.Open();
                 cmdAddRow.ExecuteNonQuery();
