@@ -20,8 +20,13 @@ namespace UCSTest
         String sys = @"C:\ProgramData\SPCS\SPCS Administration\Gemensamma filer";
         int pData;
         int antalFakturorUtanNr = 1;
+<<<<<<< HEAD
         int levRadID = 0; // Används för att skapa individuella identiteter i levfakturarader i databasen
         int kundRadID = 0; // Används för att skapa individuella identiteter i kundfakturarader i databasen
+=======
+        int levRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
+        int kundRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
+>>>>>>> a2920ed5118882ede84d52f192d894b16bd95132
 
         public VismaData()
         {
@@ -162,14 +167,15 @@ namespace UCSTest
         }
 
         private void GetLevFakturaRad(LevFakturaHuvud lFaktura, int pData)
-        {            
-
+        {
+            
             Double NROWS = new Double();
             error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_NROWS, ref NROWS);
             int radReferens = new int(); // Pekar på rader i fakturaraderna likt pData pekar på ett specifikt fakturahuvud
 
             for (int r = 0; r < NROWS; r++)
             {
+                ++levRadID;
                 LevFakturaRad enFakturaRad = new LevFakturaRad();
                 error = AdkNetWrapper.Api.AdkGetData(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_ROWS, r, ref radReferens);
                 levRadID++;
@@ -220,7 +226,32 @@ namespace UCSTest
                     
                 }
 
+<<<<<<< HEAD
                 lFaktura.fakturaRader.Add(enFakturaRad);              
+=======
+                lFaktura.fakturaRader.Add(enFakturaRad);
+
+                #region ===== Sql Connection lägg till levFaktura rader =====
+
+                SqlCommand cmdAddRow = new SqlCommand("sp_add_levInvoiceRow", sqlCon);
+                cmdAddRow.CommandType = CommandType.StoredProcedure;
+
+                cmdAddRow.Parameters.Add(new SqlParameter("@radID", levRadID));
+                cmdAddRow.Parameters.Add(new SqlParameter("@artikelNummer", enFakturaRad.ArtikelNummer));
+                cmdAddRow.Parameters.Add(new SqlParameter("@information", enFakturaRad.Information));
+                cmdAddRow.Parameters.Add(new SqlParameter("@kvantitet", decimal.Parse(enFakturaRad.Kvantitet.ToString())));
+                cmdAddRow.Parameters.Add(new SqlParameter("@levArtikelNummer", enFakturaRad.LevArtikelNummer));
+                cmdAddRow.Parameters.Add(new SqlParameter("@prisPerEnhet", decimal.Parse(enFakturaRad.PrisPerEnhet.ToString())));
+                cmdAddRow.Parameters.Add(new SqlParameter("@totalKostnad", decimal.Parse(enFakturaRad.TotalKostnad.ToString())));
+                cmdAddRow.Parameters.Add(new SqlParameter("@fakturaNummer", lFaktura.FakturaNummer));
+                cmdAddRow.Parameters.Add(new SqlParameter("@projektRad", enFakturaRad.ProjektRad));
+
+                sqlCon.Open();
+                cmdAddRow.ExecuteNonQuery();
+                sqlCon.Close();
+
+                #endregion
+>>>>>>> a2920ed5118882ede84d52f192d894b16bd95132
             }
         }
 
@@ -414,13 +445,13 @@ namespace UCSTest
         // Kingig metod som hämtar informationen om raderna i fakturorna (Alltså vad som beställts)
         private void GetKundFakturaRad(KundFakturaHuvud Faktura, int pData)
         {
-
             Double NROWS = new Double();
             error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_NROWS, ref NROWS);
             int radReferens = new int(); // Pekar på rader i fakturaraderna likt pData pekar på ett specifikt fakturahuvud
 
             for (int r = 0; r < NROWS; r++)
             {
+                ++kundRadID;
                 KundFakturaRad enFakturaRad = new KundFakturaRad();
                 error = AdkNetWrapper.Api.AdkGetData(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_ROWS, r, ref radReferens);
                 kundRadID++;
@@ -485,6 +516,31 @@ namespace UCSTest
 
                 Faktura.fakturaRader.Add(enFakturaRad);
 
+<<<<<<< HEAD
+=======
+                
+                #region Sql Connection lägg till kundfaktura rader
+
+                SqlCommand cmdAddRow = new SqlCommand("sp_add_customerInvoiceRow", sqlCon);
+                cmdAddRow.CommandType = CommandType.StoredProcedure;
+
+                cmdAddRow.Parameters.Add(new SqlParameter("@radID", kundRadID));
+                cmdAddRow.Parameters.Add(new SqlParameter("@artikelNummer", enFakturaRad.ArtikelNummer));
+                cmdAddRow.Parameters.Add(new SqlParameter("@benämning", enFakturaRad.Benämning));
+                cmdAddRow.Parameters.Add(new SqlParameter("@levAntal", enFakturaRad.LevAntal.ToString()));
+                cmdAddRow.Parameters.Add(new SqlParameter("@enhetsTyp", enFakturaRad.EnhetsTyp));
+                cmdAddRow.Parameters.Add(new SqlParameter("@styckPris", enFakturaRad.StyckPris.ToString()));
+                cmdAddRow.Parameters.Add(new SqlParameter("@totalKostnad", enFakturaRad.TotalKostnad));
+                cmdAddRow.Parameters.Add(new SqlParameter("@fakturaNummer", (int)Faktura.FakturaNummer));
+                cmdAddRow.Parameters.Add(new SqlParameter("@projekt", enFakturaRad.Projekt));
+
+                sqlCon.Open();
+                cmdAddRow.ExecuteNonQuery();
+                sqlCon.Close();
+
+                #endregion
+
+>>>>>>> a2920ed5118882ede84d52f192d894b16bd95132
 
             }
 
