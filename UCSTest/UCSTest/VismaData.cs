@@ -14,19 +14,22 @@ namespace UCSTest
         List<KundFakturaHuvud> KundFakturor;
         List<LevFakturaHuvud> LevFakturor;
         Adk.Api.ADKERROR error;
-        SqlConnection sqlCon = new SqlConnection(
-            @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\fakturaDB.mdf;Integrated Security=True");
+        
+         
         String ftg = @"C:\ProgramData\SPCS\SPCS Administration\Företag\Ovnbol2000";
         String sys = @"C:\ProgramData\SPCS\SPCS Administration\Gemensamma filer";
         int pData;
         int antalFakturorUtanNr = 1;
+        int levRadID = 0; // Används för att skapa individuella identiteter i levfakturarader i databasen
+        int kundRadID = 0; // Används för att skapa individuella identiteter i kundfakturarader i databasen
 
         public VismaData()
         {
+            
             KundFakturor = new List<KundFakturaHuvud>();
             LevFakturor = new List<LevFakturaHuvud>();
             GetKundFakturaHuvudData();
-            //GetLevFakturaHuvudData();
+            GetLevFakturaHuvudData();           
             
         }
 
@@ -75,10 +78,7 @@ namespace UCSTest
                 double valutaKurs = 0.00;
                 String fakturaTyp = new String(' ', 12); // fakturatyp F = vanlig faktura, K = kreditfaktura ADK_SUP_INV_HEAD_TYPE_OF_INVOICE
                 Double totalKostnad = new Double(); // ADK_SUP_INV_HEAD_TOTAL
-                String projektHuvud = new String(' ', 10);
-
-                
-
+                String projektHuvud = new String(' ', 10);               
 
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_GIVEN_NUMBER, ref lopNummer);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_SUPPLIER_NUMBER, ref levNummer, 16);
@@ -113,52 +113,10 @@ namespace UCSTest
 
                 // Lägger till fakturan till listan med Leverantörsfakturor
                 LevFakturor.Add(lFakturaHuvud);
-
-                #region Sql Connection för Fakturahuvud
-
-                SqlCommand cmdAddInvoice = new SqlCommand("sp_add_levInvoice", sqlCon);
-
-                cmdAddInvoice.CommandType = CommandType.StoredProcedure;
-
-                SqlParameter param1 = new SqlParameter("@fakturaNummer", fakturaNummer);
-                SqlParameter param2 = new SqlParameter("@fakturaTyp", fakturaTyp);
-                SqlParameter param3 = new SqlParameter("@levNummer", levNummer);
-                SqlParameter param4 = new SqlParameter("@lopNummer", lopNummer);
-                SqlParameter param5 = new SqlParameter("@levNamn", levNamn);
-                SqlParameter param8 = new SqlParameter("@fakturaDatum", fakturaDatum);
-                SqlParameter param9 = new SqlParameter("@totalKostnad", totalKostnad);
-                SqlParameter param10 =  new SqlParameter("@valutaKod", valutaKod);
-                SqlParameter param11 = new SqlParameter("@valutaKurs", decimal.Parse(valutaKurs.ToString()));
-                SqlParameter param12=  new SqlParameter("@projektHuvud", lFakturaHuvud.ProjektHuvud);
-
-                var returnParam = cmdAddInvoice.Parameters.Add("@ReturnValue", SqlDbType.Int);
-                returnParam.Direction = ParameterDirection.ReturnValue;
-
-                cmdAddInvoice.Parameters.Add(param1);
-                cmdAddInvoice.Parameters.Add(param2);
-                cmdAddInvoice.Parameters.Add(param3);
-                cmdAddInvoice.Parameters.Add(param4);
-                cmdAddInvoice.Parameters.Add(param5);
-                cmdAddInvoice.Parameters.Add(param8);
-                cmdAddInvoice.Parameters.Add(param9);
-                cmdAddInvoice.Parameters.Add(param10);
-                cmdAddInvoice.Parameters.Add(param11);
-                cmdAddInvoice.Parameters.Add(param12);
-
-                sqlCon.Open();
-                cmdAddInvoice.ExecuteNonQuery();
-                var returnFromSp = returnParam.Value;
-                sqlCon.Close();
-                Console.WriteLine("Returned value from sp is: {0}, and is of type: {1}", returnFromSp.ToString(), returnFromSp.GetType());
-                //if (int.Parse(returnFromSp.ToString()) != 0)
-                //{
-                //    // Anropar metod som hämtar information om de olika raderna i leverantörsfakturan
-                //    GetLevFakturaRad(lFakturaHuvud, pData);
-                //}
-
+                               
                 GetLevFakturaRad(lFakturaHuvud, pData);
 
-                #endregion
+                SkickaData sendData = new SkickaData(lFakturaHuvud);
 
                 // Sätter vidare pekaren på nästa instans
                 error = AdkNetWrapper.Api.AdkNext(pData);
@@ -168,6 +126,7 @@ namespace UCSTest
             // Stänger företaget
             AdkNetWrapper.Api.AdkClose();
 
+            /*
             int räknare = 1;
 
             // Loopar igenom kundfakturor och gör testutskrifter
@@ -199,7 +158,7 @@ namespace UCSTest
 
             // Ser till så att konsolen inte stänger av sig så fort programmet har körts
             //Console.ReadLine();
-
+            */
         }
 
         private void GetLevFakturaRad(LevFakturaHuvud lFaktura, int pData)
@@ -213,6 +172,8 @@ namespace UCSTest
             {
                 LevFakturaRad enFakturaRad = new LevFakturaRad();
                 error = AdkNetWrapper.Api.AdkGetData(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_ROWS, r, ref radReferens);
+                levRadID++;
+                enFakturaRad.LevRadID = levRadID;
 
                 if (error.lRc == AdkNetWrapper.Api.ADKE_OK)
                 {
@@ -256,40 +217,10 @@ namespace UCSTest
                     enFakturaRad.ArtikelNummer = artikelNummer;
                     enFakturaRad.LevArtikelNummer = levArtikelNummer;
                     enFakturaRad.ProjektRad = projektRad;
-                    Console.WriteLine("Testa: {0}", test);
+                    
                 }
 
-                lFaktura.fakturaRader.Add(enFakturaRad);
-
-                #region ===== Sql Connection lägg till levFaktura rader =====
-
-                SqlCommand cmdAddRow = new SqlCommand("sp_add_levInvoiceRow", sqlCon);
-                cmdAddRow.CommandType = CommandType.StoredProcedure;
-
-                SqlParameter param1 = new SqlParameter("@artikelNummer", enFakturaRad.ArtikelNummer);
-                SqlParameter param2 = new SqlParameter("@information", enFakturaRad.Information);
-                SqlParameter param3 = new SqlParameter("@kvantitet", decimal.Parse(enFakturaRad.Kvantitet.ToString()));
-                SqlParameter param4 = new SqlParameter("@levArtikelNummer", enFakturaRad.LevArtikelNummer);
-                SqlParameter param5 = new SqlParameter("@prisPerEnhet", decimal.Parse(enFakturaRad.PrisPerEnhet.ToString()));
-                SqlParameter param6 = new SqlParameter("@totalKostnad", decimal.Parse(enFakturaRad.TotalKostnad.ToString()));
-                SqlParameter param7 = new SqlParameter("@fakturaNummer", lFaktura.FakturaNummer);
-                SqlParameter param8 = new SqlParameter("@projektRad", enFakturaRad.ProjektRad);
-
-                
-                cmdAddRow.Parameters.Add(param1);
-                cmdAddRow.Parameters.Add(param2);
-                cmdAddRow.Parameters.Add(param3);
-                cmdAddRow.Parameters.Add(param4);
-                cmdAddRow.Parameters.Add(param5);
-                cmdAddRow.Parameters.Add(param6);
-                cmdAddRow.Parameters.Add(param7);
-                cmdAddRow.Parameters.Add(param8);
-
-                sqlCon.Open();
-                cmdAddRow.ExecuteNonQuery();
-                sqlCon.Close();
-
-                #endregion
+                lFaktura.fakturaRader.Add(enFakturaRad);              
             }
         }
 
@@ -429,63 +360,10 @@ namespace UCSTest
 
                 // Lägger till fakturan till listan med kundfakturor
                 KundFakturor.Add(kFaktura);
-
-                #region Sql Connection för Fakturahuvud
-
-                SqlCommand cmdAddInvoice = new SqlCommand("sp_add_customerInvoice", sqlCon);
-
-                cmdAddInvoice.CommandType = CommandType.StoredProcedure;
-
-                SqlParameter param1 = new SqlParameter("@fakturaNummer", (int)fakturaNr);
-                SqlParameter param2 = new SqlParameter("@fakturaTyp", fakturaTyp);
-                SqlParameter param3 = new SqlParameter("@kundNummer", int.Parse(kundNr));
-                SqlParameter param4 = new SqlParameter("@säljare", säljare);
-                SqlParameter param5 = new SqlParameter("@kundNamn", kundNamn);
-                SqlParameter param6 = new SqlParameter("@kundStad", kundStad);
-                SqlParameter param7 = new SqlParameter("@kundLand", kundLand);
-                SqlParameter param8 = new SqlParameter("@fakturaDatum", fakturaDatum);
-                SqlParameter param9 = new SqlParameter("@totalKostnad", totalKostnad);
-                SqlParameter param10 = new SqlParameter("@förfalloDatum", "");
-                SqlParameter param11 = new SqlParameter("@slutDatum", "");
-                SqlParameter param12 = new SqlParameter("@valutaKod", valutaKod);
-                SqlParameter param13 = new SqlParameter("@valutaKurs", valutaKurs);
-                SqlParameter param14 = new SqlParameter("@fraktAvgift", cargoAmount);
-                SqlParameter param15 = new SqlParameter("@administrationsAvgift", dispatchFee);
-
-                SqlParameter returnParam = cmdAddInvoice.Parameters.Add("@ReturnValue", SqlDbType.Int);
-                returnParam.Direction = ParameterDirection.ReturnValue;
-
-                cmdAddInvoice.Parameters.Add(param1);
-                cmdAddInvoice.Parameters.Add(param2);
-                cmdAddInvoice.Parameters.Add(param3);
-                cmdAddInvoice.Parameters.Add(param4);
-                cmdAddInvoice.Parameters.Add(param5);
-                cmdAddInvoice.Parameters.Add(param6);
-                cmdAddInvoice.Parameters.Add(param7);
-                cmdAddInvoice.Parameters.Add(param8);
-                cmdAddInvoice.Parameters.Add(param9);
-                cmdAddInvoice.Parameters.Add(param10);
-                cmdAddInvoice.Parameters.Add(param11);
-                cmdAddInvoice.Parameters.Add(param12);
-                cmdAddInvoice.Parameters.Add(param13);
-                cmdAddInvoice.Parameters.Add(param14);
-                cmdAddInvoice.Parameters.Add(param15);
-
-                sqlCon.Open();
-                cmdAddInvoice.ExecuteNonQuery();
-                var returnFromSp = returnParam.Value;
-                sqlCon.Close();
-
-                if (int.Parse(returnFromSp.ToString()) != 0)
-                {
-                    // Anropar metod som hämtar information om de olika raderna i fakturorna
-                    GetKundFakturaRad(kFaktura, pData);
-
-
-                }
-
-                #endregion
+              
                 GetKundFakturaRad(kFaktura, pData);
+
+                SkickaData sendData = new SkickaData(kFaktura);
 
                 // Sätter vidare pekaren på nästa instans
                 error = AdkNetWrapper.Api.AdkNext(pData);
@@ -545,6 +423,8 @@ namespace UCSTest
             {
                 KundFakturaRad enFakturaRad = new KundFakturaRad();
                 error = AdkNetWrapper.Api.AdkGetData(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_ROWS, r, ref radReferens);
+                kundRadID++;
+                enFakturaRad.KundRadID = kundRadID;
 
                 if (error.lRc == AdkNetWrapper.Api.ADKE_OK)
                 {
@@ -604,36 +484,6 @@ namespace UCSTest
 
 
                 Faktura.fakturaRader.Add(enFakturaRad);
-
-                
-                #region Sql Connection lägg till kundfaktura rader
-
-                SqlCommand cmdAddRow = new SqlCommand("sp_add_customerInvoiceRow", sqlCon);
-                cmdAddRow.CommandType = CommandType.StoredProcedure;
-
-                SqlParameter param1 = new SqlParameter("@artikelNummer", enFakturaRad.ArtikelNummer);
-                SqlParameter param2 = new SqlParameter("@benämning", enFakturaRad.Benämning);
-                SqlParameter param3 = new SqlParameter("@levAntal", enFakturaRad.LevAntal.ToString());
-                SqlParameter param4 = new SqlParameter("@enhetsTyp", enFakturaRad.EnhetsTyp);
-                SqlParameter param5 = new SqlParameter("@styckPris", enFakturaRad.StyckPris.ToString());
-                SqlParameter param6 = new SqlParameter("@totalKostnad", enFakturaRad.TotalKostnad);
-                SqlParameter param7 = new SqlParameter("@fakturaNummer", (int)Faktura.FakturaNummer);
-                SqlParameter param8 = new SqlParameter("@projekt", enFakturaRad.Projekt);
-               
-                cmdAddRow.Parameters.Add(param1);
-                cmdAddRow.Parameters.Add(param2);
-                cmdAddRow.Parameters.Add(param3);
-                cmdAddRow.Parameters.Add(param4);
-                cmdAddRow.Parameters.Add(param5);
-                cmdAddRow.Parameters.Add(param6);
-                cmdAddRow.Parameters.Add(param7);
-                cmdAddRow.Parameters.Add(param8);
-
-                sqlCon.Open();
-                cmdAddRow.ExecuteNonQuery();
-                sqlCon.Close();
-
-                #endregion
 
 
             }

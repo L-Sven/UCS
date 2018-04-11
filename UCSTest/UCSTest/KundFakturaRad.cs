@@ -16,6 +16,7 @@ namespace UCSTest
         public double StyckPris { get; set; }
         public double TotalKostnad { get; set; }
         public string Projekt { get; set; } = "";
+        public int KundRadID { get; set; }
 
 
 
