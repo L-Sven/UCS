@@ -20,13 +20,8 @@ namespace UCSTest
         String sys = @"C:\ProgramData\SPCS\SPCS Administration\Gemensamma filer";
         int pData;
         int antalFakturorUtanNr = 1;
-<<<<<<< HEAD
-        int levRadID = 0; // Används för att skapa individuella identiteter i levfakturarader i databasen
-        int kundRadID = 0; // Används för att skapa individuella identiteter i kundfakturarader i databasen
-=======
         int levRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
         int kundRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
->>>>>>> a2920ed5118882ede84d52f192d894b16bd95132
 
         public VismaData()
         {
@@ -83,7 +78,8 @@ namespace UCSTest
                 double valutaKurs = 0.00;
                 String fakturaTyp = new String(' ', 12); // fakturatyp F = vanlig faktura, K = kreditfaktura ADK_SUP_INV_HEAD_TYPE_OF_INVOICE
                 Double totalKostnad = new Double(); // ADK_SUP_INV_HEAD_TOTAL
-                String projektHuvud = new String(' ', 10);               
+                String projektHuvud = new String(' ', 10);
+                Double moms = new Double();
 
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_GIVEN_NUMBER, ref lopNummer);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_SUPPLIER_NUMBER, ref levNummer, 16);
@@ -102,8 +98,8 @@ namespace UCSTest
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_CODE, ref valutaKod, 4);
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_RATE, ref valutaKurs);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_TYPE_OF_INVOICE, ref fakturaTyp, 12);
-                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_TOTAL, ref totalKostnad);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_PROJECT, ref projektHuvud, 10);
+                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_VAT_AMOUNT, ref moms);
 
                 lFakturaHuvud.LopNummer = lopNummer;
                 lFakturaHuvud.LevNummer = levNummer;
@@ -113,8 +109,8 @@ namespace UCSTest
                 lFakturaHuvud.ValutaKod = valutaKod;
                 lFakturaHuvud.ValutaKurs = decimal.Parse(valutaKurs.ToString());
                 lFakturaHuvud.FakturaTyp = fakturaTyp;
-                lFakturaHuvud.TotalKostnad = totalKostnad;
                 lFakturaHuvud.ProjektHuvud = projektHuvud;
+                lFakturaHuvud.Moms = moms;
 
                 // Lägger till fakturan till listan med Leverantörsfakturor
                 LevFakturor.Add(lFakturaHuvud);
@@ -175,7 +171,6 @@ namespace UCSTest
 
             for (int r = 0; r < NROWS; r++)
             {
-                ++levRadID;
                 LevFakturaRad enFakturaRad = new LevFakturaRad();
                 error = AdkNetWrapper.Api.AdkGetData(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_ROWS, r, ref radReferens);
                 levRadID++;
@@ -185,73 +180,62 @@ namespace UCSTest
                 {
                     String information = new String(' ', 60);
                     Double kvantitet = new Double();
-                    Double prisPerEnhet = new Double();
                     String artikelNummer = new String(' ', 16); // internt artikelnummer
                     String levArtikelNummer = new String(' ', 16); // Leverantörens artikelnummer
-                    double test = 0.00;
                     String projektRad = new String(' ', 10);
-
+                    Double totalKostnad = new Double();
 
                     error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_TEXT, ref information, 60);
-                    error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_QUANTITY1, ref kvantitet);
-                    error = AdkNetWrapper.Api.AdkGetStr(radReferens,
-                        AdkNetWrapper.Api.ADK_OOI_ROW_SUPPLIER_ARTICLE_NUMBER, ref levArtikelNummer, 16);
-                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER,
-                        ref artikelNummer, 16);
-                    error = AdkNetWrapper.Api.AdkGetStr(radReferens,
-                        AdkNetWrapper.Api.ADK_OOI_ROW_PROJECT, ref projektRad, 10);
-                    error = AdkNetWrapper.Api.AdkGetDouble(radReferens,
-                        AdkNetWrapper.Api.ADK_OOI_ROW_PRICE_EACH_CURRENT_CURRENCY, ref prisPerEnhet);
 
-                    if (prisPerEnhet == 0 || prisPerEnhet == null)
+                    if (information.ToLower() == "total")
                     {
-                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens,
-                            AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_CURRENT_CURRENCY, ref prisPerEnhet);
                         
-                    }
+                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens,
+                            AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
+                        lFaktura.TotalKostnad = totalKostnad;
 
-                    if (kvantitet == 0 || kvantitet == null)
-                        enFakturaRad.TotalKostnad = prisPerEnhet;
+
+                    }
                     else
                     {
-                        enFakturaRad.TotalKostnad = prisPerEnhet * kvantitet;
+                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_QUANTITY1, ref kvantitet);
+                        error = AdkNetWrapper.Api.AdkGetStr(radReferens,
+                            AdkNetWrapper.Api.ADK_OOI_ROW_SUPPLIER_ARTICLE_NUMBER, ref levArtikelNummer, 16);
+                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER,
+                            ref artikelNummer, 16);
+                        error = AdkNetWrapper.Api.AdkGetStr(radReferens,
+                            AdkNetWrapper.Api.ADK_OOI_ROW_PROJECT, ref projektRad, 10);
+                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens,
+                            AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
+
+                        //if (prisPerEnhet == 0 || prisPerEnhet == null)
+                        //{
+                        //    error = AdkNetWrapper.Api.AdkGetDouble(radReferens,
+                        //        AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_CURRENT_CURRENCY, ref prisPerEnhet);
+
+                        //}
+
+
+
+                        //if (kvantitet == 0 || kvantitet == null)
+                        //    enFakturaRad.TotalKostnad = prisPerEnhet;
+                        //else
+                        //{
+                        //    enFakturaRad.TotalKostnad = prisPerEnhet * kvantitet;
+                        //}
+
+                        enFakturaRad.Information = information;
+                        enFakturaRad.Kvantitet = kvantitet;
+                        enFakturaRad.ArtikelNummer = artikelNummer;
+                        enFakturaRad.LevArtikelNummer = levArtikelNummer;
+                        enFakturaRad.ProjektRad = projektRad;
+                        enFakturaRad.TotalKostnad = totalKostnad;
                     }
 
-                    enFakturaRad.Information = information;
-                    enFakturaRad.Kvantitet = kvantitet;
-                    enFakturaRad.PrisPerEnhet = prisPerEnhet;
-                    enFakturaRad.ArtikelNummer = artikelNummer;
-                    enFakturaRad.LevArtikelNummer = levArtikelNummer;
-                    enFakturaRad.ProjektRad = projektRad;
+                    
                     
                 }
 
-<<<<<<< HEAD
-                lFaktura.fakturaRader.Add(enFakturaRad);              
-=======
-                lFaktura.fakturaRader.Add(enFakturaRad);
-
-                #region ===== Sql Connection lägg till levFaktura rader =====
-
-                SqlCommand cmdAddRow = new SqlCommand("sp_add_levInvoiceRow", sqlCon);
-                cmdAddRow.CommandType = CommandType.StoredProcedure;
-
-                cmdAddRow.Parameters.Add(new SqlParameter("@radID", levRadID));
-                cmdAddRow.Parameters.Add(new SqlParameter("@artikelNummer", enFakturaRad.ArtikelNummer));
-                cmdAddRow.Parameters.Add(new SqlParameter("@information", enFakturaRad.Information));
-                cmdAddRow.Parameters.Add(new SqlParameter("@kvantitet", decimal.Parse(enFakturaRad.Kvantitet.ToString())));
-                cmdAddRow.Parameters.Add(new SqlParameter("@levArtikelNummer", enFakturaRad.LevArtikelNummer));
-                cmdAddRow.Parameters.Add(new SqlParameter("@prisPerEnhet", decimal.Parse(enFakturaRad.PrisPerEnhet.ToString())));
-                cmdAddRow.Parameters.Add(new SqlParameter("@totalKostnad", decimal.Parse(enFakturaRad.TotalKostnad.ToString())));
-                cmdAddRow.Parameters.Add(new SqlParameter("@fakturaNummer", lFaktura.FakturaNummer));
-                cmdAddRow.Parameters.Add(new SqlParameter("@projektRad", enFakturaRad.ProjektRad));
-
-                sqlCon.Open();
-                cmdAddRow.ExecuteNonQuery();
-                sqlCon.Close();
-
-                #endregion
->>>>>>> a2920ed5118882ede84d52f192d894b16bd95132
             }
         }
 
@@ -322,10 +306,9 @@ namespace UCSTest
                 String säljare = new String(' ', 25);
                 String kundReferens = new String(' ', 50);
                 String valutaKod = new String(' ', 4);
-                Double valutaKurs = new Double();
-                Double valutaEnhet = new Double();
                 Double cargoAmount = new Double();
                 Double dispatchFee = new Double();
+                Double moms = new Double();
                 
                 // String projektKod = new String(' ', 10);
 
@@ -343,7 +326,7 @@ namespace UCSTest
                     Console.WriteLine(errortext);
                 }
 
-                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_TOTAL_AMOUNT, ref totalKostnad);
+                
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NUMBER, ref fakturaNr);                
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_NUMBER, ref kundNr, 16);
                 error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_DATE1, ref tmpDatum);
@@ -352,12 +335,20 @@ namespace UCSTest
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CITY, ref kundStad, 24);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_COUNTRY, ref kundLand, 24);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_OUR_REFERENCE_NAME, ref säljare, 24);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CURRENCY_CODE, ref valutaKod, 4);
-                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CURRENCY_RATE, ref valutaKurs);
-                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CURRENCY_UNIT, ref valutaEnhet);               
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CURRENCY_CODE, ref valutaKod, 4);             
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kundReferens, 50);
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CARGO_AMOUNT, ref cargoAmount);
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DISPATCH_FEE, ref dispatchFee);
+                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_VAT_AMOUNT, ref moms);
+
+                //if (valutaKod != "SEK")
+                //{
+                //    error = error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
+                //}
+                //else
+                //{
+                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_TOTAL_AMOUNT, ref totalKostnad);
+                //}
                 // error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_PROJECT_C, ref projektKod, 10);
 
                 /* Följande konverterare finns i exemplet, men datumet funkar fint för mig redan
@@ -383,16 +374,27 @@ namespace UCSTest
                 kFaktura.KundStad = kundStad;
                 kFaktura.Säljare = säljare;
                 kFaktura.KundReferens = kundReferens;
-                kFaktura.ValutaKod = valutaKod;
-                kFaktura.ValutaKurs = valutaKurs;
-                kFaktura.ValutaEnhet = valutaEnhet;
                 kFaktura.Cargo_amount = cargoAmount;
                 kFaktura.Dispatch_fee = dispatchFee;
+                kFaktura.Moms = moms;
 
                 // Lägger till fakturan till listan med kundfakturor
                 KundFakturor.Add(kFaktura);
               
                 GetKundFakturaRad(kFaktura, pData);
+
+                if (valutaKod != "SEK")
+                {
+                    totalKostnad = 0;
+                    foreach (var rad in kFaktura.fakturaRader)
+                    {
+                        totalKostnad += rad.TotalKostnad;
+                    }
+                    kFaktura.TotalKostnad = totalKostnad;
+                    
+                }
+
+                
 
                 SkickaData sendData = new SkickaData(kFaktura);
 
@@ -451,7 +453,6 @@ namespace UCSTest
 
             for (int r = 0; r < NROWS; r++)
             {
-                ++kundRadID;
                 KundFakturaRad enFakturaRad = new KundFakturaRad();
                 error = AdkNetWrapper.Api.AdkGetData(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_ROWS, r, ref radReferens);
                 kundRadID++;
@@ -494,11 +495,9 @@ namespace UCSTest
                         error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_TEXT, ref text, 60);
                         enFakturaRad.Benämning = text.Replace(";", "");
 
-                        Double prisPerStyck = new Double();
-                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PRICE_EACH_CURRENT_CURRENCY, ref prisPerStyck);
-                        enFakturaRad.StyckPris = prisPerStyck;
-
-                        enFakturaRad.TotalKostnad = kvantitet * prisPerStyck;
+                        Double totalKostnad = new Double();
+                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
+                        enFakturaRad.TotalKostnad = totalKostnad;
 
                         String enhetsTyp = new String(' ', 4);
                         error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_UNIT, ref enhetsTyp, 4);
@@ -515,32 +514,6 @@ namespace UCSTest
 
 
                 Faktura.fakturaRader.Add(enFakturaRad);
-
-<<<<<<< HEAD
-=======
-                
-                #region Sql Connection lägg till kundfaktura rader
-
-                SqlCommand cmdAddRow = new SqlCommand("sp_add_customerInvoiceRow", sqlCon);
-                cmdAddRow.CommandType = CommandType.StoredProcedure;
-
-                cmdAddRow.Parameters.Add(new SqlParameter("@radID", kundRadID));
-                cmdAddRow.Parameters.Add(new SqlParameter("@artikelNummer", enFakturaRad.ArtikelNummer));
-                cmdAddRow.Parameters.Add(new SqlParameter("@benämning", enFakturaRad.Benämning));
-                cmdAddRow.Parameters.Add(new SqlParameter("@levAntal", enFakturaRad.LevAntal.ToString()));
-                cmdAddRow.Parameters.Add(new SqlParameter("@enhetsTyp", enFakturaRad.EnhetsTyp));
-                cmdAddRow.Parameters.Add(new SqlParameter("@styckPris", enFakturaRad.StyckPris.ToString()));
-                cmdAddRow.Parameters.Add(new SqlParameter("@totalKostnad", enFakturaRad.TotalKostnad));
-                cmdAddRow.Parameters.Add(new SqlParameter("@fakturaNummer", (int)Faktura.FakturaNummer));
-                cmdAddRow.Parameters.Add(new SqlParameter("@projekt", enFakturaRad.Projekt));
-
-                sqlCon.Open();
-                cmdAddRow.ExecuteNonQuery();
-                sqlCon.Close();
-
-                #endregion
-
->>>>>>> a2920ed5118882ede84d52f192d894b16bd95132
 
             }
 

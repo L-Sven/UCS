@@ -11,7 +11,6 @@ namespace UCSTest
 
         public double Kvantitet { get; set; }
         public string Information { get; set; } = "";
-        public double PrisPerEnhet { get; set; }
         public double TotalKostnad { get; set; }
         public string ArtikelNummer { get; set; } = "";
         public string LevArtikelNummer { get; set; } = "";

@@ -21,11 +21,9 @@ namespace UCSTest
         public string KundLand { get; set; } = "";
         public string FakturaDatum { get; set; } = "";
         public double TotalKostnad { get; set; }
-        public string ValutaKod { get; set; } = "";
-        public double ValutaKurs { get; set; }
-        public double ValutaEnhet { get; set; }
         public double Cargo_amount { get; set; }
         public double Dispatch_fee { get; set; }
+        public double Moms { get; set; }
 
         // public string FörfalloDatum { get; set; } = "";
         // public string SlutDatum { get; set; } = "";

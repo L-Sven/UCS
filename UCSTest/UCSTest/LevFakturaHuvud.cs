@@ -19,5 +19,6 @@ namespace UCSTest
         public string FakturaTyp { get; set; } = "";
         public double TotalKostnad { get; set; }
         public string ProjektHuvud { get; set; } = "";
+        public double Moms { get; set; }
     }
 }
