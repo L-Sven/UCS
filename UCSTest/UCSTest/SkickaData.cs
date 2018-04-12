@@ -17,19 +17,40 @@ namespace UCSTest
 
         public SkickaData (KundFakturaHuvud k)
         {
-            kFaktura = new KundFakturaHuvud();
-            kFaktura = k;
-            KundFakturaTillDatabas();
+            KundFakturaTillDatabas(k);
         }
 
         public SkickaData (LevFakturaHuvud l)
         {
-            lFaktura = new LevFakturaHuvud();
-            lFaktura = l;
-            LevFakturaTillDatabas();
+            LevFakturaTillDatabas(l);
         }
 
-        private void KundFakturaTillDatabas()
+        public SkickaData(Artikel a)
+        {
+            ArtikelTillDatabas(a);
+        }
+
+        private void ArtikelTillDatabas(Artikel a)
+        {
+            SqlCommand cmdAddArticle = new SqlCommand("sp_add_article", sqlCon);
+
+            cmdAddArticle.CommandType = CommandType.StoredProcedure;
+
+            SqlParameter returnParam = cmdAddArticle.Parameters.Add("@ReturnValue", SqlDbType.Int);
+            returnParam.Direction = ParameterDirection.ReturnValue;
+
+            cmdAddArticle.Parameters.Add(new SqlParameter("@artikelNummer", a.ArtikelNummer));
+            cmdAddArticle.Parameters.Add(new SqlParameter("@artikelGrupp", a.ArtikelGrupp));
+            cmdAddArticle.Parameters.Add(new SqlParameter("@benämning", a.Benämning));
+            cmdAddArticle.Parameters.Add(new SqlParameter("@enhetsKod", a.EnhetsKod));
+
+            sqlCon.Open();
+            cmdAddArticle.ExecuteNonQuery();
+            var returnFromSp = returnParam.Value;
+            sqlCon.Close();
+        }
+
+        private void KundFakturaTillDatabas(KundFakturaHuvud kFaktura)
         {
 
             SqlCommand cmdAddInvoice = new SqlCommand("sp_add_customerInvoice", sqlCon);
@@ -66,12 +87,12 @@ namespace UCSTest
 
                 cmdAddRow.Parameters.Add(new SqlParameter("@radID", fRad.KundRadID));
                 cmdAddRow.Parameters.Add(new SqlParameter("@artikelNummer", fRad.ArtikelNummer));
-                cmdAddRow.Parameters.Add(new SqlParameter("@benämning", fRad.Benämning));
                 cmdAddRow.Parameters.Add(new SqlParameter("@levAntal", fRad.LevAntal.ToString()));
-                cmdAddRow.Parameters.Add(new SqlParameter("@enhetsTyp", fRad.EnhetsTyp));
                 cmdAddRow.Parameters.Add(new SqlParameter("@totalKostnad", fRad.TotalKostnad));
                 cmdAddRow.Parameters.Add(new SqlParameter("@fakturaNummer", (int)kFaktura.FakturaNummer));
                 cmdAddRow.Parameters.Add(new SqlParameter("@projekt", fRad.Projekt));
+                cmdAddRow.Parameters.Add(new SqlParameter("@täckningsGrad", decimal.Parse(fRad.TäckningsGrad.ToString())));
+                cmdAddRow.Parameters.Add(new SqlParameter("@benämning", fRad.Benämning));
 
                 sqlCon.Open();
                 cmdAddRow.ExecuteNonQuery();
@@ -80,7 +101,7 @@ namespace UCSTest
 
         }
 
-        private void LevFakturaTillDatabas()
+        private void LevFakturaTillDatabas(LevFakturaHuvud lFaktura)
         {
             SqlCommand cmdAddInvoice = new SqlCommand("sp_add_levInvoice", sqlCon);
 
