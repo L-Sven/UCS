@@ -28,9 +28,67 @@ namespace UCSTest
             
             KundFakturor = new List<KundFakturaHuvud>();
             LevFakturor = new List<LevFakturaHuvud>();
+            GetArtikelData();
             GetKundFakturaHuvudData();
+            Console.WriteLine("kFaktura klar!");
             GetLevFakturaHuvudData();           
             
+        }
+
+        private void GetArtikelData()
+        {
+            // Öppnar upp ett företag
+            error = Adk.Api.AdkOpen(ref sys, ref ftg);
+
+            // Kontroll om företaget kunde öppnas
+            if (error.lRc != Adk.Api.ADKE_OK)
+            {
+                String errortext = new String(' ', 200);
+                int errtype = (int)Adk.Api.ADK_ERROR_TEXT_TYPE.elRc;
+                Adk.Api.AdkGetErrorText(ref error, errtype,
+                    ref errortext, 200);
+                Console.WriteLine(errortext);
+            }
+
+            // Gör pData till en referens av typen Artikel
+            pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_ARTICLE);
+
+            // Pekar pData mot den första raden i Artiklar
+            error = AdkNetWrapper.Api.AdkFirst(pData);
+
+            // Kontroll om det det finns något värde i pData
+            if (error.lRc != AdkNetWrapper.Api.ADKE_OK)
+            {
+                String errortext = new String(' ', 200);
+                int errtype = (int)AdkNetWrapper.Api.ADK_ERROR_TEXT_TYPE.elRc;
+                AdkNetWrapper.Api.AdkGetErrorText(ref error, errtype, ref errortext, 200);
+                Console.WriteLine(errortext);
+            }
+
+            while (error.lRc == Adk.Api.ADKE_OK) // Snurra som borde fortgå så länge det finns artiklar
+            {
+                Artikel artikel = new Artikel();
+
+                String artikelNummer = new String(' ', 16);
+                String benämning = new string(' ', 30);
+                String artikelGrupp = new String(' ', 6);
+                String enhetsKod = new string(' ', 4);
+
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_NUMBER, ref artikelNummer, 16);
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_NAME, ref benämning, 30);
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_GROUP, ref artikelGrupp, 6);
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_UNIT_CODE, ref enhetsKod, 4);
+
+                artikel.ArtikelNummer = artikelNummer;
+                artikel.ArtikelGrupp = artikelGrupp;
+                artikel.Benämning = benämning;
+                artikel.EnhetsKod = enhetsKod;
+                
+                SkickaData sendData = new SkickaData(artikel);
+
+                error = AdkNetWrapper.Api.AdkNext(pData);
+            }
+            AdkNetWrapper.Api.AdkClose();
         }
 
         private void GetLevFakturaHuvudData()
@@ -232,7 +290,7 @@ namespace UCSTest
                         enFakturaRad.TotalKostnad = totalKostnad;
                     }
 
-                    
+                    lFaktura.fakturaRader.Add(enFakturaRad);
                     
                 }
 
@@ -395,7 +453,6 @@ namespace UCSTest
                 }
 
                 
-
                 SkickaData sendData = new SkickaData(kFaktura);
 
                 // Sätter vidare pekaren på nästa instans
@@ -455,8 +512,7 @@ namespace UCSTest
             {
                 KundFakturaRad enFakturaRad = new KundFakturaRad();
                 error = AdkNetWrapper.Api.AdkGetData(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_ROWS, r, ref radReferens);
-                kundRadID++;
-                enFakturaRad.KundRadID = kundRadID;
+                
 
                 if (error.lRc == AdkNetWrapper.Api.ADKE_OK)
                 {
@@ -464,56 +520,51 @@ namespace UCSTest
                     error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER, ref artikelNummer, 16);
                     enFakturaRad.ArtikelNummer = artikelNummer;
 
-                    Double kvantitet = new Double();
-                    error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_QUANTITY1, ref kvantitet);
-
-                    
-                    enFakturaRad.LevAntal = kvantitet;
-
-                    // Om krediterade faktura
-                    if (Faktura.FakturaTyp.ToUpper() == "K")
+                    //Fakturarader som är avtalsperioder tas inte med, dess data är för sammanställningen irrelevant?
+                    if (enFakturaRad.ArtikelNummer != "Avtalsperiod")   
                     {
-                        enFakturaRad.LevAntal = kvantitet * -1;
-                    }
-                    else
-                    {
+                        kundRadID++;
+                        enFakturaRad.KundRadID = kundRadID;
+
+                        Double kvantitet = new Double();
+                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_QUANTITY1, ref kvantitet);
                         enFakturaRad.LevAntal = kvantitet;
-                    }
 
-                    
-
-                    if (enFakturaRad.ArtikelNummer == "Avtalsperiod")
-                    {
-                        String text = new String(' ', 60);
-                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_TEXT, ref text, 60);
-                        enFakturaRad.Benämning = text.Replace(";", "");
-                    }
-
-                    else 
-                    {
-                        String text = new String(' ', 60);
-                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_TEXT, ref text, 60);
-                        enFakturaRad.Benämning = text.Replace(";", "");
+                        // Om krediterade faktura
+                        if (Faktura.FakturaTyp.ToUpper() == "K")
+                        {
+                            enFakturaRad.LevAntal = kvantitet * -1;
+                        }
+                        else
+                        {
+                            enFakturaRad.LevAntal = kvantitet;
+                        }
 
                         Double totalKostnad = new Double();
                         error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
                         enFakturaRad.TotalKostnad = totalKostnad;
 
-                        String enhetsTyp = new String(' ', 4);
-                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_UNIT, ref enhetsTyp, 4);
-                        enFakturaRad.EnhetsTyp = enhetsTyp;
-
                         String PROJECT = new String(' ', 6);
                         error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROJECT, ref PROJECT, 6);
                         enFakturaRad.Projekt = PROJECT;
 
-                    }
+                        String benämning = new string(' ', 60);
+                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_TEXT, ref benämning, 60);
+                        enFakturaRad.Benämning = benämning;
 
+                        Double täckningsgrad = new Double();
+                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens,
+                            AdkNetWrapper.Api.ADK_OOI_ROW_CONTRIBUTION_DEGREE, ref täckningsgrad);
+                        enFakturaRad.TäckningsGrad = täckningsgrad;
+
+                        Faktura.fakturaRader.Add(enFakturaRad);
+
+                    }
 
                 }
 
 
-                Faktura.fakturaRader.Add(enFakturaRad);
+                
 
             }
 
