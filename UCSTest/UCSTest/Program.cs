@@ -17,10 +17,10 @@ namespace UCSTest
         {
 
             VismaData go = new VismaData();
-
+            // C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\fakturaDB.mdf
         }
 
-        
-           
+
+
     }
 }
