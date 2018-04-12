@@ -42,6 +42,7 @@ namespace UCSTest
             cmdAddArticle.Parameters.Add(new SqlParameter("@artikelGrupp", a.ArtikelGrupp));
             cmdAddArticle.Parameters.Add(new SqlParameter("@benämning", a.Benämning));
             cmdAddArticle.Parameters.Add(new SqlParameter("@enhetsKod", a.EnhetsKod));
+            cmdAddArticle.Parameters.Add(new SqlParameter("@inköpsPris", a.InköpsPris));
 
             sqlCon.Open();
             cmdAddArticle.ExecuteNonQuery();
