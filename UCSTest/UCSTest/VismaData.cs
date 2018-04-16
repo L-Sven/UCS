@@ -147,13 +147,17 @@ namespace UCSTest
                 String artikelGrupp = new String(' ', 6);
                 String enhetsKod = new string(' ', 4);
                 Double inköpsPris = new Double();
+                Double frakt = new Double();
+                Double ovrigKostnad = new Double();
 
                 // Hämtar data från databasen och lagrar i de lokala variablerna
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_NUMBER, ref artikelNummer, 16);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_NAME, ref benämning, 30);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_GROUP, ref artikelGrupp, 6);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_UNIT_CODE, ref enhetsKod, 4);
-                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_ARTICLE_ESTIMATED_TOTAL_PURCHASE_PRICE, ref inköpsPris);
+                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_ARTICLE_ESTIMATED_PURCHASE_PRICE, ref inköpsPris);
+                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_ARTICLE_ESTIMATED_CARGO_FEE, ref frakt);
+                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_ARTICLE_ESTIMATED_OTHER, ref ovrigKostnad);
 
                 // Lägger till data den aktuella artikelinstansen
                 artikel.ArtikelNummer = artikelNummer;
@@ -161,6 +165,8 @@ namespace UCSTest
                 artikel.Benämning = benämning;
                 artikel.EnhetsKod = enhetsKod;
                 artikel.InköpsPris = inköpsPris;
+                artikel.Frakt = frakt;
+                artikel.OvrigKostnad = ovrigKostnad;
 
                 // Skickar data till sendData
                 sendData.ArtikelTillDatabas(artikel);

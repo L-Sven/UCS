@@ -13,5 +13,8 @@ namespace UCSTest
         public string ArtikelGrupp { get; set; }
         public string EnhetsKod { get; set; }
         public double InköpsPris { get; set; }
+        public double Frakt { get; set; }
+        public double OvrigKostnad { get; set; }
+
     }
 }

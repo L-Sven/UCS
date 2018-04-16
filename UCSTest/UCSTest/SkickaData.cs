@@ -51,6 +51,8 @@ namespace UCSTest
             cmdAddArticle.Parameters.Add(new SqlParameter("@benämning", a.Benämning));
             cmdAddArticle.Parameters.Add(new SqlParameter("@enhetsKod", a.EnhetsKod));
             cmdAddArticle.Parameters.Add(new SqlParameter("@inköpsPris", a.InköpsPris));
+            cmdAddArticle.Parameters.Add(new SqlParameter("@frakt", a.Frakt));
+            cmdAddArticle.Parameters.Add(new SqlParameter("@ovrigKostnad", a.OvrigKostnad));
 
             sqlCon.Open();
             cmdAddArticle.ExecuteNonQuery();
