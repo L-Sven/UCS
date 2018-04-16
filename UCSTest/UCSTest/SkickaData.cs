@@ -15,7 +15,7 @@ namespace UCSTest
 
         // Skapar en sql-connection mot databasen
         SqlConnection sqlCon = new SqlConnection(
-           "Data Source=SIMONJO-6570B\\UCSTEST;Initial Catalog=UCSTest;Integrated Security=True");
+           @"Data Source=SIMONJO-6570B\UCSTEST;Initial Catalog=UCSTest;Persist Security Info=True;User ID=sa;Password=Ucstest2018");
 
         public void ArtieklGruppTillDatabas(ArtikelGrupp g)
         {

@@ -15,7 +15,6 @@ namespace UCSTest
         Adk.Api.ADKERROR error;
         SkickaData sendData = new SkickaData();
 
-
         // Sökvägar för visma administration
         String ftg = @"C:\ProgramData\SPCS\SPCS Administration\Företag\Ovnbol2000";
         String sys = @"C:\ProgramData\SPCS\SPCS Administration\Gemensamma filer";
