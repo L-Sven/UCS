@@ -11,31 +11,103 @@ namespace UCSTest
 {
     class VismaData
     {
-        List<KundFakturaHuvud> KundFakturor;
-        List<LevFakturaHuvud> LevFakturor;
-        Adk.Api.ADKERROR error;
         
-         
+        Adk.Api.ADKERROR error;
+        SkickaData sendData = new SkickaData();
+
+
+        // Sökvägar för visma administration
         String ftg = @"C:\ProgramData\SPCS\SPCS Administration\Företag\Ovnbol2000";
         String sys = @"C:\ProgramData\SPCS\SPCS Administration\Gemensamma filer";
+
+        // Följande sökvägar verkar också fungera
+        //String sys = @"C:\Documents and Settings\All Users\Application Data\SPCS\SPCS Administration\Gemensamma filer";
+        //String ftg = @"C:\Documents and Settings\All Users\Application Data\SPCS\SPCS Administration\Företag\Ovnbol2000";
+
         int pData;
-        int antalFakturorUtanNr = 1;
+        int antalFakturorUtanNr = 1; // Används för att ge fakturor utan nummer ett fakturanummer
         int levRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
         int kundRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
 
         public VismaData()
         {
-            
-            KundFakturor = new List<KundFakturaHuvud>();
-            LevFakturor = new List<LevFakturaHuvud>();
+
+            // Anropar metod som hämtar data om alla artikelgrupper
+            GetArtikelGrupper();
+            Console.WriteLine("Artikelgrupper klar!");
+
+            // Anropar metod som hämtar data om alla artiklar 
             GetArtikelData();
+            Console.WriteLine("Artikeldata klar!");
+
+            // Anropar metod som hämtar data om alla kundfakturor
             GetKundFakturaHuvudData();
-            Console.WriteLine("kFaktura klar!");
-            GetLevFakturaHuvudData();           
+            Console.WriteLine("Kundfakturadata klar!");
+
+            // Anropar metod som hämtar data om alla leverantörsfakturor
+            GetLevFakturaHuvudData();
+            Console.WriteLine("Leverantförafkturadata klar!");
+
             
+
         }
 
-        private void GetArtikelData()
+        private void GetArtikelGrupper()
+        {
+            // Öppnar upp ett företag
+            error = Adk.Api.AdkOpen(ref sys, ref ftg);
+
+            // Kontroll om företaget kunde öppnas
+            if (error.lRc != Adk.Api.ADKE_OK)
+            {
+                String errortext = new String(' ', 200);
+                int errtype = (int)Adk.Api.ADK_ERROR_TEXT_TYPE.elRc;
+                Adk.Api.AdkGetErrorText(ref error, errtype,
+                    ref errortext, 200);
+                Console.WriteLine(errortext);
+            }
+
+            // Gör pData till en referens av typen Artikelgrupp
+            pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_CODE_OF_ARTICLE_GROUP);
+
+            // Pekar pData mot den första raden i Artikelgrupper
+            error = AdkNetWrapper.Api.AdkFirst(pData);
+
+            // Kontroll om det det finns något värde i pData
+            if (error.lRc != AdkNetWrapper.Api.ADKE_OK)
+            {
+                String errortext = new String(' ', 200);
+                int errtype = (int)AdkNetWrapper.Api.ADK_ERROR_TEXT_TYPE.elRc;
+                AdkNetWrapper.Api.AdkGetErrorText(ref error, errtype, ref errortext, 200);
+                Console.WriteLine(errortext);
+            }
+
+            while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns artikelgrupper
+            {
+                ArtikelGrupp aGrupp = new ArtikelGrupp();
+
+                String aGruppKod = new String(' ', 6);
+                String aGruppBenämning = new String(' ', 25);
+
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_ARTICLE_GROUP_CODE, ref aGruppKod, 6);
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_ARTICLE_GROUP_TEXT, ref aGruppBenämning, 25);
+
+                aGrupp.ArtikelGruppKod = aGruppKod;
+                aGrupp.Benämning = aGruppBenämning;
+
+                sendData.ArtieklGruppTillDatabas(aGrupp);
+
+                // Sätter vidare pekaren till nästa artikelgrupp
+                error = AdkNetWrapper.Api.AdkNext(pData);
+
+            }
+
+            // Stänger företaget
+            AdkNetWrapper.Api.AdkClose();
+
+        }
+            // Metod som hämtar artikeldata
+            private void GetArtikelData()
         {
             // Öppnar upp ett företag
             error = Adk.Api.AdkOpen(ref sys, ref ftg);
@@ -65,8 +137,10 @@ namespace UCSTest
                 Console.WriteLine(errortext);
             }
 
-            while (error.lRc == Adk.Api.ADKE_OK) // Snurra som borde fortgå så länge det finns artiklar
+            while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns artiklar
             {
+
+                // Skapar ett nytt artikelobjekt
                 Artikel artikel = new Artikel();
 
                 String artikelNummer = new String(' ', 16);
@@ -75,25 +149,32 @@ namespace UCSTest
                 String enhetsKod = new string(' ', 4);
                 Double inköpsPris = new Double();
 
+                // Hämtar data från databasen och lagrar i de lokala variablerna
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_NUMBER, ref artikelNummer, 16);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_NAME, ref benämning, 30);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_GROUP, ref artikelGrupp, 6);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_UNIT_CODE, ref enhetsKod, 4);
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_ARTICLE_ESTIMATED_TOTAL_PURCHASE_PRICE, ref inköpsPris);
 
+                // Lägger till data den aktuella artikelinstansen
                 artikel.ArtikelNummer = artikelNummer;
                 artikel.ArtikelGrupp = artikelGrupp;
                 artikel.Benämning = benämning;
                 artikel.EnhetsKod = enhetsKod;
                 artikel.InköpsPris = inköpsPris;
-                
-                SkickaData sendData = new SkickaData(artikel);
 
+                // Skickar data till sendData
+                sendData.ArtikelTillDatabas(artikel);
+
+                // Sätter vidare pekaren till nästa artikel
                 error = AdkNetWrapper.Api.AdkNext(pData);
             }
+
+            // Stänger företaget
             AdkNetWrapper.Api.AdkClose();
         }
 
+        // Metod som hämtar data om ett leverantörsfakturahuvud
         private void GetLevFakturaHuvudData()
         {
             // Öppnar upp ett företag
@@ -124,24 +205,27 @@ namespace UCSTest
                 Console.WriteLine(errortext);
             }
 
-            while (error.lRc == Adk.Api.ADKE_OK) // Snurra som borde fortgå så länge det finns fakturor
+            while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns fakturor
            // for (int i = 0; i < 30; i++) // Test som bara kör 30 varv
             {
 
-                LevFakturaHuvud lFakturaHuvud = new LevFakturaHuvud(); 
-                Double lopNummer = new double(); // löpnummer ADK_SUP_INV_HEAD_GIVEN_NUMBER
-                String levNummer = new String(' ', 16); // leverantörsnummer ADK_SUP_INV_HEAD_SUPPLIER_NUMBER
-                String levNamn = new String(' ', 50); // leverantörsnamn ADK_SUP_INV_HEAD_SUPPLIER_NAME
-                String fakturaNummer = new String(' ', 16); // ADK_SUP_INV_HEAD_INVOICE_NUMBER
-                int tmpDatum = new int(); // Temporär datumhållare då data hämtas som 8 siffror
-                String fakturaDatum = new String(' ', 11); // ADK_SUP_INV_HEAD_INVOICE_DATE
-                String valutaKod = new String(' ', 4); // Valutakod ADK_SUP_INV_HEAD_CURRENCY_CODE 
+                // Skapar ny instans av ett lFakturaHuvud
+                LevFakturaHuvud lFakturaHuvud = new LevFakturaHuvud();
+
+                Double lopNummer = new double(); 
+                String levNummer = new String(' ', 16); 
+                String levNamn = new String(' ', 50); 
+                String fakturaNummer = new String(' ', 16); 
+                int tmpDatum = new int(); // Temporär datumhållare eftersom data hämtas som 8 siffror
+                String fakturaDatum = new String(' ', 11); 
+                String valutaKod = new String(' ', 4);  
                 double valutaKurs = 0.00;
-                String fakturaTyp = new String(' ', 12); // fakturatyp F = vanlig faktura, K = kreditfaktura ADK_SUP_INV_HEAD_TYPE_OF_INVOICE
-                Double totalKostnad = new Double(); // ADK_SUP_INV_HEAD_TOTAL
+                String fakturaTyp = new String(' ', 12); // fakturatyp F = vanlig faktura, K = kreditfaktura 
+                Double totalKostnad = new Double(); 
                 String projektHuvud = new String(' ', 10);
                 Double moms = new Double();
 
+                // Hämtar data ur databas och lagrar i de lokala variablerna
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_GIVEN_NUMBER, ref lopNummer);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_SUPPLIER_NUMBER, ref levNummer, 16);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_SUPPLIER_NAME, ref levNamn, 50);
@@ -154,6 +238,7 @@ namespace UCSTest
                     antalFakturorUtanNr++;
                 }
 
+                // Hämtar data ur databas och lagrar i de lokala variablerna
                 error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_INVOICE_DATE, ref tmpDatum);
                 error = AdkNetWrapper.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_CODE, ref valutaKod, 4);
@@ -162,6 +247,7 @@ namespace UCSTest
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_PROJECT, ref projektHuvud, 10);
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_VAT_AMOUNT, ref moms);
 
+                // Lägger till data i instansen och lFakturaHuvud
                 lFakturaHuvud.LopNummer = lopNummer;
                 lFakturaHuvud.LevNummer = levNummer;
                 lFakturaHuvud.LevNamn = levNamn;
@@ -172,13 +258,12 @@ namespace UCSTest
                 lFakturaHuvud.FakturaTyp = fakturaTyp;
                 lFakturaHuvud.ProjektHuvud = projektHuvud;
                 lFakturaHuvud.Moms = moms;
-
-                // Lägger till fakturan till listan med Leverantörsfakturor
-                LevFakturor.Add(lFakturaHuvud);
-                               
+                        
+                // Anrop till metod som hämtar alla leverantörsfakturarader i den aktuella fakturan
                 GetLevFakturaRad(lFakturaHuvud, pData);
 
-                SkickaData sendData = new SkickaData(lFakturaHuvud);
+                // Anropr till metod som lägger in data i databasen
+                sendData.LevFakturaTillDatabas(lFakturaHuvud);
 
                 // Sätter vidare pekaren på nästa instans
                 error = AdkNetWrapper.Api.AdkNext(pData);
@@ -188,52 +273,30 @@ namespace UCSTest
             // Stänger företaget
             AdkNetWrapper.Api.AdkClose();
 
-            /*
-            int räknare = 1;
-
-            // Loopar igenom kundfakturor och gör testutskrifter
-            foreach (var faktura in LevFakturor)
-            {
-                Console.WriteLine(räknare + " Löpnummer: "+ faktura.LopNummer
-                    + " Levnamn " + faktura.LevNamn
-                    + " LevNr: " + faktura.LevNummer
-                    + " Fakturanummer: " + faktura.FakturaNummer
-                    + " datum: " + faktura.FakturaDatum
-                    + " kostnad: " + faktura.TotalKostnad                    
-                    + " fakturatyp: " + faktura.FakturaTyp
-                    + " Valuta: " + faktura.ValutaKod);
-                räknare++;
-
-                // Loopar raderna på varje faktura och göra testutskrifter
-
-                foreach (var rad in faktura.fakturaRader)
-                {
-                    Console.WriteLine("ArtikelNr: " + rad.ArtikelNummer
-                        + " Information: " + rad.Information + " Kvantitet: " + rad.Kvantitet
-                        + " Styckpris: " + rad.PrisPerEnhet
-                        + " Totalkostnad för artikeln: " + rad.TotalKostnad
-                        + " LevArtikelNr: " + rad.LevArtikelNummer);
-                }
-                Console.WriteLine();
-
-            }
-
-            // Ser till så att konsolen inte stänger av sig så fort programmet har körts
-            //Console.ReadLine();
-            */
+            
         }
 
+        // Metod som hämtar rader från en leverantörsfaktura
         private void GetLevFakturaRad(LevFakturaHuvud lFaktura, int pData)
         {
             
             Double NROWS = new Double();
+
+            // Hämtar antalet rader som finns på leverantörsfakturan
             error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_NROWS, ref NROWS);
             int radReferens = new int(); // Pekar på rader i fakturaraderna likt pData pekar på ett specifikt fakturahuvud
 
+            // Snurra som fortgår så länge det finns rader på leverantörsfakturan
             for (int r = 0; r < NROWS; r++)
             {
+
+                // Skapar ny instans av en fakturarad
                 LevFakturaRad enFakturaRad = new LevFakturaRad();
+
+                // Sätter radreferensen mot aktuell fakturarad
                 error = AdkNetWrapper.Api.AdkGetData(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_ROWS, r, ref radReferens);
+
+                // Autoinkrementad primärnyckel för leverantörsfakturaraden i databasen
                 levRadID++;
                 enFakturaRad.LevRadID = levRadID;
 
@@ -248,6 +311,8 @@ namespace UCSTest
 
                     error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_TEXT, ref information, 60);
 
+                    // om raden presenterar en totalkostnad sparas inte raden utan vi använder värdet för att 
+                    // ge leverantörsfakturahuvudet en totalkostnad i svenska kronor 
                     if (information.ToLower() == "total")
                     {
                         
@@ -257,63 +322,38 @@ namespace UCSTest
 
 
                     }
+
+                    // Om det inte är en rad som presenterar totalkostnaden
                     else
                     {
+                        // Hämtar data ur databas och lagrar i de lokala variablerna
                         error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_QUANTITY1, ref kvantitet);
-                        error = AdkNetWrapper.Api.AdkGetStr(radReferens,
-                            AdkNetWrapper.Api.ADK_OOI_ROW_SUPPLIER_ARTICLE_NUMBER, ref levArtikelNummer, 16);
-                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER,
-                            ref artikelNummer, 16);
-                        error = AdkNetWrapper.Api.AdkGetStr(radReferens,
-                            AdkNetWrapper.Api.ADK_OOI_ROW_PROJECT, ref projektRad, 10);
-                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens,
-                            AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
+                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_SUPPLIER_ARTICLE_NUMBER, ref levArtikelNummer, 16);
+                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER, ref artikelNummer, 16);
+                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROJECT, ref projektRad, 10);
+                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
 
-                        //if (prisPerEnhet == 0 || prisPerEnhet == null)
-                        //{
-                        //    error = AdkNetWrapper.Api.AdkGetDouble(radReferens,
-                        //        AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_CURRENT_CURRENCY, ref prisPerEnhet);
-
-                        //}
-
-
-
-                        //if (kvantitet == 0 || kvantitet == null)
-                        //    enFakturaRad.TotalKostnad = prisPerEnhet;
-                        //else
-                        //{
-                        //    enFakturaRad.TotalKostnad = prisPerEnhet * kvantitet;
-                        //}
-
+                        // Lägger till data i fakturaradinstansen
                         enFakturaRad.Information = information;
                         enFakturaRad.Kvantitet = kvantitet;
                         enFakturaRad.ArtikelNummer = artikelNummer;
                         enFakturaRad.LevArtikelNummer = levArtikelNummer;
                         enFakturaRad.ProjektRad = projektRad;
                         enFakturaRad.TotalKostnad = totalKostnad;
+                        lFaktura.fakturaRader.Add(enFakturaRad);
                     }
 
-                    lFaktura.fakturaRader.Add(enFakturaRad);
+                    
                     
                 }
 
             }
         }
 
-        // Kingig metod som hämtar data från fakturahuvud i visma
+        // Metod som hämtar data från fakturahuvud i visma
         private void GetKundFakturaHuvudData()
         {
-            // oklart vilken sökväg som är korrekt, den översta är tagen från sökvägen som presenteras av Visma på min lokala dator
-            // Den andra sökvägen är tagen från API:n "Om installationen är gjord på standardsätt", båda fungerar.
-
-            // String ftg = @"C:\ProgramData\SPCS\SPCS Administration\Företag\Ovnbol2000";
-            // String sys = @"C:\ProgramData\SPCS\SPCS Administration\Gemensamma filer";
-
-            //String sys = @"C:\Documents and Settings\All Users\Application Data\SPCS\SPCS Administration\Gemensamma filer";
-            //String ftg = @"C:\Documents and Settings\All Users\Application Data\SPCS\SPCS Administration\Företag\Ovnbol2000";
-
             
-
             // Öppnar upp ett företag
             error = Adk.Api.AdkOpen(ref sys, ref ftg);
 
@@ -327,11 +367,7 @@ namespace UCSTest
                 Console.WriteLine(errortext);
             }
 
-            // Enligt api är PADK_DATA en pekare som måste deklareras för att skapa en ADk_DATA-struktur (Kommando som inte funkar)
-            // I exemplen senare i API deklareras det direkt som en integer utan PADK_DATA pekaren
-            // PADK_DATA pData;
-            // int pData;
-
+           
             // gör pData till en kundfakturahuvud-referens
             pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_INVOICE_HEAD);
 
@@ -348,13 +384,13 @@ namespace UCSTest
             }
 
 
-            // Else?
-            while (error.lRc == Adk.Api.ADKE_OK) // Snurra som borde fortgå så länge det finns fakturor
-            //for (int i = 0; i < 16; i++)
+            
+            while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns fakturor            
             {
 
-                
+                // Skapar ny instans av ett kundafakturahuvud
                 KundFakturaHuvud kFaktura = new KundFakturaHuvud();
+
                 String kundNamn = new String(' ', 50);
                 Double totalKostnad = new Double();
                 int tmpDatum = new int(); 
@@ -369,25 +405,11 @@ namespace UCSTest
                 String valutaKod = new String(' ', 4);
                 Double cargoAmount = new Double();
                 Double dispatchFee = new Double();
-                Double moms = new Double();
-                
-                // String projektKod = new String(' ', 10);
+                Double moms = new Double();                                
 
 
-                // Hämtar en sträng om customerns namn i pData
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_NAME, ref kundNamn, 50);
-
-                // Kontroll om namnet är ok
-                // Skall sådan kontroll göras på all data?
-                if (error.lRc != AdkNetWrapper.Api.ADKE_OK)
-                {
-                    String errortext = new String(' ', 200);
-                    int errtype = (int)AdkNetWrapper.Api.ADK_ERROR_TEXT_TYPE.elRc;
-                    AdkNetWrapper.Api.AdkGetErrorText(ref error, errtype, ref errortext, 200);
-                    Console.WriteLine(errortext);
-                }
-
-                
+                // Hämtar data ur databas och lagrar i de lokala variablerna
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_NAME, ref kundNamn, 50);               
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NUMBER, ref fakturaNr);                
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_NUMBER, ref kundNr, 16);
                 error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_DATE1, ref tmpDatum);
@@ -401,18 +423,9 @@ namespace UCSTest
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CARGO_AMOUNT, ref cargoAmount);
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DISPATCH_FEE, ref dispatchFee);
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_VAT_AMOUNT, ref moms);
-
-                //if (valutaKod != "SEK")
-                //{
-                //    error = error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
-                //}
-                //else
-                //{
-                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_TOTAL_AMOUNT, ref totalKostnad);
-                //}
-                // error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_PROJECT_C, ref projektKod, 10);
-
-                /* Följande konverterare finns i exemplet, men datumet funkar fint för mig redan
+                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_TOTAL_AMOUNT, ref totalKostnad);
+               
+                /* Följande konverterare finns i kodexemplet om man vill dela upp data över månader/år
                 DateTime FktDatumDateTime = Convert.ToDateTime(FktDatum);
                 if (Convert.ToInt32(FktDatumDateTime.Month) < 10)
                 {
@@ -437,13 +450,12 @@ namespace UCSTest
                 kFaktura.KundReferens = kundReferens;
                 kFaktura.Cargo_amount = cargoAmount;
                 kFaktura.Dispatch_fee = dispatchFee;
-                kFaktura.Moms = moms;
-
-                // Lägger till fakturan till listan med kundfakturor
-                KundFakturor.Add(kFaktura);
+                kFaktura.Moms = moms;               
               
+                // Hämtar alla fakturarader på kundfakturan
                 GetKundFakturaRad(kFaktura, pData);
 
+                // Om valutan inte är svenska kronor, så beräknas totalkostnaden utefter fakturaraderna
                 if (valutaKod != "SEK")
                 {
                     totalKostnad = 0;
@@ -455,65 +467,33 @@ namespace UCSTest
                     
                 }
 
-                
-                SkickaData sendData = new SkickaData(kFaktura);
+
+                sendData.KundFakturaTillDatabas(kFaktura);
 
                 // Sätter vidare pekaren på nästa instans
                 error = AdkNetWrapper.Api.AdkNext(pData);
             }
-           
-
-            
 
             // Stänger företaget
             AdkNetWrapper.Api.AdkClose();
 
-            /*
-            int räknare = 1;
-            // Loopar igenom kundfakturor och gör testutskrifter
-            foreach (var faktura in KundFakturor)
-                
-            {
-                Console.WriteLine(räknare+" "+faktura.KundNamn
-                    +" KudNr: "+faktura.KundNummer
-                    +" Fakturanummer: "+faktura.FakturaNummer
-                    +" datum: "+faktura.FakturaDatum
-                    +" kostnad: "+ faktura.TotalKostnad
-                    +" Säljare: "+faktura.Säljare
-                    +" Land: "+faktura.KundLand
-                    +" Stad: "+faktura.KundStad
-                    +" fakturatyp: "+faktura.FakturaTyp);
-                räknare++;
-
-                // Loopar raderna på varje faktura och göra testutskrifter
-                
-                foreach (var rad in faktura.fakturaRader)
-                {
-                    Console.WriteLine("ArtikelNr: " + rad.ArtikelNummer
-                        + " Benämning: " + rad.Benämning + " Kvantitet: " + rad.LevAntal
-                        + " Styckpris: "+rad.StyckPris
-                        + " Totalkostnad för artikeln: "+rad.TotalKostnad
-                        + " Enhetstyp: "+rad.EnhetsTyp);
-                }
-                Console.WriteLine();
-                
-            }
-            */
-            // Ser till så att konsolen inte stänger av sig så fort programmet har körts
-            //Console.ReadLine();
-
         }
 
-        // Kingig metod som hämtar informationen om raderna i fakturorna (Alltså vad som beställts)
+        // Metod som hämtar information om raderna i fakturorna 
         private void GetKundFakturaRad(KundFakturaHuvud Faktura, int pData)
         {
             Double NROWS = new Double();
+            // Hämtar antalet rader på fakturan
             error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_NROWS, ref NROWS);
             int radReferens = new int(); // Pekar på rader i fakturaraderna likt pData pekar på ett specifikt fakturahuvud
 
+            // Snurra som går så länge deta finns rader i fakturan
             for (int r = 0; r < NROWS; r++)
             {
+
+                // Skapar en instans av en kundfakturarad
                 KundFakturaRad enFakturaRad = new KundFakturaRad();
+                // Gör så att radreferens pekar mot aktuell fakturarad
                 error = AdkNetWrapper.Api.AdkGetData(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_ROWS, r, ref radReferens);
                 
 
@@ -526,6 +506,7 @@ namespace UCSTest
                     //Fakturarader som är avtalsperioder tas inte med, dess data är för sammanställningen irrelevant?
                     if (enFakturaRad.ArtikelNummer != "Avtalsperiod")   
                     {
+                        // Autoinkrementerad primärnyckel för databasen
                         kundRadID++;
                         enFakturaRad.KundRadID = kundRadID;
 
@@ -556,8 +537,7 @@ namespace UCSTest
                         enFakturaRad.Benämning = benämning;
 
                         Double täckningsgrad = new Double();
-                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens,
-                            AdkNetWrapper.Api.ADK_OOI_ROW_CONTRIBUTION_DEGREE, ref täckningsgrad);
+                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_CONTRIBUTION_DEGREE, ref täckningsgrad);
                         enFakturaRad.TäckningsGrad = täckningsgrad;
 
                         Faktura.fakturaRader.Add(enFakturaRad);

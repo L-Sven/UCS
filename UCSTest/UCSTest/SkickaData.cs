@@ -10,33 +10,41 @@ namespace UCSTest
 {
     class SkickaData
     {
-        
+
+        // För lokal databas - @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\fakturaDB.mdf;Integrated Security=True"
+
+        // Skapar en sql-connection mot databasen
         SqlConnection sqlCon = new SqlConnection(
-            @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\fakturaDB.mdf;Integrated Security=True");
+           "Data Source=SIMONJO-6570B\\UCSTEST;Initial Catalog=UCSTest;Integrated Security=True");
 
-        public SkickaData (KundFakturaHuvud k)
+        public void ArtieklGruppTillDatabas(ArtikelGrupp g)
         {
-            KundFakturaTillDatabas(k);
+            // Pekar Sql-connection mot en stored procedure för artiklar
+            SqlCommand cmdAddArticleGroup = new SqlCommand("sp_add_articlegroup", sqlCon);
+
+            // Ger Sql-kommandot information om att den ska anropa en stored procedure
+            cmdAddArticleGroup.CommandType = CommandType.StoredProcedure;
+
+            cmdAddArticleGroup.Parameters.Add(new SqlParameter("@aGroupCode", g.ArtikelGruppKod));
+            cmdAddArticleGroup.Parameters.Add(new SqlParameter("@aGroupBenämning", g.Benämning));
+
+            sqlCon.Open();
+            cmdAddArticleGroup.ExecuteNonQuery();
+            sqlCon.Close();
         }
-
-        public SkickaData (LevFakturaHuvud l)
+        // Metod som tar emot en artikel och lägger till den i databasen
+        public void ArtikelTillDatabas(Artikel a)
         {
-            LevFakturaTillDatabas(l);
-        }
-
-        public SkickaData(Artikel a)
-        {
-            ArtikelTillDatabas(a);
-        }
-
-        private void ArtikelTillDatabas(Artikel a)
-        {
+            // Pekar Sql-connection mot en stored procedure för artiklar
             SqlCommand cmdAddArticle = new SqlCommand("sp_add_article", sqlCon);
 
+            // Ger Sql-kommandot information om att den ska anropa en stored procedure
             cmdAddArticle.CommandType = CommandType.StoredProcedure;
 
+            /*
             SqlParameter returnParam = cmdAddArticle.Parameters.Add("@ReturnValue", SqlDbType.Int);
             returnParam.Direction = ParameterDirection.ReturnValue;
+            */
 
             cmdAddArticle.Parameters.Add(new SqlParameter("@artikelNummer", a.ArtikelNummer));
             cmdAddArticle.Parameters.Add(new SqlParameter("@artikelGrupp", a.ArtikelGrupp));
@@ -46,19 +54,23 @@ namespace UCSTest
 
             sqlCon.Open();
             cmdAddArticle.ExecuteNonQuery();
-            var returnFromSp = returnParam.Value;
+             //var returnFromSp = returnParam.Value;
             sqlCon.Close();
         }
 
-        private void KundFakturaTillDatabas(KundFakturaHuvud kFaktura)
+        // Metod som tar emot en kundfaktura och lägger till den i databasen
+        public void KundFakturaTillDatabas(KundFakturaHuvud kFaktura)
         {
-
+            // Pekar Sql-connection mot en stored procedure för kundfakturor
             SqlCommand cmdAddInvoice = new SqlCommand("sp_add_customerInvoice", sqlCon);
 
+            // Ger Sql-kommandot information om att den ska anropa en stored procedure
             cmdAddInvoice.CommandType = CommandType.StoredProcedure;
 
+            /*
             SqlParameter returnParam = cmdAddInvoice.Parameters.Add("@ReturnValue", SqlDbType.Int);
             returnParam.Direction = ParameterDirection.ReturnValue;
+            */
 
             cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaNummer", (int)kFaktura.FakturaNummer));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaTyp", kFaktura.FakturaTyp));
@@ -77,17 +89,21 @@ namespace UCSTest
 
             sqlCon.Open();
             cmdAddInvoice.ExecuteNonQuery();
-            var returnFromSp = returnParam.Value;
+            // var returnFromSp = returnParam.Value;
             sqlCon.Close();
 
+            // Snurra som lägger till alla raderna från kundfakturan i databasen
             foreach (var fRad in kFaktura.fakturaRader)
             {
+                // Pekar Sql-connection mot en stored procedure för kundfakturarad
                 SqlCommand cmdAddRow = new SqlCommand("sp_add_customerInvoiceRow", sqlCon);
+
+                // Ger Sql-kommandot information om att den ska anropa en stored procedure
                 cmdAddRow.CommandType = CommandType.StoredProcedure;
 
                 cmdAddRow.Parameters.Add(new SqlParameter("@radID", fRad.KundRadID));
                 cmdAddRow.Parameters.Add(new SqlParameter("@artikelNummer", fRad.ArtikelNummer));
-                cmdAddRow.Parameters.Add(new SqlParameter("@levAntal", fRad.LevAntal.ToString()));
+                cmdAddRow.Parameters.Add(new SqlParameter("@levAntal", fRad.LevAntal));
                 cmdAddRow.Parameters.Add(new SqlParameter("@totalKostnad", fRad.TotalKostnad));
                 cmdAddRow.Parameters.Add(new SqlParameter("@fakturaNummer", (int)kFaktura.FakturaNummer));
                 cmdAddRow.Parameters.Add(new SqlParameter("@projekt", fRad.Projekt));
@@ -101,14 +117,19 @@ namespace UCSTest
 
         }
 
-        private void LevFakturaTillDatabas(LevFakturaHuvud lFaktura)
+        // Metod som tar emot en leverantörsfaktura och lägger till den i databasen
+        public void LevFakturaTillDatabas(LevFakturaHuvud lFaktura)
         {
+            // Pekar Sql-connection mot en stored procedure för leverantörsfakturor
             SqlCommand cmdAddInvoice = new SqlCommand("sp_add_levInvoice", sqlCon);
 
+            // Ger Sql-kommandot information om att den ska anropa en stored procedure
             cmdAddInvoice.CommandType = CommandType.StoredProcedure;
 
+            /*
             var returnParam = cmdAddInvoice.Parameters.Add("@ReturnValue", SqlDbType.Int);
             returnParam.Direction = ParameterDirection.ReturnValue;
+            */
 
             cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaNummer", lFaktura.FakturaNummer));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaTyp", lFaktura.FakturaTyp));
@@ -122,12 +143,16 @@ namespace UCSTest
 
             sqlCon.Open();
             cmdAddInvoice.ExecuteNonQuery();
-            var returnFromSp = returnParam.Value;
+            // var returnFromSp = returnParam.Value;
             sqlCon.Close();
 
+            // Snurra som lägger till alla raderna från leverantörsfakturan i databasen
             foreach (var lRad in lFaktura.fakturaRader)
             {
+                // Pekar Sql-connection mot en stored procedure för leverantörsfakturarader
                 SqlCommand cmdAddRow = new SqlCommand("sp_add_levInvoiceRow", sqlCon);
+                
+                // Ger Sql-kommandot information om att den ska anropa en stored procedure
                 cmdAddRow.CommandType = CommandType.StoredProcedure;
 
                 cmdAddRow.Parameters.Add(new SqlParameter("@radID", lRad.LevRadID));
