@@ -14,6 +14,7 @@ namespace UCSTest
         public string KundNummer { get; set; }
         public string StartDatum { get; set; }
         public string SlutDatum { get; set; }
+        public string KommentarsFält { get; set; }
             
     }
 }

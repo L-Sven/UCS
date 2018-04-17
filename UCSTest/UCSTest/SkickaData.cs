@@ -11,8 +11,7 @@ namespace UCSTest
     class SkickaData
     {
 
-        //TODO: Lägg till parametern i stored procedure.
-        //TODO: Skapa i Power Bi en slicer sida, och lägg till sortering för artikel & artikelgrupp.
+        //TODO: Power bi se över täckningsgraden för K fakturor. Ignorera TG i uträkning om TB är negativ.
 
         //private SqlConnection sqlCon = new SqlConnection(
         //            @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\fakturaDB.mdf;Integrated Security=True"
@@ -26,34 +25,36 @@ namespace UCSTest
         public void AvtalTillDatabas(Avtal a)
         {
             // Pekar Sql-connection mot en stored procedure för artiklar
-            SqlCommand cmdAddArticleGroup = new SqlCommand("sp_add_avtal", sqlCon);
+            SqlCommand cmdAddAgreement = new SqlCommand("sp_add_agreement", sqlCon);
 
             // Ger Sql-kommandot information om att den ska anropa en stored procedure
-            cmdAddArticleGroup.CommandType = CommandType.StoredProcedure;
+            cmdAddAgreement.CommandType = CommandType.StoredProcedure;
 
-            cmdAddArticleGroup.Parameters.Add(new SqlParameter("@dokumentNummer", a.DokumentNummer));
-            cmdAddArticleGroup.Parameters.Add(new SqlParameter("@avtalsDatum", a.AvtalsDatum));
-            cmdAddArticleGroup.Parameters.Add(new SqlParameter("@startDatum", a.StartDatum));
-            cmdAddArticleGroup.Parameters.Add(new SqlParameter("@slutDatum", a.SlutDatum));
-            cmdAddArticleGroup.Parameters.Add(new SqlParameter("@kundNummer", a.KundNummer));
+            cmdAddAgreement.Parameters.Add(new SqlParameter("@dokumentNummer", a.DokumentNummer));
+            cmdAddAgreement.Parameters.Add(new SqlParameter("@avtalsDatum", a.AvtalsDatum));
+            cmdAddAgreement.Parameters.Add(new SqlParameter("@startDatum", a.StartDatum));
+            cmdAddAgreement.Parameters.Add(new SqlParameter("@slutDatum", a.SlutDatum));
+            cmdAddAgreement.Parameters.Add(new SqlParameter("@kundNummer", a.KundNummer));
+            cmdAddAgreement.Parameters.Add(new SqlParameter("@kommentarsFält", a.KommentarsFält));
 
             sqlCon.Open();
-            cmdAddArticleGroup.ExecuteNonQuery();
+            cmdAddAgreement.ExecuteNonQuery();
             sqlCon.Close();
 
             foreach (var rad in a.ListAvtalsRad)
             {
                 // Pekar Sql-connection mot en stored procedure för kundfakturarad
-                SqlCommand cmdAddRow = new SqlCommand("sp_add_avtalsrow", sqlCon);
+                SqlCommand cmdAddAgreementRow = new SqlCommand("sp_add_agreementrow", sqlCon);
 
                 // Ger Sql-kommandot information om att den ska anropa en stored procedure
-                cmdAddRow.CommandType = CommandType.StoredProcedure;
+                cmdAddAgreementRow.CommandType = CommandType.StoredProcedure;
 
-                cmdAddRow.Parameters.Add(new SqlParameter("@radID", rad.RadId));
-                cmdAddRow.Parameters.Add(new SqlParameter("@artikelNummer", rad.ArtikelNummer));
+                cmdAddAgreementRow.Parameters.Add(new SqlParameter("@dokumentNummer", a.DokumentNummer));
+                cmdAddAgreementRow.Parameters.Add(new SqlParameter("@radID", rad.RadId));
+                cmdAddAgreementRow.Parameters.Add(new SqlParameter("@artikelNummer", rad.ArtikelNummer));
 
                 sqlCon.Open();
-                cmdAddRow.ExecuteNonQuery();
+                cmdAddAgreementRow.ExecuteNonQuery();
                 sqlCon.Close();
             }
         }
@@ -129,7 +130,7 @@ namespace UCSTest
             cmdAddInvoice.Parameters.Add(new SqlParameter("@fraktAvgift", kFaktura.Cargo_amount));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@administrationsAvgift", kFaktura.Dispatch_fee));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@moms", kFaktura.Moms));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@kommentarsFält", kFaktura.KommentarsFält));
+            //cmdAddInvoice.Parameters.Add(new SqlParameter("@kommentarsFält", kFaktura.KommentarsFält));
             
             sqlCon.Open();
             cmdAddInvoice.ExecuteNonQuery();
@@ -153,6 +154,7 @@ namespace UCSTest
                 cmdAddRow.Parameters.Add(new SqlParameter("@projekt", fRad.Projekt));
                 cmdAddRow.Parameters.Add(new SqlParameter("@täckningsGrad", decimal.Parse(fRad.TäckningsGrad.ToString())));
                 cmdAddRow.Parameters.Add(new SqlParameter("@benämning", fRad.Benämning));
+                cmdAddRow.Parameters.Add(new SqlParameter("@täckningsBidrag", decimal.Parse(fRad.TäckningsBidrag.ToString())));
 
                 sqlCon.Open();
                 cmdAddRow.ExecuteNonQuery();

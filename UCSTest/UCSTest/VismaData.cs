@@ -32,25 +32,25 @@ namespace UCSTest
         public VismaData()
         {
 
-            GetAvtal();
-
-            //// Anropar metod som hämtar data om alla artikelgrupper
-            //GetArtikelGrupper();
-            //Console.WriteLine("Artikelgrupper klar!");
-
-            //// Anropar metod som hämtar data om alla artiklar 
-            //GetArtikelData();
-            //Console.WriteLine("Artikeldata klar!");
-
-            //// Anropar metod som hämtar data om alla kundfakturor
-            //GetKundFakturaHuvudData();
-            //Console.WriteLine("Kundfakturadata klar!");
-
-            //// Anropar metod som hämtar data om alla leverantörsfakturor
-            //GetLevFakturaHuvudData();
-            //Console.WriteLine("Leverantförafkturadata klar!");
-
             
+
+            // Anropar metod som hämtar data om alla artikelgrupper
+            GetArtikelGrupper();
+            Console.WriteLine("Artikelgrupper klar!");
+
+            // Anropar metod som hämtar data om alla artiklar 
+            GetArtikelData();
+            Console.WriteLine("Artikeldata klar!");
+
+            // Anropar metod som hämtar data om alla kundfakturor
+            GetKundFakturaHuvudData();
+            Console.WriteLine("Kundfakturadata klar!");
+
+            // Anropar metod som hämtar data om alla leverantörsfakturor
+            GetLevFakturaHuvudData();
+            Console.WriteLine("Leverantförafkturadata klar!");
+
+            GetAvtal();
 
         }
 
@@ -95,6 +95,7 @@ namespace UCSTest
                 String kundNummer = new String(' ', 16);
                 String startDatum = new String(' ', 16);
                 String slutDatum = new String(' ', 16);
+                String kommentarsFält = new String(' ', 120);
 
 
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DOCUMENT_NUMBER, ref DokumentNummer);
@@ -104,15 +105,29 @@ namespace UCSTest
                 error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_START, ref Date);
                 error = AdkNetWrapper.Api.AdkLongToDate(Date, ref startDatum, 16);
                 error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_END, ref endDate);
-                error = AdkNetWrapper.Api.AdkLongToDate(Date, ref slutDatum, 16);
+                error = AdkNetWrapper.Api.AdkLongToDate(endDate, ref slutDatum, 16);
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_LOCAL_REMARK, ref kommentarsFält, 120);
+                
+                //if (endDate == 0)
+                //{
+                //    slutDatum = null;
+                //}
 
+                a.DokumentNummer = DokumentNummer;
+                a.AvtalsDatum = avtalsDatum;
+                a.StartDatum = startDatum;
+                a.SlutDatum = slutDatum;
+                a.KundNummer = kundNummer;
+                a.KommentarsFält = kommentarsFält;
 
-                // Sätter vidare pekaren till nästa artikelgrupp
-                error = AdkNetWrapper.Api.AdkNext(pData);
+                
                 
                 GetAvtalRad(a, pData);
 
                 sendData.AvtalTillDatabas(a);
+
+                // Sätter vidare pekaren till nästa artikelgrupp
+                error = AdkNetWrapper.Api.AdkNext(pData);
             }
 
             // Stänger företaget
@@ -133,8 +148,7 @@ namespace UCSTest
             {
                 AvtalsRad enAvtalsRad = new AvtalsRad();
 
-                error = AdkNetWrapper.Api.AdkGetData(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_ROWS, r,
-                    ref radReferens);
+                error = AdkNetWrapper.Api.AdkGetData(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_ROWS, r, ref radReferens);
                 avtalsRadID++;
 
                 if (error.lRc == AdkNetWrapper.Api.ADKE_OK)
@@ -142,8 +156,7 @@ namespace UCSTest
 
                     String artikelNummer = new String(' ', 16);
 
-                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER,
-                        ref artikelNummer, 16);
+                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER, ref artikelNummer, 16);
 
                     enAvtalsRad.ArtikelNummer = artikelNummer;
                     enAvtalsRad.RadId = avtalsRadID;
@@ -579,6 +592,12 @@ namespace UCSTest
                     
                 }
 
+                if (fakturaTyp.ToUpper() == "K")
+                {
+                    kFaktura.Moms *= -1;
+                    kFaktura.TotalKostnad *= -1;
+                }
+
 
                 sendData.KundFakturaTillDatabas(kFaktura);
 
@@ -626,16 +645,6 @@ namespace UCSTest
                         error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_QUANTITY1, ref kvantitet);
                         enFakturaRad.LevAntal = kvantitet;
 
-                        // Om krediterade faktura
-                        if (Faktura.FakturaTyp.ToUpper() == "K")
-                        {
-                            enFakturaRad.LevAntal = kvantitet * -1;
-                        }
-                        else
-                        {
-                            enFakturaRad.LevAntal = kvantitet;
-                        }
-
                         Double totalKostnad = new Double();
                         error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
                         enFakturaRad.TotalKostnad = totalKostnad;
@@ -651,6 +660,20 @@ namespace UCSTest
                         Double täckningsgrad = new Double();
                         error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_CONTRIBUTION_DEGREE, ref täckningsgrad);
                         enFakturaRad.TäckningsGrad = täckningsgrad;
+
+                        Double täckningsBidrag = new double();
+                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_CONTRIBUTION_MARGIN, ref täckningsBidrag);
+                        enFakturaRad.TäckningsBidrag = täckningsBidrag;
+
+                        // Om krediterade faktura
+                        if (Faktura.FakturaTyp.ToUpper() == "K")
+                        {
+                            enFakturaRad.LevAntal = kvantitet * -1;
+                            enFakturaRad.TotalKostnad *= -1;
+                            enFakturaRad.TäckningsBidrag *= -1;
+                        }
+
+                        
 
                         Faktura.fakturaRader.Add(enFakturaRad);
 

@@ -16,6 +16,7 @@ namespace UCSTest
         public string Projekt { get; set; } = "";
         public int KundRadID { get; set; }
         public double TäckningsGrad { get; set; }
+        public double TäckningsBidrag { get; set; }
         public string Benämning { get; set; }
 
 
