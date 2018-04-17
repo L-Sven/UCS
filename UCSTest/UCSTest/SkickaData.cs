@@ -11,9 +11,14 @@ namespace UCSTest
     class SkickaData
     {
 
-        // För lokal databas - @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\fakturaDB.mdf;Integrated Security=True"
+        //TODO: Lägg till parametern i stored procedure.
+        //TODO: Skapa i Power Bi en slicer sida, och lägg till sortering för artikel & artikelgrupp.
 
-        // Skapar en sql-connection mot databasen
+        //private SqlConnection sqlCon = new SqlConnection(
+        //            @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\fakturaDB.mdf;Integrated Security=True"
+        //            );
+
+        //Skapar en sql-connection mot databasen
         SqlConnection sqlCon = new SqlConnection(
            @"Data Source=SIMONJO-6570B\UCSTEST;Initial Catalog=UCSTest;Persist Security Info=True;User ID=sa;Password=Ucstest2018");
 
@@ -88,7 +93,8 @@ namespace UCSTest
             cmdAddInvoice.Parameters.Add(new SqlParameter("@fraktAvgift", kFaktura.Cargo_amount));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@administrationsAvgift", kFaktura.Dispatch_fee));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@moms", kFaktura.Moms));
-
+            cmdAddInvoice.Parameters.Add(new SqlParameter("@kommentarsFält", kFaktura.KommentarsFält));
+            
             sqlCon.Open();
             cmdAddInvoice.ExecuteNonQuery();
             // var returnFromSp = returnParam.Value;

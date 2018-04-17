@@ -31,24 +31,90 @@ namespace UCSTest
         public VismaData()
         {
 
-            // Anropar metod som hämtar data om alla artikelgrupper
-            GetArtikelGrupper();
-            Console.WriteLine("Artikelgrupper klar!");
+            GetAvtal();
 
-            // Anropar metod som hämtar data om alla artiklar 
-            GetArtikelData();
-            Console.WriteLine("Artikeldata klar!");
+            //// Anropar metod som hämtar data om alla artikelgrupper
+            //GetArtikelGrupper();
+            //Console.WriteLine("Artikelgrupper klar!");
 
-            // Anropar metod som hämtar data om alla kundfakturor
-            GetKundFakturaHuvudData();
-            Console.WriteLine("Kundfakturadata klar!");
+            //// Anropar metod som hämtar data om alla artiklar 
+            //GetArtikelData();
+            //Console.WriteLine("Artikeldata klar!");
 
-            // Anropar metod som hämtar data om alla leverantörsfakturor
-            GetLevFakturaHuvudData();
-            Console.WriteLine("Leverantförafkturadata klar!");
+            //// Anropar metod som hämtar data om alla kundfakturor
+            //GetKundFakturaHuvudData();
+            //Console.WriteLine("Kundfakturadata klar!");
+
+            //// Anropar metod som hämtar data om alla leverantörsfakturor
+            //GetLevFakturaHuvudData();
+            //Console.WriteLine("Leverantförafkturadata klar!");
 
             
 
+        }
+
+        private void GetAvtal()
+        {
+            // Öppnar upp ett företag
+            error = Adk.Api.AdkOpen(ref sys, ref ftg);
+
+            // Kontroll om företaget kunde öppnas
+            if (error.lRc != Adk.Api.ADKE_OK)
+            {
+                String errortext = new String(' ', 200);
+                int errtype = (int)Adk.Api.ADK_ERROR_TEXT_TYPE.elRc;
+                Adk.Api.AdkGetErrorText(ref error, errtype,
+                    ref errortext, 200);
+                Console.WriteLine(errortext);
+            }
+
+            // Gör pData till en referens av typen Artikelgrupp
+            pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_AGREEMENT_HEAD);
+
+            // Pekar pData mot den första raden i Artikelgrupper
+            error = AdkNetWrapper.Api.AdkFirst(pData);
+
+            // Kontroll om det det finns något värde i pData
+            if (error.lRc != AdkNetWrapper.Api.ADKE_OK)
+            {
+                String errortext = new String(' ', 200);
+                int errtype = (int)AdkNetWrapper.Api.ADK_ERROR_TEXT_TYPE.elRc;
+                AdkNetWrapper.Api.AdkGetErrorText(ref error, errtype, ref errortext, 200);
+                Console.WriteLine(errortext);
+            }
+
+            while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns artikelgrupper
+            {
+                Avtal a = new Avtal();
+
+                Double DokumentNummer = new Double();
+                int Date = new int();
+                int endDate = new int();
+                String avtalsDatum = new String(' ', 16);
+                String kundNummer = new String(' ', 16);
+                String startDatum = new String(' ', 16);
+                String slutDatum = new String(' ', 16);
+
+
+                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DOCUMENT_NUMBER, ref DokumentNummer);
+                error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DOCUMENT_DATE1, ref Date);
+                error = AdkNetWrapper.Api.AdkLongToDate(Date, ref avtalsDatum, 16);
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_CUSTOMER_NUMBER, ref kundNummer, 16);
+                error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_START, ref Date);
+                error = AdkNetWrapper.Api.AdkLongToDate(Date, ref startDatum, 16);
+                error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_END, ref endDate);
+                error = AdkNetWrapper.Api.AdkLongToDate(Date, ref slutDatum, 16);
+
+
+                // Sätter vidare pekaren till nästa artikelgrupp
+                error = AdkNetWrapper.Api.AdkNext(pData);
+                
+            }
+
+            // Stänger företaget
+            AdkNetWrapper.Api.AdkClose();
+
+            
         }
 
         private void GetArtikelGrupper()
@@ -105,8 +171,9 @@ namespace UCSTest
             AdkNetWrapper.Api.AdkClose();
 
         }
-            // Metod som hämtar artikeldata
-            private void GetArtikelData()
+
+        // Metod som hämtar artikeldata
+        private void GetArtikelData()
         {
             // Öppnar upp ett företag
             error = Adk.Api.AdkOpen(ref sys, ref ftg);
@@ -410,7 +477,8 @@ namespace UCSTest
                 String valutaKod = new String(' ', 4);
                 Double cargoAmount = new Double();
                 Double dispatchFee = new Double();
-                Double moms = new Double();                                
+                Double moms = new Double();
+                String kommentarsFält = new String(' ', 120);
 
 
                 // Hämtar data ur databas och lagrar i de lokala variablerna
@@ -429,7 +497,8 @@ namespace UCSTest
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DISPATCH_FEE, ref dispatchFee);
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_VAT_AMOUNT, ref moms);
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_TOTAL_AMOUNT, ref totalKostnad);
-               
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kommentarsFält, 120);
+
                 /* Följande konverterare finns i kodexemplet om man vill dela upp data över månader/år
                 DateTime FktDatumDateTime = Convert.ToDateTime(FktDatum);
                 if (Convert.ToInt32(FktDatumDateTime.Month) < 10)
@@ -455,7 +524,8 @@ namespace UCSTest
                 kFaktura.KundReferens = kundReferens;
                 kFaktura.Cargo_amount = cargoAmount;
                 kFaktura.Dispatch_fee = dispatchFee;
-                kFaktura.Moms = moms;               
+                kFaktura.Moms = moms;
+                kFaktura.KommentarsFält = kommentarsFält;
               
                 // Hämtar alla fakturarader på kundfakturan
                 GetKundFakturaRad(kFaktura, pData);

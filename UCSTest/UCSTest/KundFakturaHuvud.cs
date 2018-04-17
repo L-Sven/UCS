@@ -24,6 +24,7 @@ namespace UCSTest
         public double Cargo_amount { get; set; }
         public double Dispatch_fee { get; set; }
         public double Moms { get; set; }
+        public string KommentarsFält { get; set; }
 
         // public string FörfalloDatum { get; set; } = "";
         // public string SlutDatum { get; set; } = "";
