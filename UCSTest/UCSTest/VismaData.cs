@@ -27,6 +27,7 @@ namespace UCSTest
         int antalFakturorUtanNr = 1; // Används för att ge fakturor utan nummer ett fakturanummer
         int levRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
         int kundRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
+        int avtalsRadID = 0; // Används för att skapa individuella identiteter för avtalsraderna i fatabasen
 
         public VismaData()
         {
@@ -109,12 +110,48 @@ namespace UCSTest
                 // Sätter vidare pekaren till nästa artikelgrupp
                 error = AdkNetWrapper.Api.AdkNext(pData);
                 
+                GetAvtalRad(a, pData);
+
+                sendData.AvtalTillDatabas(a);
             }
 
             // Stänger företaget
             AdkNetWrapper.Api.AdkClose();
 
             
+        }
+
+        private void GetAvtalRad(Avtal avtal, int pData)
+        {
+
+            Double NROWS = new Double();
+
+            error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_NROWS, ref NROWS);
+            int radReferens = new int();
+
+            for (int r = 0; r < NROWS; r++)
+            {
+                AvtalsRad enAvtalsRad = new AvtalsRad();
+
+                error = AdkNetWrapper.Api.AdkGetData(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_ROWS, r,
+                    ref radReferens);
+                avtalsRadID++;
+
+                if (error.lRc == AdkNetWrapper.Api.ADKE_OK)
+                {
+
+                    String artikelNummer = new String(' ', 16);
+
+                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER,
+                        ref artikelNummer, 16);
+
+                    enAvtalsRad.ArtikelNummer = artikelNummer;
+                    enAvtalsRad.RadId = avtalsRadID;
+
+                    avtal.ListAvtalsRad.Add(enAvtalsRad);
+                }
+
+            }
         }
 
         private void GetArtikelGrupper()
@@ -160,7 +197,7 @@ namespace UCSTest
                 aGrupp.ArtikelGruppKod = aGruppKod;
                 aGrupp.Benämning = aGruppBenämning;
 
-                sendData.ArtieklGruppTillDatabas(aGrupp);
+                sendData.ArtikelGruppTillDatabas(aGrupp);
 
                 // Sätter vidare pekaren till nästa artikelgrupp
                 error = AdkNetWrapper.Api.AdkNext(pData);

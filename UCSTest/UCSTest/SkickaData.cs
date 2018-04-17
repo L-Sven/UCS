@@ -22,7 +22,43 @@ namespace UCSTest
         SqlConnection sqlCon = new SqlConnection(
            @"Data Source=SIMONJO-6570B\UCSTEST;Initial Catalog=UCSTest;Persist Security Info=True;User ID=sa;Password=Ucstest2018");
 
-        public void ArtieklGruppTillDatabas(ArtikelGrupp g)
+
+        public void AvtalTillDatabas(Avtal a)
+        {
+            // Pekar Sql-connection mot en stored procedure för artiklar
+            SqlCommand cmdAddArticleGroup = new SqlCommand("sp_add_avtal", sqlCon);
+
+            // Ger Sql-kommandot information om att den ska anropa en stored procedure
+            cmdAddArticleGroup.CommandType = CommandType.StoredProcedure;
+
+            cmdAddArticleGroup.Parameters.Add(new SqlParameter("@dokumentNummer", a.DokumentNummer));
+            cmdAddArticleGroup.Parameters.Add(new SqlParameter("@avtalsDatum", a.AvtalsDatum));
+            cmdAddArticleGroup.Parameters.Add(new SqlParameter("@startDatum", a.StartDatum));
+            cmdAddArticleGroup.Parameters.Add(new SqlParameter("@slutDatum", a.SlutDatum));
+            cmdAddArticleGroup.Parameters.Add(new SqlParameter("@kundNummer", a.KundNummer));
+
+            sqlCon.Open();
+            cmdAddArticleGroup.ExecuteNonQuery();
+            sqlCon.Close();
+
+            foreach (var rad in a.ListAvtalsRad)
+            {
+                // Pekar Sql-connection mot en stored procedure för kundfakturarad
+                SqlCommand cmdAddRow = new SqlCommand("sp_add_avtalsrow", sqlCon);
+
+                // Ger Sql-kommandot information om att den ska anropa en stored procedure
+                cmdAddRow.CommandType = CommandType.StoredProcedure;
+
+                cmdAddRow.Parameters.Add(new SqlParameter("@radID", rad.RadId));
+                cmdAddRow.Parameters.Add(new SqlParameter("@artikelNummer", rad.ArtikelNummer));
+
+                sqlCon.Open();
+                cmdAddRow.ExecuteNonQuery();
+                sqlCon.Close();
+            }
+        }
+
+        public void ArtikelGruppTillDatabas(ArtikelGrupp g)
         {
             // Pekar Sql-connection mot en stored procedure för artiklar
             SqlCommand cmdAddArticleGroup = new SqlCommand("sp_add_articlegroup", sqlCon);
