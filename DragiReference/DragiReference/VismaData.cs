@@ -43,13 +43,32 @@ namespace DatabasNameReplacer
                 Console.WriteLine(errortext);
             }
 
-            String nameAdd = "Dragi Spasojevic";
-            String sellerCodeAdd = "DS";
-            AdkNetWrapper.Api.AdkSetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_SELLER_SIGN, ref sellerCodeAdd);
-            AdkNetWrapper.Api.AdkSetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_SELLER_NAME, ref nameAdd);
+            int isSeller = 1;
+            int isReference = 1;
+
+            while (error.lRc == adk.Api.ADKE_OK)
+            {
+                String namn = new string(' ', 25);
+                AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_SELLER_NAME, ref namn, 25);
+                if (namn == "Dragi Spasojevic")
+                {
+                    AdkNetWrapper.Api.AdkSetBool(pData, AdkNetWrapper.Api.ADK_CODE_OF_SELLER_SELLER, isSeller);
+                    AdkNetWrapper.Api.AdkSetBool(pData, AdkNetWrapper.Api.ADK_CODE_OF_SELLER_REF, isReference);
+                    break;
+                }
+
+                error = AdkNetWrapper.Api.AdkNext(pData);
+            }
+            //String nameAdd = "Dragi Spasojevic";
+            //String sellerCodeAdd = "DS";
+            
+            //AdkNetWrapper.Api.AdkSetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_SELLER_SIGN, ref sellerCodeAdd);
+            //AdkNetWrapper.Api.AdkSetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_SELLER_NAME, ref nameAdd);
             
 
-            adk.Api.AdkAdd(pData);
+
+            
+            adk.Api.AdkUpdate(pData);
             AdkNetWrapper.Api.AdkClose();
         }
         private void UpdateSellerReference()
@@ -116,7 +135,7 @@ namespace DatabasNameReplacer
                             
                 Console.WriteLine(name);
                 Console.WriteLine(sign);
-
+                int isSeller = new int();
 
                 adk.Api.AdkSetStr(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_OUR_REFERENCE_NAME, ref name);
                 adk.Api.AdkSetStr(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_SELLER_CODE, ref sign);
