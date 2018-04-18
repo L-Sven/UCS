@@ -16,7 +16,6 @@ namespace UCSTest
         public string LevArtikelNummer { get; set; } = "";
         public string ProjektRad { get; set; } = "";
         public int LevRadID { get; set; }
-
-
+        public string ResultatEnhet { get; internal set; }
     }
 }

@@ -10,8 +10,7 @@ namespace UCSTest
 {
     class SkickaData
     {
-
-        //TODO: Power bi se över täckningsgraden för K fakturor. Ignorera TG i uträkning om TB är negativ.
+        //TODO: Lägg till Resultatenhet i Databasen och SP!
 
         //private SqlConnection sqlCon = new SqlConnection(
         //            @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\fakturaDB.mdf;Integrated Security=True"
@@ -74,6 +73,7 @@ namespace UCSTest
             cmdAddArticleGroup.ExecuteNonQuery();
             sqlCon.Close();
         }
+
         // Metod som tar emot en artikel och lägger till den i databasen
         public void ArtikelTillDatabas(Artikel a)
         {
@@ -155,6 +155,7 @@ namespace UCSTest
                 cmdAddRow.Parameters.Add(new SqlParameter("@täckningsGrad", decimal.Parse(fRad.TäckningsGrad.ToString())));
                 cmdAddRow.Parameters.Add(new SqlParameter("@benämning", fRad.Benämning));
                 cmdAddRow.Parameters.Add(new SqlParameter("@täckningsBidrag", decimal.Parse(fRad.TäckningsBidrag.ToString())));
+                cmdAddRow.Parameters.Add(new SqlParameter("@resultatEnhet", fRad.ResultatEnhet));
 
                 sqlCon.Open();
                 cmdAddRow.ExecuteNonQuery();
@@ -209,6 +210,7 @@ namespace UCSTest
                 cmdAddRow.Parameters.Add(new SqlParameter("@totalKostnad", decimal.Parse(lRad.TotalKostnad.ToString())));
                 cmdAddRow.Parameters.Add(new SqlParameter("@fakturaNummer", lFaktura.FakturaNummer));
                 cmdAddRow.Parameters.Add(new SqlParameter("@projektRad", lRad.ProjektRad));
+                cmdAddRow.Parameters.Add(new SqlParameter("@resultatEnhet", lRad.ResultatEnhet));
                 
 
                 sqlCon.Open();

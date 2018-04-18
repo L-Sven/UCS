@@ -13,7 +13,7 @@ namespace UCSTest
     {
         
         Adk.Api.ADKERROR error;
-        SkickaData sendData = new SkickaData();
+        readonly SkickaData sendData = new SkickaData();
 
         // Sökvägar för visma administration
         String ftg = @"C:\ProgramData\SPCS\SPCS Administration\Företag\Ovnbol2000";
@@ -107,11 +107,6 @@ namespace UCSTest
                 error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_END, ref endDate);
                 error = AdkNetWrapper.Api.AdkLongToDate(endDate, ref slutDatum, 16);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_LOCAL_REMARK, ref kommentarsFält, 120);
-                
-                //if (endDate == 0)
-                //{
-                //    slutDatum = null;
-                //}
 
                 a.DokumentNummer = DokumentNummer;
                 a.AvtalsDatum = avtalsDatum;
@@ -119,8 +114,6 @@ namespace UCSTest
                 a.SlutDatum = slutDatum;
                 a.KundNummer = kundNummer;
                 a.KommentarsFält = kommentarsFält;
-
-                
                 
                 GetAvtalRad(a, pData);
 
@@ -430,6 +423,7 @@ namespace UCSTest
                     String levArtikelNummer = new String(' ', 16); // Leverantörens artikelnummer
                     String projektRad = new String(' ', 10);
                     Double totalKostnad = new Double();
+                    String resultatEnhet = new string(' ', 6);
 
                     error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_TEXT, ref information, 60);
 
@@ -454,6 +448,8 @@ namespace UCSTest
                         error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER, ref artikelNummer, 16);
                         error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROJECT, ref projektRad, 10);
                         error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
+                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROFIT_CENTRE, ref resultatEnhet, 6);
+
 
                         // Lägger till data i fakturaradinstansen
                         enFakturaRad.Information = information;
@@ -462,6 +458,7 @@ namespace UCSTest
                         enFakturaRad.LevArtikelNummer = levArtikelNummer;
                         enFakturaRad.ProjektRad = projektRad;
                         enFakturaRad.TotalKostnad = totalKostnad;
+                        enFakturaRad.ResultatEnhet = resultatEnhet;
                         lFaktura.fakturaRader.Add(enFakturaRad);
                     }
 
@@ -664,6 +661,10 @@ namespace UCSTest
                         Double täckningsBidrag = new double();
                         error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_CONTRIBUTION_MARGIN, ref täckningsBidrag);
                         enFakturaRad.TäckningsBidrag = täckningsBidrag;
+
+                        String resultatEnhet = new String(' ', 6);
+                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROFIT_CENTRE, ref resultatEnhet, 6);
+                        enFakturaRad.ResultatEnhet = resultatEnhet;
 
                         // Om krediterade faktura
                         if (Faktura.FakturaTyp.ToUpper() == "K")

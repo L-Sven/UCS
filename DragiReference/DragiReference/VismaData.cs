@@ -16,7 +16,7 @@ namespace DatabasNameReplacer
         public VismaData()
         {
            SkapaDragi();
-           GetAvtalData();
+           UpdateSellerReference();
         }
 
         public void SkapaDragi()
@@ -52,7 +52,7 @@ namespace DatabasNameReplacer
             adk.Api.AdkAdd(pData);
             AdkNetWrapper.Api.AdkClose();
         }
-        private void GetAvtalData()
+        private void UpdateSellerReference()
         {
             //Öppna företag
             error = adk.Api.AdkOpen(ref sys, ref ftg);
@@ -93,7 +93,7 @@ namespace DatabasNameReplacer
             string name = new string(' ', 25);
             AdkNetWrapper.Api.AdkGetStr(sData, AdkNetWrapper.Api.ADK_CODE_OF_SELLER_NAME, ref name, 25);
             string sign = new string(' ', 10);
-            AdkNetWrapper.Api.AdkGetStr(sData, AdkNetWrapper.Api.ADK_CODE_OF_SELLER_SIGN, ref sign, 25);
+            AdkNetWrapper.Api.AdkGetStr(sData, AdkNetWrapper.Api.ADK_CODE_OF_SELLER_SIGN, ref sign, 10);
 
 
             pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_AGREEMENT_HEAD);
