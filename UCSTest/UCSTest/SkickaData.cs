@@ -102,6 +102,22 @@ namespace UCSTest
             sqlCon.Close();
         }
 
+        public void ResultatenhetTillDatabas(Resultatenhet r)
+        {
+            // Pekar Sql-connection mot en stored procedure för artiklar
+            SqlCommand cmdAddResultatEnhet = new SqlCommand("sp_add_resultatenhet", sqlCon);
+
+            // Ger Sql-kommandot information om att den ska anropa en stored procedure
+            cmdAddResultatEnhet.CommandType = CommandType.StoredProcedure;
+
+            cmdAddResultatEnhet.Parameters.Add(new SqlParameter("@resultatEnhetID", r.resultatEnhetID));
+            cmdAddResultatEnhet.Parameters.Add(new SqlParameter("@resultatEnhetNamn", r.resultatEnhetNamn));
+
+            sqlCon.Open();
+            cmdAddResultatEnhet.ExecuteNonQuery();
+            sqlCon.Close();
+        }
+
         // Metod som tar emot en kundfaktura och lägger till den i databasen
         public void KundFakturaTillDatabas(KundFakturaHuvud kFaktura)
         {
@@ -155,7 +171,7 @@ namespace UCSTest
                 cmdAddRow.Parameters.Add(new SqlParameter("@täckningsGrad", decimal.Parse(fRad.TäckningsGrad.ToString())));
                 cmdAddRow.Parameters.Add(new SqlParameter("@benämning", fRad.Benämning));
                 cmdAddRow.Parameters.Add(new SqlParameter("@täckningsBidrag", decimal.Parse(fRad.TäckningsBidrag.ToString())));
-                cmdAddRow.Parameters.Add(new SqlParameter("@resultatEnhet", fRad.ResultatEnhet));
+                cmdAddRow.Parameters.Add(new SqlParameter("@resultatEnhetID", fRad.ResultatEnhet));
 
                 sqlCon.Open();
                 cmdAddRow.ExecuteNonQuery();
@@ -210,7 +226,7 @@ namespace UCSTest
                 cmdAddRow.Parameters.Add(new SqlParameter("@totalKostnad", decimal.Parse(lRad.TotalKostnad.ToString())));
                 cmdAddRow.Parameters.Add(new SqlParameter("@fakturaNummer", lFaktura.FakturaNummer));
                 cmdAddRow.Parameters.Add(new SqlParameter("@projektRad", lRad.ProjektRad));
-                cmdAddRow.Parameters.Add(new SqlParameter("@resultatEnhet", lRad.ResultatEnhet));
+                cmdAddRow.Parameters.Add(new SqlParameter("@resultatEnhetID", lRad.ResultatEnhet));
                 
 
                 sqlCon.Open();

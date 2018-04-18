@@ -32,6 +32,7 @@ namespace DatabasNameReplacer
                 Console.WriteLine(errortext);
             }
 
+            //Pekar pData på table Code_Of_Seller
             pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_CODE_OF_SELLER);
             error = AdkNetWrapper.Api.AdkFirst(pData);
 
@@ -46,12 +47,14 @@ namespace DatabasNameReplacer
             int isSeller = 1;
             int isReference = 1;
 
+            //Loopar igenom alla rader i Code_of_Seller table
             while (error.lRc == adk.Api.ADKE_OK)
             {
                 String namn = new string(' ', 25);
                 AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_SELLER_NAME, ref namn, 25);
                 if (namn == "Dragi Spasojevic")
                 {
+                    //Om Dragi har hittats, så uppdateras hans rättigheter till att vara både säljare och referens
                     AdkNetWrapper.Api.AdkSetBool(pData, AdkNetWrapper.Api.ADK_CODE_OF_SELLER_SELLER, isSeller);
                     AdkNetWrapper.Api.AdkSetBool(pData, AdkNetWrapper.Api.ADK_CODE_OF_SELLER_REF, isReference);
                     break;
@@ -59,17 +62,11 @@ namespace DatabasNameReplacer
 
                 error = AdkNetWrapper.Api.AdkNext(pData);
             }
-            //String nameAdd = "Dragi Spasojevic";
-            //String sellerCodeAdd = "DS";
             
-            //AdkNetWrapper.Api.AdkSetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_SELLER_SIGN, ref sellerCodeAdd);
-            //AdkNetWrapper.Api.AdkSetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_SELLER_NAME, ref nameAdd);
-            
-
-
-            
+            //Pusha uppdateringen till VISMA Databasen
             adk.Api.AdkUpdate(pData);
             AdkNetWrapper.Api.AdkClose();
+
         }
         private void UpdateSellerReference()
         {

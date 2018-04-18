@@ -32,7 +32,7 @@ namespace UCSTest
         public VismaData()
         {
 
-            
+            GetResultatEnhet();
 
             // Anropar metod som hämtar data om alla artikelgrupper
             GetArtikelGrupper();
@@ -51,6 +51,62 @@ namespace UCSTest
             Console.WriteLine("Leverantförafkturadata klar!");
 
             GetAvtal();
+
+        }
+
+        private void GetResultatEnhet()
+        {
+            // Öppnar upp ett företag
+            error = Adk.Api.AdkOpen(ref sys, ref ftg);
+
+            // Kontroll om företaget kunde öppnas
+            if (error.lRc != Adk.Api.ADKE_OK)
+            {
+                String errortext = new String(' ', 200);
+                int errtype = (int)Adk.Api.ADK_ERROR_TEXT_TYPE.elRc;
+                Adk.Api.AdkGetErrorText(ref error, errtype,
+                    ref errortext, 200);
+                Console.WriteLine(errortext);
+            }
+
+            // Gör pData till en referens av typen Artikelgrupp
+            pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_CODE_OF_PROFIT_CENTRE);
+
+            // Pekar pData mot den första raden i Artikelgrupper
+            error = AdkNetWrapper.Api.AdkFirst(pData);
+
+            // Kontroll om det det finns något värde i pData
+            if (error.lRc != AdkNetWrapper.Api.ADKE_OK)
+            {
+                String errortext = new String(' ', 200);
+                int errtype = (int)AdkNetWrapper.Api.ADK_ERROR_TEXT_TYPE.elRc;
+                AdkNetWrapper.Api.AdkGetErrorText(ref error, errtype, ref errortext, 200);
+                Console.WriteLine(errortext);
+            }
+
+            while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns artikelgrupper
+            {
+                Resultatenhet r = new Resultatenhet();
+                
+                String resultatEnhetID = new String(' ', 6);
+                String resultatEnhetNamn = new String(' ', 20);
+
+                
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_PROFIT_CENTRE_CODE, ref resultatEnhetID, 6);
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_PROFIT_CENTRE_NAME, ref resultatEnhetNamn, 20);
+
+                r.resultatEnhetID = resultatEnhetID;
+                r.resultatEnhetNamn = resultatEnhetNamn;
+
+                sendData.ResultatenhetTillDatabas(r);
+
+                // Sätter vidare pekaren till nästa artikelgrupp
+                error = AdkNetWrapper.Api.AdkNext(pData);
+            }
+
+            // Stänger företaget
+            AdkNetWrapper.Api.AdkClose();
+
 
         }
 
