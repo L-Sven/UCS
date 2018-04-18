@@ -34,6 +34,11 @@ namespace UCSTest
             cmdAddAgreement.Parameters.Add(new SqlParameter("@startDatum", a.StartDatum));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@slutDatum", a.SlutDatum));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@kundNummer", a.KundNummer));
+            cmdAddAgreement.Parameters.Add(new SqlParameter("@isActive", a.IsActive));
+            cmdAddAgreement.Parameters.Add(new SqlParameter("@fakturaIntervall", decimal.Parse(a.FakturaIntervall.ToString())));
+            cmdAddAgreement.Parameters.Add(new SqlParameter("@periodStart", a.PeriodStart));
+            cmdAddAgreement.Parameters.Add(new SqlParameter("@periodEnd", a.PeriodEnd));
+            cmdAddAgreement.Parameters.Add(new SqlParameter("@totalKostnad", decimal.Parse(a.TotalKostnad.ToString())));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@kommentarsFält", a.KommentarsFält));
 
             sqlCon.Open();
@@ -51,6 +56,7 @@ namespace UCSTest
                 cmdAddAgreementRow.Parameters.Add(new SqlParameter("@dokumentNummer", a.DokumentNummer));
                 cmdAddAgreementRow.Parameters.Add(new SqlParameter("@radID", rad.RadId));
                 cmdAddAgreementRow.Parameters.Add(new SqlParameter("@artikelNummer", rad.ArtikelNummer));
+                cmdAddAgreementRow.Parameters.Add(new SqlParameter("@totalKostnad", rad.TotalKostnad));
 
                 sqlCon.Open();
                 cmdAddAgreementRow.ExecuteNonQuery();

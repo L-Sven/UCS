@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -32,25 +33,27 @@ namespace UCSTest
         public VismaData()
         {
 
-            GetResultatEnhet();
+            //GetResultatEnhet();
+            //Console.WriteLine("Resultatenhet klar!");
 
-            // Anropar metod som hämtar data om alla artikelgrupper
-            GetArtikelGrupper();
-            Console.WriteLine("Artikelgrupper klar!");
+            //// Anropar metod som hämtar data om alla artikelgrupper
+            //GetArtikelGrupper();
+            //Console.WriteLine("Artikelgrupper klar!");
 
-            // Anropar metod som hämtar data om alla artiklar 
-            GetArtikelData();
-            Console.WriteLine("Artikeldata klar!");
+            //// Anropar metod som hämtar data om alla artiklar 
+            //GetArtikelData();
+            //Console.WriteLine("Artikeldata klar!");
 
-            // Anropar metod som hämtar data om alla kundfakturor
-            GetKundFakturaHuvudData();
-            Console.WriteLine("Kundfakturadata klar!");
+            //// Anropar metod som hämtar data om alla kundfakturor
+            //GetKundFakturaHuvudData();
+            //Console.WriteLine("Kundfakturadata klar!");
 
-            // Anropar metod som hämtar data om alla leverantörsfakturor
-            GetLevFakturaHuvudData();
-            Console.WriteLine("Leverantförafkturadata klar!");
+            //// Anropar metod som hämtar data om alla leverantörsfakturor
+            //GetLevFakturaHuvudData();
+            //Console.WriteLine("Leverantförafkturadata klar!");
 
             GetAvtal();
+            Console.WriteLine("Avtal klar!");
 
         }
 
@@ -153,6 +156,12 @@ namespace UCSTest
                 String slutDatum = new String(' ', 16);
                 String kommentarsFält = new String(' ', 120);
 
+                Double intervall = new Double();
+                int finnsAvtal = new int();    //isActive i Avtal.cs
+                int periodTemp = new int();
+                String periodStart = new string(' ', 8);
+                String periodEnd = new String(' ', 8);
+
 
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DOCUMENT_NUMBER, ref DokumentNummer);
                 error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DOCUMENT_DATE1, ref Date);
@@ -161,17 +170,42 @@ namespace UCSTest
                 error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_START, ref Date);
                 error = AdkNetWrapper.Api.AdkLongToDate(Date, ref startDatum, 16);
                 error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_END, ref endDate);
-                error = AdkNetWrapper.Api.AdkLongToDate(endDate, ref slutDatum, 16);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_LOCAL_REMARK, ref kommentarsFält, 120);
 
+                error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_PERIOD_START, ref periodTemp);
+                error = AdkNetWrapper.Api.AdkLongToDate(periodTemp, ref periodStart, 16);
+                error = AdkNetWrapper.Api.AdkGetBool(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_PERIOD, ref finnsAvtal);
+                error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_PERIOD_END, ref periodTemp);
+                error = AdkNetWrapper.Api.AdkLongToDate(periodTemp, ref periodEnd, 16);
+                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_INTERVAL, ref intervall);
+                if (endDate == 0)
+                {
+                    slutDatum = "2099-01-31";
+                }
+                else
+                {
+                    error = AdkNetWrapper.Api.AdkLongToDate(endDate, ref slutDatum, 16);
+                }
+                
                 a.DokumentNummer = DokumentNummer;
                 a.AvtalsDatum = avtalsDatum;
                 a.StartDatum = startDatum;
                 a.SlutDatum = slutDatum;
                 a.KundNummer = kundNummer;
                 a.KommentarsFält = kommentarsFält;
+
+                a.IsActive = finnsAvtal;
+                a.FakturaIntervall = intervall;
+                a.PeriodStart = periodStart;
+                a.PeriodEnd = periodEnd;
+                
                 
                 GetAvtalRad(a, pData);
+
+                foreach (var element in a.ListAvtalsRad)
+                {
+                    a.TotalKostnad += (double)element.TotalKostnad;
+                }
 
                 sendData.AvtalTillDatabas(a);
 
@@ -204,11 +238,14 @@ namespace UCSTest
                 {
 
                     String artikelNummer = new String(' ', 16);
+                    Double totalKostnad = new Double();
 
                     error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER, ref artikelNummer, 16);
+                    error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
 
                     enAvtalsRad.ArtikelNummer = artikelNummer;
                     enAvtalsRad.RadId = avtalsRadID;
+                    enAvtalsRad.TotalKostnad = totalKostnad;
 
                     avtal.ListAvtalsRad.Add(enAvtalsRad);
                 }

@@ -15,6 +15,10 @@ namespace UCSTest
         public string StartDatum { get; set; }
         public string SlutDatum { get; set; }
         public string KommentarsFält { get; set; }
-            
+        public int IsActive { get; set; }
+        public string PeriodStart { get; set; }
+        public string PeriodEnd { get; set; }
+        public double FakturaIntervall { get; set; }
+        public double TotalKostnad { get; internal set; }
     }
 }

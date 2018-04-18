@@ -10,5 +10,6 @@ namespace UCSTest
     {
         public int RadId { get; set; }
         public string ArtikelNummer { get; set; }
+        public object TotalKostnad { get; internal set; }
     }
 }
