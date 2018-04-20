@@ -11,7 +11,6 @@ namespace UCSTest
         public List<LevFakturaRad> fakturaRader = new List<LevFakturaRad>();
         public double LopNummer { get; set; }
         public string LevNummer { get; set; } = "";
-        public string LevNamn { get; set; } = "";
         public string FakturaNummer { get; set; } = "";
         public string FakturaDatum { get; set; } = "";
         public string ValutaKod { get; set; } = "";

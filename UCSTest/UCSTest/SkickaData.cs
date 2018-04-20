@@ -140,13 +140,10 @@ namespace UCSTest
             returnParam.Direction = ParameterDirection.ReturnValue;
             */
 
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaNummer", (int)kFaktura.FakturaNummer));
+            cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaNummer", kFaktura.FakturaNummer));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaTyp", kFaktura.FakturaTyp));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@kundNummer", int.Parse(kFaktura.KundNummer)));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@säljare", kFaktura.Säljare));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@kundNamn", kFaktura.KundNamn));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@kundStad", kFaktura.KundStad));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@kundLand", kFaktura.KundLand));
+            cmdAddInvoice.Parameters.Add(new SqlParameter("@säljare", kFaktura.Säljare));            
             cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaDatum", kFaktura.FakturaDatum));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@totalKostnad", decimal.Parse(kFaktura.TotalKostnad.ToString())));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@förfalloDatum", ""));
@@ -174,7 +171,7 @@ namespace UCSTest
                 cmdAddRow.Parameters.Add(new SqlParameter("@artikelNummer", fRad.ArtikelNummer));
                 cmdAddRow.Parameters.Add(new SqlParameter("@levAntal", fRad.LevAntal));
                 cmdAddRow.Parameters.Add(new SqlParameter("@totalKostnad", fRad.TotalKostnad));
-                cmdAddRow.Parameters.Add(new SqlParameter("@fakturaNummer", (int)kFaktura.FakturaNummer));
+                cmdAddRow.Parameters.Add(new SqlParameter("@fakturaNummer", kFaktura.FakturaNummer));
                 cmdAddRow.Parameters.Add(new SqlParameter("@projekt", fRad.Projekt));
                 cmdAddRow.Parameters.Add(new SqlParameter("@täckningsGrad", decimal.Parse(fRad.TäckningsGrad.ToString())));
                 cmdAddRow.Parameters.Add(new SqlParameter("@benämning", fRad.Benämning));
@@ -205,8 +202,7 @@ namespace UCSTest
             cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaNummer", lFaktura.FakturaNummer));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaTyp", lFaktura.FakturaTyp));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@levNummer", lFaktura.LevNummer));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@lopNummer", (int)lFaktura.LopNummer));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@levNamn", lFaktura.LevNamn));
+            cmdAddInvoice.Parameters.Add(new SqlParameter("@lopNummer", (int)lFaktura.LopNummer));           
             cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaDatum", lFaktura.FakturaDatum));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@totalKostnad", decimal.Parse(lFaktura.TotalKostnad.ToString())));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@projektHuvud", lFaktura.ProjektHuvud));
@@ -242,6 +238,57 @@ namespace UCSTest
                 sqlCon.Close();
             }
         }
-        
+
+        public void KundTillDatabas(Kund ku)
+        {
+            // Pekar Sql-connection mot en stored procedure för artiklar
+            SqlCommand cmdAddCustomer = new SqlCommand("sp_add_customer", sqlCon);
+
+            // Ger Sql-kommandot information om att den ska anropa en stored procedure
+            cmdAddCustomer.CommandType = CommandType.StoredProcedure;
+
+            /*
+            SqlParameter returnParam = cmdAddArticle.Parameters.Add("@ReturnValue", SqlDbType.Int);
+            returnParam.Direction = ParameterDirection.ReturnValue;
+            */
+
+            cmdAddCustomer.Parameters.Add(new SqlParameter("@kundNummer", int.Parse(ku.KundNummer)));
+            cmdAddCustomer.Parameters.Add(new SqlParameter("@kundNamn", ku.KundNamn));
+            cmdAddCustomer.Parameters.Add(new SqlParameter("@kundStad", ku.KundStad));
+            cmdAddCustomer.Parameters.Add(new SqlParameter("@kundLand", ku.KundLand));
+            cmdAddCustomer.Parameters.Add(new SqlParameter("@kundReferens", ku.KundReferens));
+            
+
+            sqlCon.Open();
+            cmdAddCustomer.ExecuteNonQuery();
+            //var returnFromSp = returnParam.Value;
+            sqlCon.Close();
+        }
+
+        public void LeverantörTillDatabas(Leverantör lev)
+        {
+            // Pekar Sql-connection mot en stored procedure för artiklar
+            SqlCommand cmdAddSupplier = new SqlCommand("sp_add_supplier", sqlCon);
+
+            // Ger Sql-kommandot information om att den ska anropa en stored procedure
+            cmdAddSupplier.CommandType = CommandType.StoredProcedure;
+
+            /*
+            SqlParameter returnParam = cmdAddArticle.Parameters.Add("@ReturnValue", SqlDbType.Int);
+            returnParam.Direction = ParameterDirection.ReturnValue;
+            */
+
+            cmdAddSupplier.Parameters.Add(new SqlParameter("@levNummer", int.Parse(lev.LevNummer)));
+            cmdAddSupplier.Parameters.Add(new SqlParameter("@levNamn", lev.LevNamn));
+            cmdAddSupplier.Parameters.Add(new SqlParameter("@levStad", lev.LevStad));
+            cmdAddSupplier.Parameters.Add(new SqlParameter("@levLand", lev.LevLand));
+            cmdAddSupplier.Parameters.Add(new SqlParameter("@levReferens", lev.LevReferens));
+
+
+            sqlCon.Open();
+            cmdAddSupplier.ExecuteNonQuery();
+            //var returnFromSp = returnParam.Value;
+            sqlCon.Close();
+        }
     }
 }

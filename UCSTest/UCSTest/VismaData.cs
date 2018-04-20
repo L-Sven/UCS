@@ -32,6 +32,11 @@ namespace UCSTest
 
         public VismaData()
         {
+            GetKunder();
+            Console.WriteLine("Kunder klar!");
+
+            GetLeverantörer();
+            Console.WriteLine("Leverantörer klar!");
 
             GetResultatEnhet();
             Console.WriteLine("Resultatenhet klar!");
@@ -452,8 +457,7 @@ namespace UCSTest
                 LevFakturaHuvud lFakturaHuvud = new LevFakturaHuvud();
 
                 Double lopNummer = new double(); 
-                String levNummer = new String(' ', 16); 
-                String levNamn = new String(' ', 50); 
+                String levNummer = new String(' ', 16);                  
                 String fakturaNummer = new String(' ', 16); 
                 int tmpDatum = new int(); // Temporär datumhållare eftersom data hämtas som 8 siffror
                 String fakturaDatum = new String(' ', 11); 
@@ -466,8 +470,7 @@ namespace UCSTest
 
                 // Hämtar data ur databas och lagrar i de lokala variablerna
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_GIVEN_NUMBER, ref lopNummer);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_SUPPLIER_NUMBER, ref levNummer, 16);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_SUPPLIER_NAME, ref levNamn, 50);
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_SUPPLIER_NUMBER, ref levNummer, 16);               
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_INVOICE_NUMBER, ref fakturaNummer, 16);
 
                 // Ger fakturor utan nummer ett eget fakturanummer
@@ -489,7 +492,7 @@ namespace UCSTest
                 // Lägger till data i instansen och lFakturaHuvud
                 lFakturaHuvud.LopNummer = lopNummer;
                 lFakturaHuvud.LevNummer = levNummer;
-                lFakturaHuvud.LevNamn = levNamn;
+                fakturaNummer = "LF-" + fakturaNummer;
                 lFakturaHuvud.FakturaNummer = fakturaNummer;
                 lFakturaHuvud.FakturaDatum = fakturaDatum;
                 lFakturaHuvud.ValutaKod = valutaKod;
@@ -593,6 +596,135 @@ namespace UCSTest
             }
         }
 
+        private void GetKunder()
+        {
+            // Öppnar upp ett företag
+            error = Adk.Api.AdkOpen(ref sys, ref ftg);
+
+            // Kontroll om företaget kunde öppnas
+            if (error.lRc != Adk.Api.ADKE_OK)
+            {
+                String errortext = new String(' ', 200);
+                int errtype = (int)Adk.Api.ADK_ERROR_TEXT_TYPE.elRc;
+                Adk.Api.AdkGetErrorText(ref error, errtype,
+                ref errortext, 200);
+                Console.WriteLine(errortext);
+            }
+
+
+            // gör pData till en kund-referens
+            pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_CUSTOMER);
+
+            // Pekar pData mot första raden i kundtabellen
+            error = AdkNetWrapper.Api.AdkFirst(pData);
+
+            // Kontroll om det det finns något värde i pData
+            if (error.lRc != AdkNetWrapper.Api.ADKE_OK)
+            {
+                String errortext = new String(' ', 200);
+                int errtype = (int)AdkNetWrapper.Api.ADK_ERROR_TEXT_TYPE.elRc;
+                AdkNetWrapper.Api.AdkGetErrorText(ref error, errtype, ref errortext, 200);
+                Console.WriteLine(errortext);
+            }
+
+
+
+            while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns kunder            
+            {
+                Kund nyKund = new Kund();
+                String kundNr = new String(' ', 16);
+                String kundNamn = new String(' ', 50);
+                String kundLand = new String(' ', 24);
+                String kundStad = new String(' ', 24);
+                String kundReferens = new String(' ', 50);
+
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CUSTOMER_NUMBER, ref kundNr, 16);
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CUSTOMER_NAME, ref kundNamn, 50);
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CUSTOMER_COUNTRY, ref kundLand, 24);
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CUSTOMER_CITY, ref kundStad, 24);
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CUSTOMER_REFERENCE, ref kundReferens, 50);
+
+                nyKund.KundNummer = kundNr;
+                nyKund.KundNamn = kundNamn;
+                nyKund.KundLand = kundLand;
+                nyKund.KundStad = kundStad;
+                nyKund.KundReferens = kundReferens;
+
+                sendData.KundTillDatabas(nyKund);
+
+                // Sätter vidare pekaren på nästa instans
+                error = AdkNetWrapper.Api.AdkNext(pData);
+
+            }
+
+            // Stänger företaget
+            AdkNetWrapper.Api.AdkClose();
+        }
+        private void GetLeverantörer()
+        {
+            // Öppnar upp ett företag
+            error = Adk.Api.AdkOpen(ref sys, ref ftg);
+
+            // Kontroll om företaget kunde öppnas
+            if (error.lRc != Adk.Api.ADKE_OK)
+            {
+                String errortext = new String(' ', 200);
+                int errtype = (int)Adk.Api.ADK_ERROR_TEXT_TYPE.elRc;
+                Adk.Api.AdkGetErrorText(ref error, errtype,
+                ref errortext, 200);
+                Console.WriteLine(errortext);
+            }
+
+
+            // gör pData till en kund-referens
+            pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_SUPPLIER);
+
+            // Pekar pData mot första raden i kundtabellen
+            error = AdkNetWrapper.Api.AdkFirst(pData);
+
+            // Kontroll om det det finns något värde i pData
+            if (error.lRc != AdkNetWrapper.Api.ADKE_OK)
+            {
+                String errortext = new String(' ', 200);
+                int errtype = (int)AdkNetWrapper.Api.ADK_ERROR_TEXT_TYPE.elRc;
+                AdkNetWrapper.Api.AdkGetErrorText(ref error, errtype, ref errortext, 200);
+                Console.WriteLine(errortext);
+            }
+
+
+
+            while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns kunder            
+            {
+                Leverantör nyLev = new Leverantör();
+                String levNr = new String(' ', 16);
+                String levNamn = new String(' ', 50);
+                String levLand = new String(' ', 24);
+                String levStad = new String(' ', 24);
+                String levReferens = new String(' ', 50);
+
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUPPLIER_NUMBER, ref levNr, 16);
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUPPLIER_NAME, ref levNamn, 50);
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUPPLIER_COUNTRY, ref levLand, 24);
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUPPLIER_CITY, ref levStad, 24);
+                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUPPLIER_REFERENCE, ref levReferens, 50);
+
+                nyLev.LevNummer = levNr;
+                nyLev.LevNamn = levNamn;
+                nyLev.LevLand = levLand;
+                nyLev.LevStad = levStad;
+                nyLev.LevReferens = levReferens;
+
+                sendData.LeverantörTillDatabas(nyLev);
+
+                // Sätter vidare pekaren på nästa instans
+                error = AdkNetWrapper.Api.AdkNext(pData);
+
+            }
+
+            // Stänger företaget
+            AdkNetWrapper.Api.AdkClose();
+        }
+
         // Metod som hämtar data från fakturahuvud i visma
         private void GetKundFakturaHuvudData()
         {
@@ -634,17 +766,14 @@ namespace UCSTest
                 // Skapar ny instans av ett kundafakturahuvud
                 KundFakturaHuvud kFaktura = new KundFakturaHuvud();
 
-                String kundNamn = new String(' ', 50);
+                
                 Double totalKostnad = new Double();
+                String kundNr = new String(' ', 16);
                 int tmpDatum = new int(); 
                 String fakturaDatum = new String(' ', 11);
-                String kundNr = new String(' ', 16);
                 Double fakturaNr = new Double();
-                String fakturaTyp = new String(' ', 20);
-                String kundLand = new String(' ', 24);
-                String kundStad = new String(' ', 24);
-                String säljare = new String(' ', 25);
-                String kundReferens = new String(' ', 50);
+                String fakturaTyp = new String(' ', 20);                
+                String säljare = new String(' ', 25);                
                 String valutaKod = new String(' ', 4);
                 Double cargoAmount = new Double();
                 Double dispatchFee = new Double();
@@ -653,17 +782,14 @@ namespace UCSTest
 
 
                 // Hämtar data ur databas och lagrar i de lokala variablerna
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_NAME, ref kundNamn, 50);               
-                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NUMBER, ref fakturaNr);                
+                               
+                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NUMBER, ref fakturaNr);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_NUMBER, ref kundNr, 16);
                 error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_DATE1, ref tmpDatum);
                 error = AdkNetWrapper.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_TYPE_OF_INVOICE, ref fakturaTyp, 20);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CITY, ref kundStad, 24);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_COUNTRY, ref kundLand, 24);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_OUR_REFERENCE_NAME, ref säljare, 24);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CURRENCY_CODE, ref valutaKod, 4);             
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kundReferens, 50);
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CARGO_AMOUNT, ref cargoAmount);
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DISPATCH_FEE, ref dispatchFee);
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_VAT_AMOUNT, ref moms);
@@ -683,16 +809,18 @@ namespace UCSTest
                 */
 
                 // Lägger info i kundfakturan
-                kFaktura.KundNamn = kundNamn;
+                
+                
                 kFaktura.TotalKostnad = totalKostnad;
                 kFaktura.FakturaDatum = fakturaDatum;
-                kFaktura.FakturaNummer = fakturaNr;
+
+                String fakturaNummer = new String(' ', 20);
+                fakturaNummer = fakturaNr.ToString();
+                fakturaNummer = "KF-" + fakturaNummer;
+                kFaktura.FakturaNummer = fakturaNummer;
                 kFaktura.KundNummer = kundNr;
                 kFaktura.FakturaTyp = fakturaTyp;
-                kFaktura.KundLand = kundLand;
-                kFaktura.KundStad = kundStad;
                 kFaktura.Säljare = säljare;
-                kFaktura.KundReferens = kundReferens;
                 kFaktura.Cargo_amount = cargoAmount;
                 kFaktura.Dispatch_fee = dispatchFee;
                 kFaktura.Moms = moms;
