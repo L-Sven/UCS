@@ -33,24 +33,24 @@ namespace UCSTest
         public VismaData()
         {
 
-            //GetResultatEnhet();
-            //Console.WriteLine("Resultatenhet klar!");
+            GetResultatEnhet();
+            Console.WriteLine("Resultatenhet klar!");
 
-            //// Anropar metod som hämtar data om alla artikelgrupper
-            //GetArtikelGrupper();
-            //Console.WriteLine("Artikelgrupper klar!");
+            // Anropar metod som hämtar data om alla artikelgrupper
+            GetArtikelGrupper();
+            Console.WriteLine("Artikelgrupper klar!");
 
-            //// Anropar metod som hämtar data om alla artiklar 
-            //GetArtikelData();
-            //Console.WriteLine("Artikeldata klar!");
+            // Anropar metod som hämtar data om alla artiklar 
+            GetArtikelData();
+            Console.WriteLine("Artikeldata klar!");
 
-            //// Anropar metod som hämtar data om alla kundfakturor
-            //GetKundFakturaHuvudData();
-            //Console.WriteLine("Kundfakturadata klar!");
+            // Anropar metod som hämtar data om alla kundfakturor
+            GetKundFakturaHuvudData();
+            Console.WriteLine("Kundfakturadata klar!");
 
-            //// Anropar metod som hämtar data om alla leverantörsfakturor
-            //GetLevFakturaHuvudData();
-            //Console.WriteLine("Leverantförafkturadata klar!");
+            // Anropar metod som hämtar data om alla leverantörsfakturor
+            GetLevFakturaHuvudData();
+            Console.WriteLine("Leverantförafkturadata klar!");
 
             GetAvtal();
             Console.WriteLine("Avtal klar!");
@@ -155,6 +155,7 @@ namespace UCSTest
                 String startDatum = new String(' ', 16);
                 String slutDatum = new String(' ', 16);
                 String kommentarsFält = new String(' ', 120);
+                String avtalsDatumSlut = new String(' ', 16);
 
                 Double intervall = new Double();
                 int finnsAvtal = new int();    //isActive i Avtal.cs
@@ -178,27 +179,57 @@ namespace UCSTest
                 error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_PERIOD_END, ref periodTemp);
                 error = AdkNetWrapper.Api.AdkLongToDate(periodTemp, ref periodEnd, 16);
                 error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_INTERVAL, ref intervall);
-                if (endDate == 0)
+                error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_END, ref Date);
+                if (Date == 0)
                 {
-                    slutDatum = "2099-01-31";
+                    avtalsDatumSlut = "1111-11-11";
                 }
                 else
                 {
-                    error = AdkNetWrapper.Api.AdkLongToDate(endDate, ref slutDatum, 16);
+                    error = AdkNetWrapper.Api.AdkLongToDate(Date, ref avtalsDatumSlut, 16);
                 }
+                
+                
+                //if (endDate == 0)
+                //{
+                //    slutDatum = "NaN";
+                //}
+                //else
+                //{
+                //    error = AdkNetWrapper.Api.AdkLongToDate(endDate, ref slutDatum, 16);
+                //}
+
+                String text = new String(' ', 10);
+
+                //TODO: Lägg till en try catch ifall kommentarsfältet inte är ifylld korrekt
+                if (kommentarsFält != "")
+                {
+                    string[] data = kommentarsFält.Split('#');
+
+                    //Vi avlägsnar de sista 2 tecken från strängen samt att vi avlägsnar mellanslaget i början av strängen.
+                    text = data[1].Remove(data[1].Length - 2).TrimStart(' ');
+                    
+                    a.KommenteratSlutDatum = text;
+                    a.Uppsägningstid = int.Parse(data[2]);
+                    a.Förlängningstid = int.Parse(data[3]);
+                }
+                else
+                {
+                    a.KommenteratSlutDatum = "1111-11-11";
+                }
+                 
+                
                 
                 a.DokumentNummer = DokumentNummer;
                 a.AvtalsDatum = avtalsDatum;
+                a.AvtalsDatumSlut = avtalsDatumSlut;
                 a.StartDatum = startDatum;
-                a.SlutDatum = slutDatum;
                 a.KundNummer = kundNummer;
-                a.KommentarsFält = kommentarsFält;
 
                 a.IsActive = finnsAvtal;
                 a.FakturaIntervall = intervall;
                 a.PeriodStart = periodStart;
                 a.PeriodEnd = periodEnd;
-                
                 
                 GetAvtalRad(a, pData);
 

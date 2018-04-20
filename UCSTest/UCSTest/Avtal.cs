@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,12 +14,14 @@ namespace UCSTest
         public string AvtalsDatum { get; set; }
         public string KundNummer { get; set; }
         public string StartDatum { get; set; }
-        public string SlutDatum { get; set; }
-        public string KommentarsFält { get; set; }
+        public string KommenteratSlutDatum { get; set; }
         public int IsActive { get; set; }
         public string PeriodStart { get; set; }
         public string PeriodEnd { get; set; }
         public double FakturaIntervall { get; set; }
         public double TotalKostnad { get; internal set; }
+        public int Uppsägningstid { get; internal set; }
+        public int Förlängningstid { get; internal set; }
+        public string AvtalsDatumSlut { get; internal set; }
     }
 }

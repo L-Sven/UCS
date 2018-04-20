@@ -32,14 +32,16 @@ namespace UCSTest
             cmdAddAgreement.Parameters.Add(new SqlParameter("@dokumentNummer", a.DokumentNummer));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@avtalsDatum", a.AvtalsDatum));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@startDatum", a.StartDatum));
-            cmdAddAgreement.Parameters.Add(new SqlParameter("@slutDatum", a.SlutDatum));
+            cmdAddAgreement.Parameters.Add(new SqlParameter("@tempSlutDatum", a.KommenteratSlutDatum));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@kundNummer", a.KundNummer));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@isActive", a.IsActive));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@fakturaIntervall", decimal.Parse(a.FakturaIntervall.ToString())));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@periodStart", a.PeriodStart));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@periodEnd", a.PeriodEnd));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@totalKostnad", decimal.Parse(a.TotalKostnad.ToString())));
-            cmdAddAgreement.Parameters.Add(new SqlParameter("@kommentarsFält", a.KommentarsFält));
+            cmdAddAgreement.Parameters.Add(new SqlParameter("@uppsägningstid", a.Uppsägningstid));
+            cmdAddAgreement.Parameters.Add(new SqlParameter("@förlängningstid", a.Förlängningstid));
+            cmdAddAgreement.Parameters.Add(new SqlParameter("@avtalsDatumSlut", a.AvtalsDatumSlut));
 
             sqlCon.Open();
             cmdAddAgreement.ExecuteNonQuery();
