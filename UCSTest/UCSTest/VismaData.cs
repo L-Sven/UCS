@@ -556,6 +556,7 @@ namespace UCSTest
 
                     // om raden presenterar en totalkostnad sparas inte raden utan vi använder värdet för att 
                     // ge leverantörsfakturahuvudet en totalkostnad i svenska kronor 
+                    // OBS, kan bli problem om det inte finns någon totalrad i livedatan?!
                     if (information.ToLower() == "total")
                     {
                         
@@ -763,92 +764,110 @@ namespace UCSTest
             while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns fakturor            
             {
 
-                // Skapar ny instans av ett kundafakturahuvud
-                KundFakturaHuvud kFaktura = new KundFakturaHuvud();
-
                 
-                Double totalKostnad = new Double();
-                String kundNr = new String(' ', 16);
-                int tmpDatum = new int(); 
-                String fakturaDatum = new String(' ', 11);
-                Double fakturaNr = new Double();
-                String fakturaTyp = new String(' ', 20);                
-                String säljare = new String(' ', 25);                
-                String valutaKod = new String(' ', 4);
-                Double cargoAmount = new Double();
-                Double dispatchFee = new Double();
-                Double moms = new Double();
-                String kommentarsFält = new String(' ', 120);
 
+                // Kontroll om fakturan inte är färdig eller makulerad
+                int validFaktura = new int();
+                int makulerad = new int();
 
-                // Hämtar data ur databas och lagrar i de lokala variablerna
-                               
-                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NUMBER, ref fakturaNr);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_NUMBER, ref kundNr, 16);
-                error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_DATE1, ref tmpDatum);
-                error = AdkNetWrapper.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_TYPE_OF_INVOICE, ref fakturaTyp, 20);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_OUR_REFERENCE_NAME, ref säljare, 24);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CURRENCY_CODE, ref valutaKod, 4);             
-                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CARGO_AMOUNT, ref cargoAmount);
-                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DISPATCH_FEE, ref dispatchFee);
-                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_VAT_AMOUNT, ref moms);
-                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_TOTAL_AMOUNT, ref totalKostnad);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kommentarsFält, 120);
+                error = AdkNetWrapper.Api.AdkGetBool(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NOT_DONE, ref validFaktura);
+                error = AdkNetWrapper.Api.AdkGetBool(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NOT_DONE, ref makulerad);
 
-                /* Följande konverterare finns i kodexemplet om man vill dela upp data över månader/år
-                DateTime FktDatumDateTime = Convert.ToDateTime(FktDatum);
-                if (Convert.ToInt32(FktDatumDateTime.Month) < 10)
+                if (validFaktura == 1 || makulerad == 1)
                 {
-                    FakturaHuvudObj.ArManad = FktDatumDateTime.Year + "0" + FktDatumDateTime.Month + "";
+                    // Do nothing
+                    Console.WriteLine("hej hej");
                 }
+
                 else
                 {
-                    FakturaHuvudObj.ArManad = FktDatumDateTime.Year + "" + FktDatumDateTime.Month + "";
-                }
-                */
+                    // Skapar ny instans av ett kundafakturahuvud
+                    KundFakturaHuvud kFaktura = new KundFakturaHuvud();
 
-                // Lägger info i kundfakturan
-                
-                
-                kFaktura.TotalKostnad = totalKostnad;
-                kFaktura.FakturaDatum = fakturaDatum;
+                    Double totalKostnad = new Double();
+                    String kundNr = new String(' ', 16);
+                    int tmpDatum = new int();
+                    String fakturaDatum = new String(' ', 11);
+                    Double fakturaNr = new Double();
+                    String fakturaTyp = new String(' ', 20);
+                    String säljare = new String(' ', 25);
+                    String valutaKod = new String(' ', 4);
+                    Double cargoAmount = new Double();
+                    Double dispatchFee = new Double();
+                    Double moms = new Double();
+                    String kommentarsFält = new String(' ', 120);
 
-                String fakturaNummer = new String(' ', 20);
-                fakturaNummer = fakturaNr.ToString();
-                fakturaNummer = "KF-" + fakturaNummer;
-                kFaktura.FakturaNummer = fakturaNummer;
-                kFaktura.KundNummer = kundNr;
-                kFaktura.FakturaTyp = fakturaTyp;
-                kFaktura.Säljare = säljare;
-                kFaktura.Cargo_amount = cargoAmount;
-                kFaktura.Dispatch_fee = dispatchFee;
-                kFaktura.Moms = moms;
-                kFaktura.KommentarsFält = kommentarsFält;
-              
-                // Hämtar alla fakturarader på kundfakturan
-                GetKundFakturaRad(kFaktura, pData);
 
-                // Om valutan inte är svenska kronor, så beräknas totalkostnaden utefter fakturaraderna
-                if (valutaKod != "SEK")
-                {
-                    totalKostnad = 0;
-                    foreach (var rad in kFaktura.fakturaRader)
+                    // Hämtar data ur databas och lagrar i de lokala variablerna
+
+                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NUMBER, ref fakturaNr);
+                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_NUMBER, ref kundNr, 16);
+                    error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_DATE1, ref tmpDatum);
+                    error = AdkNetWrapper.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
+                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_TYPE_OF_INVOICE, ref fakturaTyp, 20);
+                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_OUR_REFERENCE_NAME, ref säljare, 24);
+                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CURRENCY_CODE, ref valutaKod, 4);
+                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CARGO_AMOUNT, ref cargoAmount);
+                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DISPATCH_FEE, ref dispatchFee);
+                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_VAT_AMOUNT, ref moms);
+                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_TOTAL_AMOUNT, ref totalKostnad);
+                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kommentarsFält, 120);
+
+                    /* Följande konverterare finns i kodexemplet om man vill dela upp data över månader/år
+                    DateTime FktDatumDateTime = Convert.ToDateTime(FktDatum);
+                    if (Convert.ToInt32(FktDatumDateTime.Month) < 10)
                     {
-                        totalKostnad += rad.TotalKostnad;
+                        FakturaHuvudObj.ArManad = FktDatumDateTime.Year + "0" + FktDatumDateTime.Month + "";
                     }
+                    else
+                    {
+                        FakturaHuvudObj.ArManad = FktDatumDateTime.Year + "" + FktDatumDateTime.Month + "";
+                    }
+                    */
+
+                    // Lägger info i kundfakturan
+
+
                     kFaktura.TotalKostnad = totalKostnad;
-                    
-                }
+                    kFaktura.FakturaDatum = fakturaDatum;
 
-                if (fakturaTyp.ToUpper() == "K")
-                {
-                    kFaktura.Moms *= -1;
-                    kFaktura.TotalKostnad *= -1;
-                }
+                    String fakturaNummer = new String(' ', 20);
+                    fakturaNummer = fakturaNr.ToString();
+                    fakturaNummer = "KF-" + fakturaNummer;
+                    kFaktura.FakturaNummer = fakturaNummer;
+                    kFaktura.KundNummer = kundNr;
+                    kFaktura.FakturaTyp = fakturaTyp;
+                    kFaktura.Säljare = säljare;
+                    kFaktura.Cargo_amount = cargoAmount;
+                    kFaktura.Dispatch_fee = dispatchFee;
+                    kFaktura.Moms = moms;
+                    kFaktura.KommentarsFält = kommentarsFält;
+
+                    // Hämtar alla fakturarader på kundfakturan
+                    GetKundFakturaRad(kFaktura, pData);
+
+                    // Om valutan inte är svenska kronor, så beräknas totalkostnaden utefter fakturaraderna
+                    if (valutaKod != "SEK")
+                    {
+                        totalKostnad = 0;
+                        foreach (var rad in kFaktura.fakturaRader)
+                        {
+                            totalKostnad += rad.TotalKostnad;
+                        }
+                        kFaktura.TotalKostnad = totalKostnad;
+
+                    }
+
+                    if (fakturaTyp.ToUpper() == "K")
+                    {
+                        kFaktura.Moms *= -1;
+                        kFaktura.TotalKostnad *= -1;
+                    }
 
 
-                sendData.KundFakturaTillDatabas(kFaktura);
+                    sendData.KundFakturaTillDatabas(kFaktura);
+
+                } // Slut på else
 
                 // Sätter vidare pekaren på nästa instans
                 error = AdkNetWrapper.Api.AdkNext(pData);
