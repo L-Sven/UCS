@@ -587,6 +587,9 @@ namespace UCSTest
                         enFakturaRad.ProjektRad = projektRad;
                         enFakturaRad.TotalKostnad = totalKostnad;
                         enFakturaRad.ResultatEnhet = resultatEnhet;
+
+                        lFaktura.TotalKostnad += totalKostnad;
+
                         lFaktura.fakturaRader.Add(enFakturaRad);
                     }
 
@@ -661,6 +664,7 @@ namespace UCSTest
             // Stänger företaget
             AdkNetWrapper.Api.AdkClose();
         }
+
         private void GetLeverantörer()
         {
             // Öppnar upp ett företag
