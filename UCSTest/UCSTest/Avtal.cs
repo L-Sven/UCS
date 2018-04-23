@@ -14,7 +14,7 @@ namespace UCSTest
         public string AvtalsDatum { get; set; }
         public string KundNummer { get; set; }
         public string StartDatum { get; set; }
-        public string KommenteratSlutDatum { get; set; }
+        public string KommenteratSlutDatum { get; set; } = "1111-11-11";
         public int IsActive { get; set; }
         public string PeriodStart { get; set; }
         public string PeriodEnd { get; set; }
