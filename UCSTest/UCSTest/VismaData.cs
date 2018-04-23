@@ -773,10 +773,10 @@ namespace UCSTest
                 error = AdkNetWrapper.Api.AdkGetBool(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NOT_DONE, ref validFaktura);
                 error = AdkNetWrapper.Api.AdkGetBool(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NOT_DONE, ref makulerad);
 
+                // Om det är en ofärdig eller makulerad faktura tar vi inte med den!
                 if (validFaktura == 1 || makulerad == 1)
                 {
                     // Do nothing
-                    Console.WriteLine("hej hej");
                 }
 
                 else
