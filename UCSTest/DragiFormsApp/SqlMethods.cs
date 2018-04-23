@@ -151,7 +151,6 @@ namespace DragiFormsApp
                 AdkNetWrapper.Api.AdkGetStr(sData, AdkNetWrapper.Api.ADK_CODE_OF_SELLER_NAME, ref namn, 25);
                 listOfNames.Add(namn);
                 error = AdkNetWrapper.Api.AdkNext(sData);
-                Thread.Sleep(500);
             }
 
             // Stänger företaget
