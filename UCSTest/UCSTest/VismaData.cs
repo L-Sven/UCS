@@ -23,7 +23,7 @@ namespace UCSTest
         // Följande sökvägar verkar också fungera
         //String sys = @"C:\Documents and Settings\All Users\Application Data\SPCS\SPCS Administration\Gemensamma filer";
         //String ftg = @"C:\Documents and Settings\All Users\Application Data\SPCS\SPCS Administration\Företag\Ovnbol2000";
-        private int exp = 0;
+        
         int pData;
         int antalFakturorUtanNr = 1; // Används för att ge fakturor utan nummer ett fakturanummer
         int levRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
@@ -461,7 +461,7 @@ namespace UCSTest
                 if (makulerad == 1)
                 {
                     // Do nothing
-                    Console.WriteLine("hej hej");
+                    Console.WriteLine("Makulerad");
                 }
                 else
                 {
@@ -501,10 +501,7 @@ namespace UCSTest
                     error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_PROJECT, ref projektHuvud, 10);
                     error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_VAT_AMOUNT, ref moms);
 
-                    if (lopNummer == 23)
-                    {
-                        Console.WriteLine("hej");
-                    }
+                   
 
                     // Lägger till data i instansen och lFakturaHuvud
                     lFakturaHuvud.LopNummer = "LF-" +  lopNummer;
@@ -531,8 +528,7 @@ namespace UCSTest
 
                     }
 
-                    exp++;
-                    Console.WriteLine(exp);
+                    
 
                     // Anropr till metod som lägger in data i databasen
                     sendData.LevFakturaTillDatabas(lFakturaHuvud);
@@ -810,6 +806,7 @@ namespace UCSTest
                 if (validFaktura == 1 || makulerad == 1)
                 {
                     // Do nothing
+                    Console.WriteLine("Makulerad eller ofärdig faktura");
                 }
 
                 else
