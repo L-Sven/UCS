@@ -60,6 +60,9 @@ namespace UCSTest
             GetAvtal();
             Console.WriteLine("Avtal klar!");
 
+            Console.WriteLine("Tryck en tangent för att avsluta!");
+            Console.ReadKey();
+
         }
 
         private void GetResultatEnhet()
@@ -213,14 +216,38 @@ namespace UCSTest
 
                     //Vi avlägsnar de sista 2 tecken från strängen samt att vi avlägsnar mellanslaget i början av strängen.
                     text = data[1].Remove(data[1].Length - 2).TrimStart(' ');
-                    
-                    a.KommenteratSlutDatum = text;
-                    a.Uppsägningstid = int.Parse(data[2]);
-                    a.Förlängningstid = int.Parse(data[3]);
+                    DateTime temp;
+                    if(DateTime.TryParse(text, out temp))
+                    {
+                        a.KommenteratSlutDatum = text;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Avtal med dokumentnummer {0} har inget giltigt slutdatum", DokumentNummer);
+                    }
+
+                    if (int.Parse(data[2]) > 0 && int.Parse(data[2]) <= 12)
+                    {
+                        a.Uppsägningstid = int.Parse(data[2]);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Avtal med dokumentnummer {0} har ingen giltig uppsägningstid", DokumentNummer);
+                    }
+
+                    if (int.Parse(data[3]) > 0 && int.Parse(data[3]) <= 12)
+                    {
+                        a.Förlängningstid = int.Parse(data[3]);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Avtal med dokumentnummer {0} har ingen giltig förlängningstid", DokumentNummer);
+                    }
                 }
                 else
                 {
                     a.KommenteratSlutDatum = "1111-11-11";
+                    Console.WriteLine("Avtal med dokumentnummer {0} har ingen kommentar", DokumentNummer);
                 }
                  
                 

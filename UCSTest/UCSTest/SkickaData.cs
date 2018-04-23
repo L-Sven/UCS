@@ -10,8 +10,6 @@ namespace UCSTest
 {
     class SkickaData
     {
-        //TODO: Lägg till Resultatenhet i Databasen och SP!
-
         //private SqlConnection sqlCon = new SqlConnection(
         //            @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\fakturaDB.mdf;Integrated Security=True"
         //            );
