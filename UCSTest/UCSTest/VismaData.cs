@@ -53,9 +53,9 @@ namespace UCSTest
             GetKundFakturaHuvudData();
             Console.WriteLine("Kundfakturadata klar!");
 
-            // Anropar metod som hämtar data om alla leverantörsfakturor
+            //Anropar metod som hämtar data om alla leverantörsfakturor
             GetLevFakturaHuvudData();
-            Console.WriteLine("Leverantförafkturadata klar!");
+            Console.WriteLine("Leverantörsfakturadata klar!");
 
             GetAvtal();
             Console.WriteLine("Avtal klar!");
@@ -557,44 +557,40 @@ namespace UCSTest
                     // om raden presenterar en totalkostnad sparas inte raden utan vi använder värdet för att 
                     // ge leverantörsfakturahuvudet en totalkostnad i svenska kronor 
                     // OBS, kan bli problem om det inte finns någon totalrad i livedatan?!
-                    if (information.ToLower() == "total")
+                    
+                    if (information.ToLower() == "total" || information.ToLower() == "moms")
                     {
-                        
-                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens,
-                            AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
-                        lFaktura.TotalKostnad = totalKostnad;
-
-
+                        //Do Nothing
                     }
 
                     // Om det inte är en rad som presenterar totalkostnaden
                     else
                     {
-                        // Hämtar data ur databas och lagrar i de lokala variablerna
-                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_QUANTITY1, ref kvantitet);
-                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_SUPPLIER_ARTICLE_NUMBER, ref levArtikelNummer, 16);
-                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER, ref artikelNummer, 16);
-                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROJECT, ref projektRad, 10);
-                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
-                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROFIT_CENTRE, ref resultatEnhet, 6);
+                    // Hämtar data ur databas och lagrar i de lokala variablerna
+                    error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_QUANTITY1, ref kvantitet);
+                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_SUPPLIER_ARTICLE_NUMBER, ref levArtikelNummer, 16);
+                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER, ref artikelNummer, 16);
+                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROJECT, ref projektRad, 10);
+                    error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
+                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROFIT_CENTRE, ref resultatEnhet, 6);
 
 
-                        // Lägger till data i fakturaradinstansen
-                        enFakturaRad.Information = information;
-                        enFakturaRad.Kvantitet = kvantitet;
-                        enFakturaRad.ArtikelNummer = artikelNummer;
-                        enFakturaRad.LevArtikelNummer = levArtikelNummer;
-                        enFakturaRad.ProjektRad = projektRad;
-                        enFakturaRad.TotalKostnad = totalKostnad;
-                        enFakturaRad.ResultatEnhet = resultatEnhet;
+                    // Lägger till data i fakturaradinstansen
+                    enFakturaRad.Information = information;
+                    enFakturaRad.Kvantitet = kvantitet;
+                    enFakturaRad.ArtikelNummer = artikelNummer;
+                    enFakturaRad.LevArtikelNummer = levArtikelNummer;
+                    enFakturaRad.ProjektRad = projektRad;
+                    enFakturaRad.TotalKostnad = totalKostnad;
+                    enFakturaRad.ResultatEnhet = resultatEnhet;
 
-                        lFaktura.TotalKostnad += totalKostnad;
+                    lFaktura.TotalKostnad += totalKostnad;
 
-                        lFaktura.fakturaRader.Add(enFakturaRad);
+                    lFaktura.fakturaRader.Add(enFakturaRad);
                     }
 
-                    
-                    
+
+
                 }
 
             }
