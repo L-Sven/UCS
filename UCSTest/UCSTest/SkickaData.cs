@@ -202,7 +202,7 @@ namespace UCSTest
             cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaNummer", lFaktura.FakturaNummer));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaTyp", lFaktura.FakturaTyp));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@levNummer", lFaktura.LevNummer));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@lopNummer", (int)lFaktura.LopNummer));           
+            cmdAddInvoice.Parameters.Add(new SqlParameter("@lopNummer", lFaktura.LopNummer));           
             cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaDatum", lFaktura.FakturaDatum));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@totalKostnad", decimal.Parse(lFaktura.TotalKostnad.ToString())));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@projektHuvud", lFaktura.ProjektHuvud));
@@ -228,7 +228,7 @@ namespace UCSTest
                 cmdAddRow.Parameters.Add(new SqlParameter("@kvantitet", decimal.Parse(lRad.Kvantitet.ToString())));
                 cmdAddRow.Parameters.Add(new SqlParameter("@levArtikelNummer", lRad.LevArtikelNummer));
                 cmdAddRow.Parameters.Add(new SqlParameter("@totalKostnad", decimal.Parse(lRad.TotalKostnad.ToString())));
-                cmdAddRow.Parameters.Add(new SqlParameter("@fakturaNummer", lFaktura.FakturaNummer));
+                cmdAddRow.Parameters.Add(new SqlParameter("@löpNummer", lFaktura.LopNummer.ToString()));
                 cmdAddRow.Parameters.Add(new SqlParameter("@projektRad", lRad.ProjektRad));
                 cmdAddRow.Parameters.Add(new SqlParameter("@resultatEnhetID", lRad.ResultatEnhet));
                 

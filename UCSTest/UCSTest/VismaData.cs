@@ -23,7 +23,7 @@ namespace UCSTest
         // Följande sökvägar verkar också fungera
         //String sys = @"C:\Documents and Settings\All Users\Application Data\SPCS\SPCS Administration\Gemensamma filer";
         //String ftg = @"C:\Documents and Settings\All Users\Application Data\SPCS\SPCS Administration\Företag\Ovnbol2000";
-
+        private int exp = 0;
         int pData;
         int antalFakturorUtanNr = 1; // Används för att ge fakturor utan nummer ett fakturanummer
         int levRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
@@ -452,63 +452,96 @@ namespace UCSTest
             while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns fakturor
            // for (int i = 0; i < 30; i++) // Test som bara kör 30 varv
             {
+                // Kontroll om fakturan inte är färdig eller makulerad
+                int makulerad = new int();
+                
+                error = AdkNetWrapper.Api.AdkGetBool(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CANCELLED, ref makulerad);
 
-                // Skapar ny instans av ett lFakturaHuvud
-                LevFakturaHuvud lFakturaHuvud = new LevFakturaHuvud();
 
-                Double lopNummer = new double(); 
-                String levNummer = new String(' ', 16);                  
-                String fakturaNummer = new String(' ', 16); 
-                int tmpDatum = new int(); // Temporär datumhållare eftersom data hämtas som 8 siffror
-                String fakturaDatum = new String(' ', 11); 
-                String valutaKod = new String(' ', 4);  
-                double valutaKurs = 0.00;
-                String fakturaTyp = new String(' ', 12); // fakturatyp F = vanlig faktura, K = kreditfaktura 
-                Double totalKostnad = new Double(); 
-                String projektHuvud = new String(' ', 10);
-                Double moms = new Double();
-
-                // Hämtar data ur databas och lagrar i de lokala variablerna
-                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_GIVEN_NUMBER, ref lopNummer);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_SUPPLIER_NUMBER, ref levNummer, 16);               
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_INVOICE_NUMBER, ref fakturaNummer, 16);
-
-                // Ger fakturor utan nummer ett eget fakturanummer
-                if (fakturaNummer == "" || fakturaNummer == null)
+                if (makulerad == 1)
                 {
-                    fakturaNummer = "Faktura-" + antalFakturorUtanNr;
-                    antalFakturorUtanNr++;
+                    // Do nothing
+                    Console.WriteLine("hej hej");
+                }
+                else
+                {
+                    // Skapar ny instans av ett lFakturaHuvud
+                    LevFakturaHuvud lFakturaHuvud = new LevFakturaHuvud();
+
+                    Double lopNummer = new double();
+                    String levNummer = new String(' ', 16);
+                    String fakturaNummer = new String(' ', 16);
+                    int tmpDatum = new int(); // Temporär datumhållare eftersom data hämtas som 8 siffror
+                    String fakturaDatum = new String(' ', 11);
+                    String valutaKod = new String(' ', 4);
+                    double valutaKurs = 0.00;
+                    String fakturaTyp = new String(' ', 12); // fakturatyp F = vanlig faktura, K = kreditfaktura 
+                    Double totalKostnad = new Double();
+                    String projektHuvud = new String(' ', 10);
+                    Double moms = new Double();
+
+                    // Hämtar data ur databas och lagrar i de lokala variablerna
+                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_GIVEN_NUMBER, ref lopNummer);
+                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_SUPPLIER_NUMBER, ref levNummer, 16);
+                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_INVOICE_NUMBER, ref fakturaNummer, 16);
+
+                    // Ger fakturor utan nummer ett eget fakturanummer
+                    if (fakturaNummer == "" || fakturaNummer == null)
+                    {
+                        fakturaNummer = "Faktura-" + antalFakturorUtanNr;
+                        antalFakturorUtanNr++;
+                    }
+
+                    // Hämtar data ur databas och lagrar i de lokala variablerna
+                    error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_INVOICE_DATE, ref tmpDatum);
+                    error = AdkNetWrapper.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
+                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_CODE, ref valutaKod, 4);
+                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_RATE, ref valutaKurs);
+                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_TYPE_OF_INVOICE, ref fakturaTyp, 12);
+                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_PROJECT, ref projektHuvud, 10);
+                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_VAT_AMOUNT, ref moms);
+
+                    if (lopNummer == 23)
+                    {
+                        Console.WriteLine("hej");
+                    }
+
+                    // Lägger till data i instansen och lFakturaHuvud
+                    lFakturaHuvud.LopNummer = "LF-" +  lopNummer;
+                    lFakturaHuvud.LevNummer = levNummer;
+                    lFakturaHuvud.FakturaNummer = fakturaNummer;
+                    lFakturaHuvud.FakturaDatum = fakturaDatum;
+                    lFakturaHuvud.ValutaKod = valutaKod;
+                    lFakturaHuvud.ValutaKurs = decimal.Parse(valutaKurs.ToString());
+                    lFakturaHuvud.FakturaTyp = fakturaTyp;
+                    lFakturaHuvud.ProjektHuvud = projektHuvud;
+                    lFakturaHuvud.Moms = moms;
+
+                    // Anrop till metod som hämtar alla leverantörsfakturarader i den aktuella fakturan
+                    GetLevFakturaRad(lFakturaHuvud, pData);
+
+                    if (lFakturaHuvud.FakturaTyp.ToLower() != "k")
+                    {
+                        lFakturaHuvud.TotalKostnad *= -1;
+
+                        foreach (var rad in lFakturaHuvud.fakturaRader)
+                        {
+                            rad.TotalKostnad *= -1;
+                        }
+
+                    }
+
+                    exp++;
+                    Console.WriteLine(exp);
+
+                    // Anropr till metod som lägger in data i databasen
+                    sendData.LevFakturaTillDatabas(lFakturaHuvud);
+
+                    // Sätter vidare pekaren på nästa instans
+                    error = AdkNetWrapper.Api.AdkNext(pData);
                 }
 
-                // Hämtar data ur databas och lagrar i de lokala variablerna
-                error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_INVOICE_DATE, ref tmpDatum);
-                error = AdkNetWrapper.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_CODE, ref valutaKod, 4);
-                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_RATE, ref valutaKurs);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_TYPE_OF_INVOICE, ref fakturaTyp, 12);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_PROJECT, ref projektHuvud, 10);
-                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_VAT_AMOUNT, ref moms);
-
-                // Lägger till data i instansen och lFakturaHuvud
-                lFakturaHuvud.LopNummer = lopNummer;
-                lFakturaHuvud.LevNummer = levNummer;
-                fakturaNummer = "LF-" + fakturaNummer;
-                lFakturaHuvud.FakturaNummer = fakturaNummer;
-                lFakturaHuvud.FakturaDatum = fakturaDatum;
-                lFakturaHuvud.ValutaKod = valutaKod;
-                lFakturaHuvud.ValutaKurs = decimal.Parse(valutaKurs.ToString());
-                lFakturaHuvud.FakturaTyp = fakturaTyp;
-                lFakturaHuvud.ProjektHuvud = projektHuvud;
-                lFakturaHuvud.Moms = moms;
-                        
-                // Anrop till metod som hämtar alla leverantörsfakturarader i den aktuella fakturan
-                GetLevFakturaRad(lFakturaHuvud, pData);
-
-                // Anropr till metod som lägger in data i databasen
-                sendData.LevFakturaTillDatabas(lFakturaHuvud);
-
-                // Sätter vidare pekaren på nästa instans
-                error = AdkNetWrapper.Api.AdkNext(pData);
+                
 
             }
 
