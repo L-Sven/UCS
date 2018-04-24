@@ -19,5 +19,6 @@ namespace UCSTest
         public double TotalKostnad { get; set; }
         public string ProjektHuvud { get; set; } = "";
         public double Moms { get; set; }
+        public string LevNamn { get; internal set; }
     }
 }

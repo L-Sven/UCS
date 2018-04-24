@@ -22,6 +22,11 @@ namespace UCSTest
         public double Moms { get; set; }
         public string KommentarsFält { get; set; }
 
+        public string KundNamn { get; set; } = "";
+        public string KundReferens { get; set; } = "";
+        public string KundStad { get; set; } = "";
+        public string KundLand { get; set; } = "";
+
         // public string FörfalloDatum { get; set; } = "";
         // public string SlutDatum { get; set; } = "";
 

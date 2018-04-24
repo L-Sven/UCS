@@ -6,6 +6,8 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using NLog;
 using Adk = AdkNetWrapper;
 
 namespace UCSTest
@@ -17,6 +19,7 @@ namespace UCSTest
         
         Adk.Api.ADKERROR error;
         readonly SkickaData sendData = new SkickaData();
+        Logger logger = LogManager.GetCurrentClassLogger();
 
         // Sökvägar för visma administration
         private string ftg = Program.ftg;
@@ -27,18 +30,24 @@ namespace UCSTest
         //String ftg = @"C:\Documents and Settings\All Users\Application Data\SPCS\SPCS Administration\Företag\Ovnbol2000";
 
         int pData;
+        private int kData;
+        private int lData;
         int antalFakturorUtanNr = 1; // Används för att ge fakturor utan nummer ett fakturanummer
         int levRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
         int kundRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
         int avtalsRadID = 0; // Används för att skapa individuella identiteter för avtalsraderna i fatabasen
+        private List<KundFakturaHuvud> kundFakturaList = new List<KundFakturaHuvud>();
+        private List<Kund> kundList = new List<Kund>();
+        private List<Leverantör> levList = new List<Leverantör>();
+        private List<LevFakturaHuvud> levFakturaList = new List<LevFakturaHuvud>();
 
         public VismaData()
         {
-            GetKunder();
-            Console.WriteLine("Kunder klar!");
+            //GetKunder();
+            //Console.WriteLine("Kunder klar!");
 
-            GetLeverantörer();
-            Console.WriteLine("Leverantörer klar!");
+            //GetLeverantörer();
+            //Console.WriteLine("Leverantörer klar!");
 
             GetResultatEnhet();
             Console.WriteLine("Resultatenhet klar!");
@@ -105,8 +114,8 @@ namespace UCSTest
                 String resultatEnhetNamn = new String(' ', 20);
 
                 
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_PROFIT_CENTRE_CODE, ref resultatEnhetID, 6);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_PROFIT_CENTRE_NAME, ref resultatEnhetNamn, 20);
+                AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_PROFIT_CENTRE_CODE, ref resultatEnhetID, 6);
+                AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_PROFIT_CENTRE_NAME, ref resultatEnhetNamn, 20);
 
                 r.resultatEnhetID = resultatEnhetID;
                 r.resultatEnhetNamn = resultatEnhetNamn;
@@ -157,8 +166,8 @@ namespace UCSTest
             {
                 Avtal a = new Avtal();
 
-                Double DokumentNummer = new Double();
-                int Date = new int();
+                Double dokumentNummer = new Double();
+                int date = new int();
                 int endDate = new int();
                 String avtalsDatum = new String(' ', 16);
                 String kundNummer = new String(' ', 16);
@@ -168,107 +177,104 @@ namespace UCSTest
                 String avtalsDatumSlut = new String(' ', 16);
 
                 Double intervall = new Double();
-                int finnsAvtal = new int();    //isActive i Avtal.cs
                 int periodTemp = new int();
                 String periodStart = new string(' ', 8);
                 String periodEnd = new String(' ', 8);
 
 
-                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DOCUMENT_NUMBER, ref DokumentNummer);
-                error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DOCUMENT_DATE1, ref Date);
-                error = AdkNetWrapper.Api.AdkLongToDate(Date, ref avtalsDatum, 16);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_CUSTOMER_NUMBER, ref kundNummer, 16);
-                error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_START, ref Date);
-                error = AdkNetWrapper.Api.AdkLongToDate(Date, ref startDatum, 16);
-                error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_END, ref endDate);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_LOCAL_REMARK, ref kommentarsFält, 120);
+                AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DOCUMENT_NUMBER, ref dokumentNummer);
+                AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DOCUMENT_DATE1, ref date);
+                AdkNetWrapper.Api.AdkLongToDate(date, ref avtalsDatum, 16);
+                AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_CUSTOMER_NUMBER, ref kundNummer, 16);
+                AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_START, ref date);
+                AdkNetWrapper.Api.AdkLongToDate(date, ref startDatum, 16);
+                AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_END, ref endDate);
+                AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_LOCAL_REMARK, ref kommentarsFält, 120);
 
-                error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_PERIOD_START, ref periodTemp);
-                error = AdkNetWrapper.Api.AdkLongToDate(periodTemp, ref periodStart, 16);
-                error = AdkNetWrapper.Api.AdkGetBool(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_PERIOD, ref finnsAvtal);
-                error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_PERIOD_END, ref periodTemp);
-                error = AdkNetWrapper.Api.AdkLongToDate(periodTemp, ref periodEnd, 16);
-                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_INTERVAL, ref intervall);
-                error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_END, ref Date);
-                if (Date == 0)
+                AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_PERIOD_START, ref periodTemp);
+                AdkNetWrapper.Api.AdkLongToDate(periodTemp, ref periodStart, 16);
+                AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_PERIOD_END, ref periodTemp);
+                AdkNetWrapper.Api.AdkLongToDate(periodTemp, ref periodEnd, 16);
+                AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_INTERVAL, ref intervall);
+                AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_END, ref date);
+                if (date == 0)
                 {
                     avtalsDatumSlut = "1111-11-11";
                 }
                 else
                 {
-                    error = AdkNetWrapper.Api.AdkLongToDate(Date, ref avtalsDatumSlut, 16);
+                    AdkNetWrapper.Api.AdkLongToDate(date, ref avtalsDatumSlut, 16);
                 }
-                
-                
-                //if (endDate == 0)
-                //{
-                //    slutDatum = "NaN";
-                //}
-                //else
-                //{
-                //    error = AdkNetWrapper.Api.AdkLongToDate(endDate, ref slutDatum, 16);
-                //}
 
-                String text = new String(' ', 10);
-
-                //TODO: Lägg till en try catch ifall kommentarsfältet inte är ifylld korrekt
-                if (kommentarsFält != "")
+                String datum = new String(' ', 10);
+                string errorText;
+                if (kommentarsFält != "" /*|| avtalsDatumSlut == ""*/)
                 {
                     string[] data = kommentarsFält.Split('#');
 
-                    //Vi avlägsnar de sista 2 tecken från strängen samt att vi avlägsnar mellanslaget i början av strängen.
-                    text = data[1].Remove(data[1].Length - 2).TrimStart(' ');
+                    //Vi tar arrayens första element, trimmar bort mellanslaget i början samt tar de första tio tecken.
+                    //För detta måste formatet vara yyyy-mm-dd.
+                    //För uppsägningstid och förlängningstiden så måste tar vi bort mellanslaget från båda samt tar bara et tecken.
+                    datum = data[1].TrimStart(' ').Substring(0, 10);
+                    int uppsägningstid = int.Parse(data[2].TrimStart(' ').Substring(0, 1));
+                    int förlängningstid = int.Parse(data[3].TrimStart(' ').Substring(0, 1));
                     DateTime temp;
-                    if(DateTime.TryParse(text, out temp))
+                    if (DateTime.TryParse(datum, out temp))
                     {
-                        a.KommenteratSlutDatum = text;
+                        a.KommenteratSlutDatum = datum;
                     }
                     else
                     {
-                        Console.WriteLine("Avtal med dokumentnummer {0} har inget giltigt slutdatum", DokumentNummer);
+                        //errorText = "Avtal med dokumentnummer " + dokumentNummer +  " har inget giltigt slutdatum";
+                        //ErrorMessageBox(errorText);
                     }
 
                     try
                     {
-                        if (int.Parse(data[2]) > 0 && int.Parse(data[2]) <= 12)
+                        //if (int.Parse(data[2]) > 0 && int.Parse(data[2]) <= 12)
+                        if(uppsägningstid > 0 && uppsägningstid <= 12)
                         {
-                            a.Uppsägningstid = int.Parse(data[2]);
+                            a.Uppsägningstid = uppsägningstid;
+                            //a.Uppsägningstid = int.Parse(data[2]);
                         }
                         else
                         {
-                            Console.WriteLine("Avtal med dokumentnummer {0} har ingen giltig uppsägningstid", DokumentNummer);
+                            //errorText = "Avtal med dokumentnummer " + dokumentNummer + " har ingen giltig uppsägningstid";
+                            //ErrorMessageBox(errorText);
                         }
 
-                        if (int.Parse(data[3]) > 0 && int.Parse(data[3]) <= 12)
+                        //if (int.Parse(data[3]) > 0 && int.Parse(data[3]) <= 12)
+                        if(förlängningstid > 0 && förlängningstid <= 12)
                         {
-                            a.Förlängningstid = int.Parse(data[3]);
+                            a.Förlängningstid = förlängningstid;
+                            //a.Förlängningstid = int.Parse(data[3]);
                         }
                         else
                         {
-                            Console.WriteLine("Avtal med dokumentnummer {0} har ingen giltig förlängningstid", DokumentNummer);
+                            //errorText = "Avtal med dokumentnummer " + dokumentNummer + " har ingen giltig förlängningstid";
+                            //ErrorMessageBox(errorText);
                         }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Ogiltig uppsägningstid eller förlängningstid. Mata in rätt värde för fan.");
+                        ErrorMessageBox(ex);
                     }
                     
                 }
                 else
                 {
-                    //a.KommenteratSlutDatum = "1111-11-11";
-                    Console.WriteLine("Avtal med dokumentnummer {0} har ingen kommentar", DokumentNummer);
+                    //errorText = "Avtal med dokumentnummer " + dokumentNummer + " har ingen kommentar";
+                    //ErrorMessageBox(errorText);
                 }
                  
                 
                 
-                a.DokumentNummer = DokumentNummer;
+                a.DokumentNummer = dokumentNummer;
                 a.AvtalsDatum = avtalsDatum;
                 a.AvtalsDatumSlut = avtalsDatumSlut;
                 a.StartDatum = startDatum;
                 a.KundNummer = kundNummer;
-
-                a.IsActive = finnsAvtal;
+                
                 a.FakturaIntervall = intervall;
                 a.PeriodStart = periodStart;
                 a.PeriodEnd = periodEnd;
@@ -313,8 +319,8 @@ namespace UCSTest
                     String artikelNummer = new String(' ', 16);
                     Double totalKostnad = new Double();
 
-                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER, ref artikelNummer, 16);
-                    error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
+                    AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER, ref artikelNummer, 16);
+                    AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
 
                     enAvtalsRad.ArtikelNummer = artikelNummer;
                     enAvtalsRad.RadId = avtalsRadID;
@@ -363,8 +369,8 @@ namespace UCSTest
                 String aGruppKod = new String(' ', 6);
                 String aGruppBenämning = new String(' ', 25);
 
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_ARTICLE_GROUP_CODE, ref aGruppKod, 6);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_ARTICLE_GROUP_TEXT, ref aGruppBenämning, 25);
+                AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_ARTICLE_GROUP_CODE, ref aGruppKod, 6);
+                AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_ARTICLE_GROUP_TEXT, ref aGruppBenämning, 25);
 
                 aGrupp.ArtikelGruppKod = aGruppKod;
                 aGrupp.Benämning = aGruppBenämning;
@@ -427,13 +433,13 @@ namespace UCSTest
                 Double ovrigKostnad = new Double();
 
                 // Hämtar data från databasen och lagrar i de lokala variablerna
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_NUMBER, ref artikelNummer, 16);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_NAME, ref benämning, 30);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_GROUP, ref artikelGrupp, 6);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_UNIT_CODE, ref enhetsKod, 4);
-                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_ARTICLE_ESTIMATED_PURCHASE_PRICE, ref inköpsPris);
-                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_ARTICLE_ESTIMATED_CARGO_FEE, ref frakt);
-                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_ARTICLE_ESTIMATED_OTHER, ref ovrigKostnad);
+                AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_NUMBER, ref artikelNummer, 16);
+                AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_NAME, ref benämning, 30);
+                AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_GROUP, ref artikelGrupp, 6);
+                AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_UNIT_CODE, ref enhetsKod, 4);
+                AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_ARTICLE_ESTIMATED_PURCHASE_PRICE, ref inköpsPris);
+                AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_ARTICLE_ESTIMATED_CARGO_FEE, ref frakt);
+                AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_ARTICLE_ESTIMATED_OTHER, ref ovrigKostnad);
 
                 // Lägger till data den aktuella artikelinstansen
                 artikel.ArtikelNummer = artikelNummer;
@@ -513,14 +519,16 @@ namespace UCSTest
                     String valutaKod = new String(' ', 4);
                     double valutaKurs = 0.00;
                     String fakturaTyp = new String(' ', 12); // fakturatyp F = vanlig faktura, K = kreditfaktura 
-                    Double totalKostnad = new Double();
                     String projektHuvud = new String(' ', 10);
                     Double moms = new Double();
 
+                    String levNamn = new String(' ', 50);
+
+
                     // Hämtar data ur databas och lagrar i de lokala variablerna
-                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_GIVEN_NUMBER, ref lopNummer);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_SUPPLIER_NUMBER, ref levNummer, 16);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_INVOICE_NUMBER, ref fakturaNummer, 16);
+                    AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_GIVEN_NUMBER, ref lopNummer);
+                    AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_SUPPLIER_NUMBER, ref levNummer, 16);
+                    AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_INVOICE_NUMBER, ref fakturaNummer, 16);
 
                     // Ger fakturor utan nummer ett eget fakturanummer
                     if (fakturaNummer == "" || fakturaNummer == null)
@@ -530,15 +538,16 @@ namespace UCSTest
                     }
 
                     // Hämtar data ur databas och lagrar i de lokala variablerna
-                    error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_INVOICE_DATE, ref tmpDatum);
-                    error = AdkNetWrapper.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_CODE, ref valutaKod, 4);
-                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_RATE, ref valutaKurs);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_TYPE_OF_INVOICE, ref fakturaTyp, 12);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_PROJECT, ref projektHuvud, 10);
-                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_VAT_AMOUNT, ref moms);
+                    AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_INVOICE_DATE, ref tmpDatum);
+                    AdkNetWrapper.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
+                    AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_CODE, ref valutaKod, 4);
+                    AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_RATE, ref valutaKurs);
+                    AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_TYPE_OF_INVOICE, ref fakturaTyp, 12);
+                    AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_PROJECT, ref projektHuvud, 10);
+                    AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_VAT_AMOUNT, ref moms);
 
-                   
+                    Adk.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_SUPPLIER_NAME, ref levNamn, 50);
+
 
                     // Lägger till data i instansen och lFakturaHuvud
                     lFakturaHuvud.LopNummer = "LF-" +  lopNummer;
@@ -550,6 +559,7 @@ namespace UCSTest
                     lFakturaHuvud.FakturaTyp = fakturaTyp;
                     lFakturaHuvud.ProjektHuvud = projektHuvud;
                     lFakturaHuvud.Moms = moms;
+                    lFakturaHuvud.LevNamn = levNamn;
 
                     // Anrop till metod som hämtar alla leverantörsfakturarader i den aktuella fakturan
                     GetLevFakturaRad(lFakturaHuvud, pData);
@@ -580,8 +590,48 @@ namespace UCSTest
 
             // Stänger företaget
             AdkNetWrapper.Api.AdkClose();
-
+            //GetLeverantörHuvudData(levFakturaList);
             
+        }
+
+        private void GetLeverantörHuvudData(List<LevFakturaHuvud> list)
+        {
+            foreach (var el in list)
+            {
+                string levNr = el.LevNummer;
+
+                lData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_SUPPLIER);
+
+                Adk.Api.AdkSetStr(lData, Adk.Api.ADK_SUPPLIER_NUMBER, ref levNr);
+                error = Adk.Api.AdkFind2(lData, 0);
+
+                if (error.lRc == Adk.Api.ADKE_OK && levList.Any(x => x.LevNummer != levNr) || levList.Count == 0)
+                {
+                    Leverantör nyLev = new Leverantör();
+                    String levNamn = new String(' ', 50);
+                    String levLand = new String(' ', 24);
+                    String levStad = new String(' ', 24);
+                    String levReferens = new String(' ', 50);
+
+
+
+                    AdkNetWrapper.Api.AdkGetStr(lData, AdkNetWrapper.Api.ADK_SUPPLIER_NUMBER, ref levNr, 16);
+                    AdkNetWrapper.Api.AdkGetStr(lData, AdkNetWrapper.Api.ADK_SUPPLIER_NAME, ref levNamn, 50);
+                    AdkNetWrapper.Api.AdkGetStr(lData, AdkNetWrapper.Api.ADK_SUPPLIER_COUNTRY, ref levLand, 24);
+                    AdkNetWrapper.Api.AdkGetStr(lData, AdkNetWrapper.Api.ADK_SUPPLIER_CITY, ref levStad, 24);
+                    AdkNetWrapper.Api.AdkGetStr(lData, AdkNetWrapper.Api.ADK_SUPPLIER_REFERENCE, ref levReferens, 50);
+
+                    nyLev.LevNummer = levNr;
+                    nyLev.LevNamn = levNamn;
+                    nyLev.LevLand = levLand;
+                    nyLev.LevStad = levStad;
+                    nyLev.LevReferens = levReferens;
+
+                    levList.Add(nyLev);
+                    //sendData.LeverantörTillDatabas(nyLev);
+                }
+                sendData.LevFakturaTillDatabas(el);
+            }
         }
 
         // Metod som hämtar rader från en leverantörsfaktura
@@ -618,7 +668,7 @@ namespace UCSTest
                     Double totalKostnad = new Double();
                     String resultatEnhet = new string(' ', 6);
 
-                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_TEXT, ref information, 60);
+                    AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_TEXT, ref information, 60);
 
                     // om raden presenterar en totalkostnad sparas inte raden utan vi använder värdet för att 
                     // ge leverantörsfakturahuvudet en totalkostnad i svenska kronor 
@@ -633,12 +683,12 @@ namespace UCSTest
                     else
                     {
                     // Hämtar data ur databas och lagrar i de lokala variablerna
-                    error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_QUANTITY1, ref kvantitet);
-                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_SUPPLIER_ARTICLE_NUMBER, ref levArtikelNummer, 16);
-                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER, ref artikelNummer, 16);
-                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROJECT, ref projektRad, 10);
-                    error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
-                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROFIT_CENTRE, ref resultatEnhet, 6);
+                    AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_QUANTITY1, ref kvantitet);
+                    AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_SUPPLIER_ARTICLE_NUMBER, ref levArtikelNummer, 16);
+                    AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER, ref artikelNummer, 16);
+                    AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROJECT, ref projektRad, 10);
+                    AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
+                    AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROFIT_CENTRE, ref resultatEnhet, 6);
 
 
                     // Lägger till data i fakturaradinstansen
@@ -654,8 +704,6 @@ namespace UCSTest
 
                     lFaktura.fakturaRader.Add(enFakturaRad);
                     }
-
-
 
                 }
 
@@ -704,11 +752,11 @@ namespace UCSTest
                 String kundStad = new String(' ', 24);
                 String kundReferens = new String(' ', 50);
 
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CUSTOMER_NUMBER, ref kundNr, 16);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CUSTOMER_NAME, ref kundNamn, 50);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CUSTOMER_COUNTRY, ref kundLand, 24);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CUSTOMER_CITY, ref kundStad, 24);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CUSTOMER_REFERENCE, ref kundReferens, 50);
+                AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CUSTOMER_NUMBER, ref kundNr, 16);
+                AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CUSTOMER_NAME, ref kundNamn, 50);
+                AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CUSTOMER_COUNTRY, ref kundLand, 24);
+                AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CUSTOMER_CITY, ref kundStad, 24);
+                AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CUSTOMER_REFERENCE, ref kundReferens, 50);
 
                 nyKund.KundNummer = kundNr;
                 nyKund.KundNamn = kundNamn;
@@ -716,7 +764,7 @@ namespace UCSTest
                 nyKund.KundStad = kundStad;
                 nyKund.KundReferens = kundReferens;
 
-                sendData.KundTillDatabas(nyKund);
+                //sendData.KundTillDatabas(nyKund);
 
                 // Sätter vidare pekaren på nästa instans
                 error = AdkNetWrapper.Api.AdkNext(pData);
@@ -769,11 +817,11 @@ namespace UCSTest
                 String levStad = new String(' ', 24);
                 String levReferens = new String(' ', 50);
 
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUPPLIER_NUMBER, ref levNr, 16);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUPPLIER_NAME, ref levNamn, 50);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUPPLIER_COUNTRY, ref levLand, 24);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUPPLIER_CITY, ref levStad, 24);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUPPLIER_REFERENCE, ref levReferens, 50);
+                AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUPPLIER_NUMBER, ref levNr, 16);
+                AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUPPLIER_NAME, ref levNamn, 50);
+                AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUPPLIER_COUNTRY, ref levLand, 24);
+                AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUPPLIER_CITY, ref levStad, 24);
+                AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUPPLIER_REFERENCE, ref levReferens, 50);
 
                 nyLev.LevNummer = levNr;
                 nyLev.LevNamn = levNamn;
@@ -781,7 +829,7 @@ namespace UCSTest
                 nyLev.LevStad = levStad;
                 nyLev.LevReferens = levReferens;
 
-                sendData.LeverantörTillDatabas(nyLev);
+                //sendData.LeverantörTillDatabas(nyLev);
 
                 // Sätter vidare pekaren på nästa instans
                 error = AdkNetWrapper.Api.AdkNext(pData);
@@ -836,8 +884,8 @@ namespace UCSTest
                 int validFaktura = new int();
                 int makulerad = new int();
 
-                error = AdkNetWrapper.Api.AdkGetBool(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NOT_DONE, ref validFaktura);
-                error = AdkNetWrapper.Api.AdkGetBool(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NOT_DONE, ref makulerad);
+                AdkNetWrapper.Api.AdkGetBool(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NOT_DONE, ref validFaktura);
+                AdkNetWrapper.Api.AdkGetBool(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NOT_DONE, ref makulerad);
 
                 // Om det är en ofärdig eller makulerad faktura tar vi inte med den!
                 if (validFaktura == 1 || makulerad == 1)
@@ -864,36 +912,35 @@ namespace UCSTest
                     Double moms = new Double();
                     String kommentarsFält = new String(' ', 120);
 
+                    String kundNamn = new String(' ', 50);
+                    String kundLand = new String(' ', 24);
+                    String kundStad = new String(' ', 24);
+                    String kundReferens = new String(' ', 50);
+
 
                     // Hämtar data ur databas och lagrar i de lokala variablerna
 
-                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NUMBER, ref fakturaNr);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_NUMBER, ref kundNr, 16);
-                    error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_DATE1, ref tmpDatum);
-                    error = AdkNetWrapper.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_TYPE_OF_INVOICE, ref fakturaTyp, 20);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_OUR_REFERENCE_NAME, ref säljare, 24);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CURRENCY_CODE, ref valutaKod, 4);
-                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CARGO_AMOUNT, ref cargoAmount);
-                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DISPATCH_FEE, ref dispatchFee);
-                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_VAT_AMOUNT, ref moms);
-                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_TOTAL_AMOUNT, ref totalKostnad);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kommentarsFält, 120);
+                    AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NUMBER, ref fakturaNr);
+                    AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_NUMBER, ref kundNr, 16);
+                    AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_DATE1, ref tmpDatum);
+                    AdkNetWrapper.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
+                    AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_TYPE_OF_INVOICE, ref fakturaTyp, 20);
+                    AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_OUR_REFERENCE_NAME, ref säljare, 24);
+                    AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CURRENCY_CODE, ref valutaKod, 4);
+                    AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CARGO_AMOUNT, ref cargoAmount);
+                    AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DISPATCH_FEE, ref dispatchFee);
+                    AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_VAT_AMOUNT, ref moms);
+                    AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_TOTAL_AMOUNT, ref totalKostnad);
+                    AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kommentarsFält, 120);
 
-                    /* Följande konverterare finns i kodexemplet om man vill dela upp data över månader/år
-                    DateTime FktDatumDateTime = Convert.ToDateTime(FktDatum);
-                    if (Convert.ToInt32(FktDatumDateTime.Month) < 10)
-                    {
-                        FakturaHuvudObj.ArManad = FktDatumDateTime.Year + "0" + FktDatumDateTime.Month + "";
-                    }
-                    else
-                    {
-                        FakturaHuvudObj.ArManad = FktDatumDateTime.Year + "" + FktDatumDateTime.Month + "";
-                    }
-                    */
+                    AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_NAME, ref kundNamn, 50);
+                    AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_COUNTRY, ref kundLand, 24);
+                    AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CITY, ref kundStad, 24);
+                    AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kundReferens, 50);
+
+
 
                     // Lägger info i kundfakturan
-
 
                     kFaktura.TotalKostnad = totalKostnad;
                     kFaktura.FakturaDatum = fakturaDatum;
@@ -909,6 +956,10 @@ namespace UCSTest
                     kFaktura.Dispatch_fee = dispatchFee;
                     kFaktura.Moms = moms;
                     kFaktura.KommentarsFält = kommentarsFält;
+                    kFaktura.KundNamn = kundNamn;
+                    kFaktura.KundLand = kundLand;
+                    kFaktura.KundStad = kundStad;
+                    kFaktura.KundReferens = kundReferens;
 
                     // Hämtar alla fakturarader på kundfakturan
                     GetKundFakturaRad(kFaktura, pData);
@@ -933,16 +984,66 @@ namespace UCSTest
 
 
                     sendData.KundFakturaTillDatabas(kFaktura);
-
+                    //kundFakturaList.Add(kFaktura);
                 } // Slut på else
 
                 // Sätter vidare pekaren på nästa instans
                 error = AdkNetWrapper.Api.AdkNext(pData);
             }
-
             // Stänger företaget
             AdkNetWrapper.Api.AdkClose();
+            //GetKundHuvudData(kundFakturaList);
 
+        }
+
+        private void GetKundHuvudData(List<KundFakturaHuvud> list)
+        {
+            foreach (var el in list)
+            {
+                string kundNr = el.KundNummer;
+
+                kData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_CUSTOMER);
+
+                Adk.Api.AdkSetStr(kData, Adk.Api.ADK_CUSTOMER_NUMBER, ref kundNr);
+                Adk.Api.AdkSetSortOrder(kData, Adk.Api.ADK_SORT_ORDER.eCustomerNr);
+                error = Adk.Api.AdkFind(kData);
+
+                
+                if ((error.lRc == Adk.Api.ADKE_OK && kundList.Any(x=>x.KundNummer != kundNr)) || (kundList.Count == 0 && error.lRc == Adk.Api.ADKE_OK))
+                {
+                    Kund nyKund = new Kund();
+                    //using (Kund nyKund = new Kund())
+                    {
+                        String kundNamn = new String(' ', 50);
+                        String kundLand = new String(' ', 24);
+                        String kundStad = new String(' ', 24);
+                        String kundReferens = new String(' ', 50);
+
+                        error = AdkNetWrapper.Api.AdkGetStr(kData, AdkNetWrapper.Api.ADK_CUSTOMER_NAME, ref kundNamn, 50);
+                        error = AdkNetWrapper.Api.AdkGetStr(kData, AdkNetWrapper.Api.ADK_CUSTOMER_COUNTRY, ref kundLand,
+                            24);
+                        error = AdkNetWrapper.Api.AdkGetStr(kData, AdkNetWrapper.Api.ADK_CUSTOMER_CITY, ref kundStad, 24);
+                        error = AdkNetWrapper.Api.AdkGetStr(kData, AdkNetWrapper.Api.ADK_CUSTOMER_REFERENCE,
+                            ref kundReferens, 50);
+
+                        nyKund.KundNummer = kundNr;
+                        nyKund.KundNamn = kundNamn;
+                        nyKund.KundLand = kundLand;
+                        nyKund.KundStad = kundStad;
+                        nyKund.KundReferens = kundReferens;
+
+                        kundList.Add(nyKund);
+                        //sendData.KundTillDatabas(nyKund);
+                    }
+                }
+                sendData.KundFakturaTillDatabas(el);
+
+                //if (kundList.Any(x => x.KundNummer != kundNr) || kundList.Count == 0)
+                //if (true)
+                //{
+
+                //    }
+            }
         }
 
         // Metod som hämtar information om raderna i fakturorna 
@@ -966,7 +1067,7 @@ namespace UCSTest
                 if (error.lRc == AdkNetWrapper.Api.ADKE_OK)
                 {
                     String artikelNummer = new String(' ', 16);
-                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER, ref artikelNummer, 16);
+                    AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER, ref artikelNummer, 16);
                     enFakturaRad.ArtikelNummer = artikelNummer;
 
                     //Fakturarader som är avtalsperioder tas inte med, dess data är för sammanställningen irrelevant?
@@ -977,31 +1078,32 @@ namespace UCSTest
                         enFakturaRad.KundRadID = kundRadID;
 
                         Double kvantitet = new Double();
-                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_QUANTITY1, ref kvantitet);
-                        enFakturaRad.LevAntal = kvantitet;
-
                         Double totalKostnad = new Double();
-                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
-                        enFakturaRad.TotalKostnad = totalKostnad;
-
-                        String PROJECT = new String(' ', 6);
-                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROJECT, ref PROJECT, 6);
-                        enFakturaRad.Projekt = PROJECT;
-
+                        String projekt = new String(' ', 6);
                         String benämning = new string(' ', 60);
-                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_TEXT, ref benämning, 60);
+                        Double täckningsgrad = new Double();
+                        Double täckningsBidrag = new double();
+                        String resultatEnhet = new String(' ', 6);
+
+                        AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_QUANTITY1, ref kvantitet);
+                        enFakturaRad.LevAntal = kvantitet;
+                        
+                        AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
+                        enFakturaRad.TotalKostnad = totalKostnad;
+                        
+                        AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROJECT, ref projekt, 6);
+                        enFakturaRad.Projekt = projekt;
+
+                        AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_TEXT, ref benämning, 60);
                         enFakturaRad.Benämning = benämning;
 
-                        Double täckningsgrad = new Double();
-                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_CONTRIBUTION_DEGREE, ref täckningsgrad);
+                        AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_CONTRIBUTION_DEGREE, ref täckningsgrad);
                         enFakturaRad.TäckningsGrad = täckningsgrad;
 
-                        Double täckningsBidrag = new double();
-                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_CONTRIBUTION_MARGIN, ref täckningsBidrag);
+                        AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_CONTRIBUTION_MARGIN, ref täckningsBidrag);
                         enFakturaRad.TäckningsBidrag = täckningsBidrag;
 
-                        String resultatEnhet = new String(' ', 6);
-                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROFIT_CENTRE, ref resultatEnhet, 6);
+                        AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROFIT_CENTRE, ref resultatEnhet, 6);
                         enFakturaRad.ResultatEnhet = resultatEnhet;
 
                         // Om krediterade faktura
@@ -1018,16 +1120,14 @@ namespace UCSTest
 
                     }
 
-                }
-
-
-                
+                } 
 
             }
+        }
 
-
-
-
+        private void ErrorMessageBox(Exception msg)
+        {
+            logger.Error(msg, "Error discovered");
         }
     }
 }
