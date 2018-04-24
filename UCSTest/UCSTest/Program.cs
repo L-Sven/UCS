@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Adk = AdkNetWrapper;
 using System.Windows;
-using System.Windows.Forms;
+using System.Configuration;
 
 namespace UCSTest
 {
     class Program
     {
+
         public static String ftg = String.Empty;
         public static String sys = string.Empty;
 
@@ -19,12 +20,18 @@ namespace UCSTest
         {
 
 
-            ChooseVismaFilePath();
+
+
+            ftg = ConfigurationManager.AppSettings["ftgPath"];
+            sys = ConfigurationManager.AppSettings["sysPath"];
+
+            //ChooseVismaFilePath();
+            //VismaTidData vismaTid = new VismaTidData(ftg, sys);
             VismaData go = new VismaData();
             // C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\fakturaDB.mdf
         }
 
-        private static void ChooseVismaFilePath()
+       /* private static void ChooseVismaFilePath()
         {
             while (ftg.Length == 0 || sys.Length == 0)
             {
@@ -51,7 +58,7 @@ namespace UCSTest
 
 
 
-        }
+        } */
 
     }
 }

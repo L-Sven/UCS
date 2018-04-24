@@ -32,7 +32,6 @@ namespace UCSTest
             cmdAddAgreement.Parameters.Add(new SqlParameter("@startDatum", a.StartDatum));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@tempSlutDatum", a.KommenteratSlutDatum));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@kundNummer", a.KundNummer));
-            cmdAddAgreement.Parameters.Add(new SqlParameter("@isActive", a.IsActive));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@fakturaIntervall", decimal.Parse(a.FakturaIntervall.ToString())));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@periodStart", a.PeriodStart));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@periodEnd", a.PeriodEnd));
@@ -127,6 +126,7 @@ namespace UCSTest
         // Metod som tar emot en kundfaktura och lägger till den i databasen
         public void KundFakturaTillDatabas(KundFakturaHuvud kFaktura)
         {
+            KundTillDatabas(kFaktura);
             // Pekar Sql-connection mot en stored procedure för kundfakturor
             SqlCommand cmdAddInvoice = new SqlCommand("sp_add_customerInvoice", sqlCon);
 
@@ -186,6 +186,7 @@ namespace UCSTest
         // Metod som tar emot en leverantörsfaktura och lägger till den i databasen
         public void LevFakturaTillDatabas(LevFakturaHuvud lFaktura)
         {
+            LeverantörTillDatabas(lFaktura);
             // Pekar Sql-connection mot en stored procedure för leverantörsfakturor
             SqlCommand cmdAddInvoice = new SqlCommand("sp_add_levInvoice", sqlCon);
 
@@ -237,7 +238,7 @@ namespace UCSTest
             }
         }
 
-        public void KundTillDatabas(Kund ku)
+        public void KundTillDatabas(KundFakturaHuvud ku)
         {
             // Pekar Sql-connection mot en stored procedure för artiklar
             SqlCommand cmdAddCustomer = new SqlCommand("sp_add_customer", sqlCon);
@@ -263,7 +264,7 @@ namespace UCSTest
             sqlCon.Close();
         }
 
-        public void LeverantörTillDatabas(Leverantör lev)
+        public void LeverantörTillDatabas(LevFakturaHuvud lev)
         {
             // Pekar Sql-connection mot en stored procedure för artiklar
             SqlCommand cmdAddSupplier = new SqlCommand("sp_add_supplier", sqlCon);
@@ -278,9 +279,6 @@ namespace UCSTest
 
             cmdAddSupplier.Parameters.Add(new SqlParameter("@levNummer", int.Parse(lev.LevNummer)));
             cmdAddSupplier.Parameters.Add(new SqlParameter("@levNamn", lev.LevNamn));
-            cmdAddSupplier.Parameters.Add(new SqlParameter("@levStad", lev.LevStad));
-            cmdAddSupplier.Parameters.Add(new SqlParameter("@levLand", lev.LevLand));
-            cmdAddSupplier.Parameters.Add(new SqlParameter("@levReferens", lev.LevReferens));
 
 
             sqlCon.Open();
