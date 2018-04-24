@@ -43,6 +43,16 @@ namespace UCSTest
 
         public VismaData()
         {
+            try
+            {
+                Console.WriteLine("test");
+                int zero = 0;
+                int i = 20 / zero;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Error in VismaData");
+            }
             //GetKunder();
             //Console.WriteLine("Kunder klar!");
 
