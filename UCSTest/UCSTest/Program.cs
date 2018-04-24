@@ -5,36 +5,53 @@ using System.Text;
 using System.Threading.Tasks;
 using Adk = AdkNetWrapper;
 using System.Windows;
-
+using System.Windows.Forms;
 
 namespace UCSTest
 {
     class Program
     {
-        
+        public static String ftg = String.Empty;
+        public static String sys = string.Empty;
 
+        [STAThreadAttribute]
         static void Main(string[] args)
         {
-            /*
-              IF EXISTS (SELECT @dokumentNummer FROM Avtal where dokumentNummer = @dokumentNummer)
-	BEGIN
-		UPDATE Avtal SET dokumentNummer = @dokumentNummer, avtalsDatum = @avtalsDatum, startDatum = @startDatum, tempSlutDatum = @tempSlutDatum,
-		kundNummer = @kundnummer, isActive = @isActive, fakturaIntervall = @fakturaIntervall, periodStart = @periodStart, periodEnd = @periodEnd,
-		totalKostnad = @totalKostnad, uppsägningstid = @uppsägningstid, förlängningstid = @förlängningstid, avtalsDatumSlut = @avtalsDatumSlut
-	END
-	ELSE
-	BEGIN
-	INSERT INTO Avtal (dokumentNummer, avtalsDatum, startDatum, tempSlutDatum, kundNummer, isActive, fakturaIntervall, periodStart, periodEnd, totalKostnad, uppsägningstid, förlängningstid, avtalsDatumSlut)
-	VALUES
-	(@dokumentNummer, @avtalsDatum, @startDatum, @tempSlutDatum, @kundnummer, @isActive, @fakturaIntervall, @periodStart, @periodEnd, @totalKostnad, @uppsägningstid, @förlängningstid, @avtalsDatumSlut)
-END
-             */
 
+
+            ChooseVismaFilePath();
             VismaData go = new VismaData();
             // C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\fakturaDB.mdf
         }
 
+        private static void ChooseVismaFilePath()
+        {
+            while (ftg.Length == 0 || sys.Length == 0)
+            {
+                FolderBrowserDialog selectFolder = new FolderBrowserDialog();
+                selectFolder.SelectedPath = @"C:\ProgramData\SPCS\SPCS Administration";
+                selectFolder.Description = "Vänligen ange sökvägen till Företaget som ska öppnas.";
+                if (selectFolder.ShowDialog() == DialogResult.OK)
+                {
+                    ftg = selectFolder.SelectedPath;
+                }
+                selectFolder.Dispose();
 
+                FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
+                folderBrowser.SelectedPath = @"C:\ProgramData\SPCS\SPCS Administration";
+                folderBrowser.Description = "Vänligen ange sökvägen till Visma Administrations gemensamma filer.";
+                if (folderBrowser.ShowDialog() == DialogResult.OK)
+                {
+                    sys = folderBrowser.SelectedPath;
+                }
+
+                folderBrowser.Dispose();
+            }
+            
+
+
+
+        }
 
     }
 }

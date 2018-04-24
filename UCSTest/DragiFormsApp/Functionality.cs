@@ -30,8 +30,6 @@ namespace DragiFormsApp
             {
                 newNameShort += t[0];
             }
-            //För att inte blockera Main thread utför vi en await och kör metoden som Task.Run
-            //och anropar metoden genom ett lambda uttryck
             SendDataToDatabase(newName, newNameShort, oldNames);
         }
 

@@ -10,6 +10,8 @@ using Adk = AdkNetWrapper;
 
 namespace UCSTest
 {
+
+
     class VismaData
     {
         
@@ -17,13 +19,13 @@ namespace UCSTest
         readonly SkickaData sendData = new SkickaData();
 
         // Sökvägar för visma administration
-        String ftg = @"C:\ProgramData\SPCS\SPCS Administration\Företag\Ovnbol2000";
-        String sys = @"C:\ProgramData\SPCS\SPCS Administration\Gemensamma filer";
+        private string ftg = Program.ftg;
 
+        private string sys = Program.sys;
         // Följande sökvägar verkar också fungera
         //String sys = @"C:\Documents and Settings\All Users\Application Data\SPCS\SPCS Administration\Gemensamma filer";
         //String ftg = @"C:\Documents and Settings\All Users\Application Data\SPCS\SPCS Administration\Företag\Ovnbol2000";
-        
+
         int pData;
         int antalFakturorUtanNr = 1; // Används för att ge fakturor utan nummer ett fakturanummer
         int levRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
@@ -226,27 +228,35 @@ namespace UCSTest
                         Console.WriteLine("Avtal med dokumentnummer {0} har inget giltigt slutdatum", DokumentNummer);
                     }
 
-                    if (int.Parse(data[2]) > 0 && int.Parse(data[2]) <= 12)
+                    try
                     {
-                        a.Uppsägningstid = int.Parse(data[2]);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Avtal med dokumentnummer {0} har ingen giltig uppsägningstid", DokumentNummer);
-                    }
+                        if (int.Parse(data[2]) > 0 && int.Parse(data[2]) <= 12)
+                        {
+                            a.Uppsägningstid = int.Parse(data[2]);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Avtal med dokumentnummer {0} har ingen giltig uppsägningstid", DokumentNummer);
+                        }
 
-                    if (int.Parse(data[3]) > 0 && int.Parse(data[3]) <= 12)
-                    {
-                        a.Förlängningstid = int.Parse(data[3]);
+                        if (int.Parse(data[3]) > 0 && int.Parse(data[3]) <= 12)
+                        {
+                            a.Förlängningstid = int.Parse(data[3]);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Avtal med dokumentnummer {0} har ingen giltig förlängningstid", DokumentNummer);
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        Console.WriteLine("Avtal med dokumentnummer {0} har ingen giltig förlängningstid", DokumentNummer);
+                        Console.WriteLine("Ogiltig uppsägningstid eller förlängningstid. Mata in rätt värde för fan.");
                     }
+                    
                 }
                 else
                 {
-                    a.KommenteratSlutDatum = "1111-11-11";
+                    //a.KommenteratSlutDatum = "1111-11-11";
                     Console.WriteLine("Avtal med dokumentnummer {0} har ingen kommentar", DokumentNummer);
                 }
                  
