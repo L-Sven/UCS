@@ -12,6 +12,7 @@ namespace UCSTest
 {
     class SkickaData
     {
+
         //Skapar en sql-connection mot databasen
         private SqlConnection sqlCon = new SqlConnection(
               @"Data Source=SIMONJO-6570B\UCSTEST;Initial Catalog=UCSTest;Persist Security Info=True;User ID=sa;Password=Ucstest2018");
