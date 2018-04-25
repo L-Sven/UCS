@@ -16,21 +16,18 @@ namespace UCSTest
         Adk.Api.ADKERROR error;
         readonly SkickaData sendData = new SkickaData();
 
-        //FAIL
+        
         ErrorLogger logger;
 
         // Sökvägar för visma administration
-<<<<<<< HEAD
-        private string ftg = Program.ftg;
 
-        private string sys = Program.sys;
-=======
+       
         private string ftg;
         private string sys;
         string _appStartDatum;
         bool hasDate;
         
->>>>>>> 48af5d388869e5b6dd1b33b222471af1702e7751
+
         // Följande sökvägar verkar också fungera
         //String sys = @"C:\Documents and Settings\All Users\Application Data\SPCS\SPCS Administration\Gemensamma filer";
         //String ftg = @"C:\Documents and Settings\All Users\Application Data\SPCS\SPCS Administration\Företag\Ovnbol2000";
@@ -41,10 +38,9 @@ namespace UCSTest
         int kundRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
         int avtalsRadID = 0; // Används för att skapa individuella identiteter för avtalsraderna i fatabasen   
 
-        public VismaData()
+        public VismaData(string ftg, string sys, string startDatum)
         {
-<<<<<<< HEAD
-=======
+
 
             DateTime temp;
             this.ftg = ftg;
@@ -63,7 +59,7 @@ namespace UCSTest
             
 
 
->>>>>>> 48af5d388869e5b6dd1b33b222471af1702e7751
+
             logger = new ErrorLogger();
 
             GetResultatEnhet();
@@ -171,151 +167,143 @@ namespace UCSTest
                 String periodStart = new string(' ', 8);
                 String periodEnd = new String(' ', 8);
 
-
-                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DOCUMENT_NUMBER, ref dokumentNummer);
-                logger.ErrorMessage(error);
                 error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DOCUMENT_DATE1, ref date);
                 logger.ErrorMessage(error);
                 error = AdkNetWrapper.Api.AdkLongToDate(date, ref avtalsDatum, 16);
                 logger.ErrorMessage(error);
-<<<<<<< HEAD
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_CUSTOMER_NUMBER, ref kundNummer, 16);
-                logger.ErrorMessage(error);
-                error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_START, ref date);
-                logger.ErrorMessage(error);
-                error = AdkNetWrapper.Api.AdkLongToDate(date, ref startDatum, 16);
-                logger.ErrorMessage(error);
-                error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_END, ref endDate);
-                logger.ErrorMessage(error);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_LOCAL_REMARK, ref kommentarsFält, 120);
-                logger.ErrorMessage(error);
-=======
-
 
                 if (!hasDate || DateTime.Parse(avtalsDatum) >= DateTime.Parse(_appStartDatum))
                 {
                     error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DOCUMENT_NUMBER, ref dokumentNummer);
                     logger.ErrorMessage(error);
-
->>>>>>> 48af5d388869e5b6dd1b33b222471af1702e7751
-
-                error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_PERIOD_START, ref periodTemp);
-                logger.ErrorMessage(error);
-                error = AdkNetWrapper.Api.AdkLongToDate(periodTemp, ref periodStart, 16);
-                logger.ErrorMessage(error);
-                error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_PERIOD_END, ref periodTemp);
-                logger.ErrorMessage(error);
-                error = AdkNetWrapper.Api.AdkLongToDate(periodTemp, ref periodEnd, 16);
-                logger.ErrorMessage(error);
-                error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_INTERVAL, ref intervall);
-                logger.ErrorMessage(error);
-                error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_END, ref date);
-                logger.ErrorMessage(error);
-
-                if (date == 0)
-                {
-                    avtalsDatumSlut = "1111-11-11";
-                }
-                else
-                {
-                    error = AdkNetWrapper.Api.AdkLongToDate(date, ref avtalsDatumSlut, 16);
+                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_CUSTOMER_NUMBER, ref kundNummer, 16);
                     logger.ErrorMessage(error);
-                }
+                    error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_START, ref date);
+                    logger.ErrorMessage(error);
+                    error = AdkNetWrapper.Api.AdkLongToDate(date, ref startDatum, 16);
+                    logger.ErrorMessage(error);
+                    error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_END, ref endDate);
+                    logger.ErrorMessage(error);
+                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_LOCAL_REMARK, ref kommentarsFält, 120);
+                    logger.ErrorMessage(error);
 
-                String datum = new String(' ', 10);
-                string errorText;
-                try
-                {
-                    if (kommentarsFält != "" /*|| avtalsDatumSlut == ""*/)
+                    error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_PERIOD_START, ref periodTemp);
+                    logger.ErrorMessage(error);
+                    error = AdkNetWrapper.Api.AdkLongToDate(periodTemp, ref periodStart, 16);
+                    logger.ErrorMessage(error);
+                    error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_PERIOD_END, ref periodTemp);
+                    logger.ErrorMessage(error);
+                    error = AdkNetWrapper.Api.AdkLongToDate(periodTemp, ref periodEnd, 16);
+                    logger.ErrorMessage(error);
+                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_INTERVAL, ref intervall);
+                    logger.ErrorMessage(error);
+                    error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_END, ref date);
+                    logger.ErrorMessage(error);
+
+                    if (date == 0)
                     {
-                        string[] data = kommentarsFält.Split('#');
-
-                        //Vi tar arrayens första element, trimmar bort mellanslaget i början samt tar de första tio tecken.
-                        //För detta måste formatet vara yyyy-mm-dd.
-                        //För uppsägningstid och förlängningstiden så måste tar vi bort mellanslaget från båda samt tar bara et tecken.
-                        datum = data[1].TrimStart(' ').Substring(0, 10);
-                        int uppsägningstid = int.Parse(data[2].TrimStart(' ').Substring(0, 1));
-                        int förlängningstid = int.Parse(data[3].TrimStart(' ').Substring(0, 1));
-                        if (DateTime.TryParse(datum, out var temp))
-                        {
-                            a.KommenteratSlutDatum = datum;
-                        }
-                        else
-                        {
-                            errorText = "Avtal med dokumentnummer " + dokumentNummer + " har inget giltigt slutdatum";
-                            logger.ErrorMessage(errorText);
-                        }
-
-
-                        //if (int.Parse(data[2]) > 0 && int.Parse(data[2]) <= 12)
-                        if (uppsägningstid > 0 && uppsägningstid <= 12)
-                        {
-                            a.Uppsägningstid = uppsägningstid;
-                            //a.Uppsägningstid = int.Parse(data[2]);
-                        }
-                        else
-                        {
-                            errorText = "Avtal med dokumentnummer " + dokumentNummer + " har ingen giltig uppsägningstid";
-                            logger.ErrorMessage(errorText);
-                        }
-
-                        //if (int.Parse(data[3]) > 0 && int.Parse(data[3]) <= 12)
-                        if (förlängningstid > 0 && förlängningstid <= 12)
-                        {
-                            a.Förlängningstid = förlängningstid;
-                            //a.Förlängningstid = int.Parse(data[3]);
-                        }
-                        else
-                        {
-                            errorText = "Avtal med dokumentnummer " + dokumentNummer + " har ingen giltig förlängningstid";
-                            logger.ErrorMessage(errorText);
-                        }
-
-
+                        avtalsDatumSlut = "1111-11-11";
                     }
                     else
                     {
-
-                        errorText = "Avtal med dokumentnummer " + dokumentNummer + " har ingen kommentar";
-                        logger.ErrorMessage(errorText);
-
+                        error = AdkNetWrapper.Api.AdkLongToDate(date, ref avtalsDatumSlut, 16);
+                        logger.ErrorMessage(error);
                     }
+
+                    String datum = new String(' ', 10);
+                    string errorText;
+                    try
+                    {
+                        if (kommentarsFält != "" /*|| avtalsDatumSlut == ""*/)
+                        {
+                            string[] data = kommentarsFält.Split('#');
+
+                            //Vi tar arrayens första element, trimmar bort mellanslaget i början samt tar de första tio tecken.
+                            //För detta måste formatet vara yyyy-mm-dd.
+                            //För uppsägningstid och förlängningstiden så måste tar vi bort mellanslaget från båda samt tar bara et tecken.
+                            datum = data[1].TrimStart(' ').Substring(0, 10);
+                            int uppsägningstid = int.Parse(data[2].TrimStart(' ').Substring(0, 1));
+                            int förlängningstid = int.Parse(data[3].TrimStart(' ').Substring(0, 1));
+                            if (DateTime.TryParse(datum, out var temp))
+                            {
+                                a.KommenteratSlutDatum = datum;
+                            }
+                            else
+                            {
+                                errorText = "Avtal med dokumentnummer " + dokumentNummer + " har inget giltigt slutdatum";
+                                logger.ErrorMessage(errorText);
+                            }
+
+
+                            //if (int.Parse(data[2]) > 0 && int.Parse(data[2]) <= 12)
+                            if (uppsägningstid > 0 && uppsägningstid <= 12)
+                            {
+                                a.Uppsägningstid = uppsägningstid;
+                                //a.Uppsägningstid = int.Parse(data[2]);
+                            }
+                            else
+                            {
+                                errorText = "Avtal med dokumentnummer " + dokumentNummer + " har ingen giltig uppsägningstid";
+                                logger.ErrorMessage(errorText);
+                            }
+
+                            //if (int.Parse(data[3]) > 0 && int.Parse(data[3]) <= 12)
+                            if (förlängningstid > 0 && förlängningstid <= 12)
+                            {
+                                a.Förlängningstid = förlängningstid;
+                                //a.Förlängningstid = int.Parse(data[3]);
+                            }
+                            else
+                            {
+                                errorText = "Avtal med dokumentnummer " + dokumentNummer + " har ingen giltig förlängningstid";
+                                logger.ErrorMessage(errorText);
+                            }
+
+
+                        }
+                        else
+                        {
+
+                            errorText = "Avtal med dokumentnummer " + dokumentNummer + " har ingen kommentar";
+                            logger.ErrorMessage(errorText);
+
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.ErrorMessage(ex);
+                    }
+
+
+                    a.DokumentNummer = dokumentNummer;
+                    a.AvtalsDatum = avtalsDatum;
+                    a.AvtalsDatumSlut = avtalsDatumSlut;
+                    a.StartDatum = startDatum;
+                    a.KundNummer = kundNummer;
+
+                    a.FakturaIntervall = intervall;
+                    a.PeriodStart = periodStart;
+                    a.PeriodEnd = periodEnd;
+
+                    GetAvtalRad(a, pData);
+
+                    foreach (var element in a.ListAvtalsRad)
+                    {
+                        a.TotalKostnad += (double)element.TotalKostnad;
+                    }
+
+
+                    sendData.AvtalTillDatabas(a);
+
+                    // Sätter vidare pekaren till nästa artikelgrupp
+                    error = AdkNetWrapper.Api.AdkNext(pData);
+
                 }
-                catch (Exception ex)
-                {
-                    logger.ErrorMessage(ex);
-                }
 
+                // Stänger företaget
+                AdkNetWrapper.Api.AdkClose();
 
-                a.DokumentNummer = dokumentNummer;
-                a.AvtalsDatum = avtalsDatum;
-                a.AvtalsDatumSlut = avtalsDatumSlut;
-                a.StartDatum = startDatum;
-                a.KundNummer = kundNummer;
-
-                a.FakturaIntervall = intervall;
-                a.PeriodStart = periodStart;
-                a.PeriodEnd = periodEnd;
-
-                GetAvtalRad(a, pData);
-
-                foreach (var element in a.ListAvtalsRad)
-                {
-                    a.TotalKostnad += (double)element.TotalKostnad;
-                }
-
-
-                sendData.AvtalTillDatabas(a);
-
-                // Sätter vidare pekaren till nästa artikelgrupp
-                error = AdkNetWrapper.Api.AdkNext(pData);
-                
             }
-
-            // Stänger företaget
-            AdkNetWrapper.Api.AdkClose();
-
-
         }
 
         private void GetAvtalRad(Avtal avtal, int pData)
@@ -507,83 +495,77 @@ namespace UCSTest
 
                     String levNamn = new String(' ', 50);
 
-
-                    // Hämtar data ur databas och lagrar i de lokala variablerna
-                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_GIVEN_NUMBER, ref lopNummer);
-                    logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_SUPPLIER_NUMBER, ref levNummer, 16);
-                    logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_INVOICE_NUMBER, ref fakturaNummer, 16);
-                    logger.ErrorMessage(error);
-
-                    // Ger fakturor utan nummer ett eget fakturanummer
-                    if (fakturaNummer == "" || fakturaNummer == null)
-                    {
-                        fakturaNummer = "Faktura-" + antalFakturorUtanNr;
-                        antalFakturorUtanNr++;
-                    }
-
-                    // Hämtar data ur databas och lagrar i de lokala variablerna
-                    error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_INVOICE_DATE, ref tmpDatum);
-                    logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
-                    logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_CODE, ref valutaKod, 4);
-                    logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_RATE, ref valutaKurs);
-                    logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_TYPE_OF_INVOICE, ref fakturaTyp, 12);
-                    logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_PROJECT, ref projektHuvud, 10);
-                    logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_VAT_AMOUNT, ref moms);
-                    logger.ErrorMessage(error);
-                    error = Adk.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_SUPPLIER_NAME, ref levNamn, 50);
-                    logger.ErrorMessage(error);
-
-<<<<<<< HEAD
-                    // Lägger till data i instansen och lFakturaHuvud
-                    lFakturaHuvud.LopNummer = "LF-" + lopNummer;
-                    lFakturaHuvud.LevNummer = levNummer;
-                    lFakturaHuvud.FakturaNummer = fakturaNummer;
-                    lFakturaHuvud.FakturaDatum = fakturaDatum;
-                    lFakturaHuvud.ValutaKod = valutaKod;
-                    lFakturaHuvud.ValutaKurs = decimal.Parse(valutaKurs.ToString());
-                    lFakturaHuvud.FakturaTyp = fakturaTyp;
-                    lFakturaHuvud.ProjektHuvud = projektHuvud;
-                    lFakturaHuvud.Moms = moms;
-                    lFakturaHuvud.LevNamn = levNamn;
-
-                    // Anrop till metod som hämtar alla leverantörsfakturarader i den aktuella fakturan
-                    GetLevFakturaRad(lFakturaHuvud, pData);
-
-                    //Totalkostnaden räknas ut genom att slå ihop beloppet i alla rader.
-                    if (lFakturaHuvud.FakturaTyp.ToLower() != "k")
-=======
-
                     if (!hasDate || DateTime.Parse(fakturaDatum) >= DateTime.Parse(_appStartDatum))
->>>>>>> 48af5d388869e5b6dd1b33b222471af1702e7751
                     {
-                        lFakturaHuvud.TotalKostnad *= -1;
 
-                        foreach (var rad in lFakturaHuvud.fakturaRader)
+                        error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_GIVEN_NUMBER, ref lopNummer);
+                        logger.ErrorMessage(error);
+                        error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_SUPPLIER_NUMBER, ref levNummer, 16);
+                        logger.ErrorMessage(error);
+                        error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_INVOICE_NUMBER, ref fakturaNummer, 16);
+                        logger.ErrorMessage(error);
+
+                        // Ger fakturor utan nummer ett eget fakturanummer
+                        if (fakturaNummer == "" || fakturaNummer == null)
                         {
-                            rad.TotalKostnad *= -1;
+                            fakturaNummer = "Faktura-" + antalFakturorUtanNr;
+                            antalFakturorUtanNr++;
                         }
 
+                        // Hämtar data ur databas och lagrar i de lokala variablerna
+
+                        logger.ErrorMessage(error);
+                        error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_CODE, ref valutaKod, 4);
+                        logger.ErrorMessage(error);
+                        error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_RATE, ref valutaKurs);
+                        logger.ErrorMessage(error);
+                        error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_TYPE_OF_INVOICE, ref fakturaTyp, 12);
+                        logger.ErrorMessage(error);
+                        error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_PROJECT, ref projektHuvud, 10);
+                        logger.ErrorMessage(error);
+                        error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_VAT_AMOUNT, ref moms);
+                        logger.ErrorMessage(error);
+                        error = Adk.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_SUPPLIER_NAME, ref levNamn, 50);
+                        logger.ErrorMessage(error);
+
+                        // Lägger till data i instansen och lFakturaHuvud
+                        lFakturaHuvud.LopNummer = "LF-" + lopNummer;
+                        lFakturaHuvud.LevNummer = levNummer;
+                        lFakturaHuvud.FakturaNummer = fakturaNummer;
+                        lFakturaHuvud.FakturaDatum = fakturaDatum;
+                        lFakturaHuvud.ValutaKod = valutaKod;
+                        lFakturaHuvud.ValutaKurs = decimal.Parse(valutaKurs.ToString());
+                        lFakturaHuvud.FakturaTyp = fakturaTyp;
+                        lFakturaHuvud.ProjektHuvud = projektHuvud;
+                        lFakturaHuvud.Moms = moms;
+                        lFakturaHuvud.LevNamn = levNamn;
+
+                        // Anrop till metod som hämtar alla leverantörsfakturarader i den aktuella fakturan
+                        GetLevFakturaRad(lFakturaHuvud, pData);
+
+                        //Totalkostnaden räknas ut genom att slå ihop beloppet i alla rader.
+                        if (lFakturaHuvud.FakturaTyp.ToLower() != "k")
+                        {
+                            lFakturaHuvud.TotalKostnad *= -1;
+
+                            foreach (var rad in lFakturaHuvud.fakturaRader)
+                            {
+                                rad.TotalKostnad *= -1;
+                            }
+
+                        }
+
+                        // Anropr till metod som lägger in data i databasen
+                        sendData.LevFakturaTillDatabas(lFakturaHuvud);
+
                     }
-
-
-
-                    // Anropr till metod som lägger in data i databasen
-                    sendData.LevFakturaTillDatabas(lFakturaHuvud);
 
                     // Sätter vidare pekaren på nästa instans
                     error = AdkNetWrapper.Api.AdkNext(pData);
-                    
+
                 }
 
-
+            
 
             }
 
@@ -836,42 +818,11 @@ namespace UCSTest
 
 
                     // Hämtar data ur databas och lagrar i de lokala variablerna
-
-                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NUMBER, ref fakturaNr);
-                    logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_NUMBER, ref kundNr, 16);
-                    logger.ErrorMessage(error);
                     error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_DATE1, ref tmpDatum);
                     logger.ErrorMessage(error);
                     error = AdkNetWrapper.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
                     logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_TYPE_OF_INVOICE, ref fakturaTyp, 20);
-                    logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_OUR_REFERENCE_NAME, ref säljare, 24);
-                    logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CURRENCY_CODE, ref valutaKod, 4);
-                    logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CARGO_AMOUNT, ref cargoAmount);
-                    logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DISPATCH_FEE, ref dispatchFee);
-                    logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_VAT_AMOUNT, ref moms);
-                    logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_TOTAL_AMOUNT, ref totalKostnad);
-                    logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kommentarsFält, 120);
-                    logger.ErrorMessage(error);
 
-<<<<<<< HEAD
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_NAME, ref kundNamn, 50);
-                    logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_COUNTRY, ref kundLand, 24);
-                    logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CITY, ref kundStad, 24);
-                    logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kundReferens, 50);
-                    logger.ErrorMessage(error);
-=======
 
                     if (!hasDate || DateTime.Parse(fakturaDatum) >= DateTime.Parse(_appStartDatum))
                     {
@@ -895,53 +846,62 @@ namespace UCSTest
                         logger.ErrorMessage(error);
                         error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kommentarsFält, 120);
                         logger.ErrorMessage(error);
->>>>>>> 48af5d388869e5b6dd1b33b222471af1702e7751
+
+                        error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_NAME, ref kundNamn, 50);
+                        logger.ErrorMessage(error);
+                        error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_COUNTRY, ref kundLand, 24);
+                        logger.ErrorMessage(error);
+                        error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CITY, ref kundStad, 24);
+                        logger.ErrorMessage(error);
+                        error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kundReferens, 50);
+                        logger.ErrorMessage(error);
 
 
 
-                    // Lägger info i kundfakturan
+                        // Lägger info i kundfakturan
 
-                    kFaktura.TotalKostnad = totalKostnad;
-                    kFaktura.FakturaDatum = fakturaDatum;
-
-                    String fakturaNummer = new String(' ', 20);
-                    fakturaNummer = fakturaNr.ToString();
-                    fakturaNummer = "KF-" + fakturaNummer;
-                    kFaktura.FakturaNummer = fakturaNummer;
-                    kFaktura.KundNummer = kundNr;
-                    kFaktura.FakturaTyp = fakturaTyp;
-                    kFaktura.Säljare = säljare;
-                    kFaktura.Cargo_amount = cargoAmount;
-                    kFaktura.Dispatch_fee = dispatchFee;
-                    kFaktura.Moms = moms;
-                    kFaktura.KommentarsFält = kommentarsFält;
-                    kFaktura.KundNamn = kundNamn;
-                    kFaktura.KundLand = kundLand;
-                    kFaktura.KundStad = kundStad;
-                    kFaktura.KundReferens = kundReferens;
-
-                    // Hämtar alla fakturarader på kundfakturan
-                    GetKundFakturaRad(kFaktura, pData);
-
-                    // Om valutan inte är svenska kronor, så beräknas totalkostnaden utefter fakturaraderna
-                    if (valutaKod != "SEK")
-                    {
-                        totalKostnad = 0;
-                        foreach (var rad in kFaktura.fakturaRader)
-                        {
-                            totalKostnad += rad.TotalKostnad;
-                        }
                         kFaktura.TotalKostnad = totalKostnad;
+                        kFaktura.FakturaDatum = fakturaDatum;
 
+                        String fakturaNummer = new String(' ', 20);
+                        fakturaNummer = fakturaNr.ToString();
+                        fakturaNummer = "KF-" + fakturaNummer;
+                        kFaktura.FakturaNummer = fakturaNummer;
+                        kFaktura.KundNummer = kundNr;
+                        kFaktura.FakturaTyp = fakturaTyp;
+                        kFaktura.Säljare = säljare;
+                        kFaktura.Cargo_amount = cargoAmount;
+                        kFaktura.Dispatch_fee = dispatchFee;
+                        kFaktura.Moms = moms;
+                        kFaktura.KommentarsFält = kommentarsFält;
+                        kFaktura.KundNamn = kundNamn;
+                        kFaktura.KundLand = kundLand;
+                        kFaktura.KundStad = kundStad;
+                        kFaktura.KundReferens = kundReferens;
+
+                        // Hämtar alla fakturarader på kundfakturan
+                        GetKundFakturaRad(kFaktura, pData);
+
+                        // Om valutan inte är svenska kronor, så beräknas totalkostnaden utefter fakturaraderna
+                        if (valutaKod != "SEK")
+                        {
+                            totalKostnad = 0;
+                            foreach (var rad in kFaktura.fakturaRader)
+                            {
+                                totalKostnad += rad.TotalKostnad;
+                            }
+                            kFaktura.TotalKostnad = totalKostnad;
+
+                        }
+
+                        if (fakturaTyp.ToUpper() == "K")
+                        {
+                            kFaktura.Moms *= -1;
+                            kFaktura.TotalKostnad *= -1;
+                        }
+
+                        sendData.KundFakturaTillDatabas(kFaktura);
                     }
-
-                    if (fakturaTyp.ToUpper() == "K")
-                    {
-                        kFaktura.Moms *= -1;
-                        kFaktura.TotalKostnad *= -1;
-                    }
-
-                    sendData.KundFakturaTillDatabas(kFaktura);
 
                 } // Slut på else
 
