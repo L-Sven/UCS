@@ -22,8 +22,8 @@ namespace UCSTest
         // Sökvägar för visma administration
         private string ftg;
         private string sys;
-        private string _appStartDatum;
-        private bool hasDate;
+        string _appStartDatum;
+        bool hasDate;
         
         // Följande sökvägar verkar också fungera
         //String sys = @"C:\Documents and Settings\All Users\Application Data\SPCS\SPCS Administration\Gemensamma filer";
@@ -40,14 +40,17 @@ namespace UCSTest
 
         public VismaData(string ftg, string sys, string startDatum)
         {
+
             DateTime temp;
             this.ftg = ftg;
             this.sys = sys;
-            if(DateTime.TryParse(startDatum, out temp))
+
+            if (DateTime.TryParse(startDatum, out temp))
             {
                 this._appStartDatum = startDatum;
                 hasDate = true;
             }
+
             else
             {
                 hasDate = false;
@@ -165,6 +168,8 @@ namespace UCSTest
                 logger.ErrorMessage(error);
                 error = AdkNetWrapper.Api.AdkLongToDate(date, ref avtalsDatum, 16);
                 logger.ErrorMessage(error);
+
+
                 if (!hasDate || DateTime.Parse(avtalsDatum) >= DateTime.Parse(_appStartDatum))
                 {
                     error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DOCUMENT_NUMBER, ref dokumentNummer);
@@ -497,6 +502,7 @@ namespace UCSTest
                     logger.ErrorMessage(error);
                     error = AdkNetWrapper.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
 
+
                     if (!hasDate || DateTime.Parse(fakturaDatum) >= DateTime.Parse(_appStartDatum))
                     {
                         error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_GIVEN_NUMBER, ref lopNummer);
@@ -822,6 +828,7 @@ namespace UCSTest
                     logger.ErrorMessage(error);
                     error = AdkNetWrapper.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
                     logger.ErrorMessage(error);
+
 
                     if (!hasDate || DateTime.Parse(fakturaDatum) >= DateTime.Parse(_appStartDatum))
                     {
