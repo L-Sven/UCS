@@ -11,8 +11,6 @@ using Adk = AdkNetWrapper;
 
 namespace UCSTest
 {
-
-
     class VismaData
     {
         Adk.Api.ADKERROR error;
