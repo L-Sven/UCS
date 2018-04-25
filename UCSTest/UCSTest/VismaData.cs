@@ -20,9 +20,17 @@ namespace UCSTest
         ErrorLogger logger;
 
         // Sökvägar för visma administration
+<<<<<<< HEAD
         private string ftg = Program.ftg;
 
         private string sys = Program.sys;
+=======
+        private string ftg;
+        private string sys;
+        string _appStartDatum;
+        bool hasDate;
+        
+>>>>>>> 48af5d388869e5b6dd1b33b222471af1702e7751
         // Följande sökvägar verkar också fungera
         //String sys = @"C:\Documents and Settings\All Users\Application Data\SPCS\SPCS Administration\Gemensamma filer";
         //String ftg = @"C:\Documents and Settings\All Users\Application Data\SPCS\SPCS Administration\Företag\Ovnbol2000";
@@ -35,6 +43,27 @@ namespace UCSTest
 
         public VismaData()
         {
+<<<<<<< HEAD
+=======
+
+            DateTime temp;
+            this.ftg = ftg;
+            this.sys = sys;
+
+            if (DateTime.TryParse(startDatum, out temp))
+            {
+                this._appStartDatum = startDatum;
+                hasDate = true;
+            }
+
+            else
+            {
+                hasDate = false;
+            }
+            
+
+
+>>>>>>> 48af5d388869e5b6dd1b33b222471af1702e7751
             logger = new ErrorLogger();
 
             GetResultatEnhet();
@@ -149,6 +178,7 @@ namespace UCSTest
                 logger.ErrorMessage(error);
                 error = AdkNetWrapper.Api.AdkLongToDate(date, ref avtalsDatum, 16);
                 logger.ErrorMessage(error);
+<<<<<<< HEAD
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_CUSTOMER_NUMBER, ref kundNummer, 16);
                 logger.ErrorMessage(error);
                 error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_START, ref date);
@@ -159,6 +189,15 @@ namespace UCSTest
                 logger.ErrorMessage(error);
                 error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_LOCAL_REMARK, ref kommentarsFält, 120);
                 logger.ErrorMessage(error);
+=======
+
+
+                if (!hasDate || DateTime.Parse(avtalsDatum) >= DateTime.Parse(_appStartDatum))
+                {
+                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DOCUMENT_NUMBER, ref dokumentNummer);
+                    logger.ErrorMessage(error);
+
+>>>>>>> 48af5d388869e5b6dd1b33b222471af1702e7751
 
                 error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_PERIOD_START, ref periodTemp);
                 logger.ErrorMessage(error);
@@ -502,6 +541,7 @@ namespace UCSTest
                     error = Adk.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_SUPPLIER_NAME, ref levNamn, 50);
                     logger.ErrorMessage(error);
 
+<<<<<<< HEAD
                     // Lägger till data i instansen och lFakturaHuvud
                     lFakturaHuvud.LopNummer = "LF-" + lopNummer;
                     lFakturaHuvud.LevNummer = levNummer;
@@ -519,6 +559,10 @@ namespace UCSTest
 
                     //Totalkostnaden räknas ut genom att slå ihop beloppet i alla rader.
                     if (lFakturaHuvud.FakturaTyp.ToLower() != "k")
+=======
+
+                    if (!hasDate || DateTime.Parse(fakturaDatum) >= DateTime.Parse(_appStartDatum))
+>>>>>>> 48af5d388869e5b6dd1b33b222471af1702e7751
                     {
                         lFakturaHuvud.TotalKostnad *= -1;
 
@@ -818,6 +862,7 @@ namespace UCSTest
                     error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kommentarsFält, 120);
                     logger.ErrorMessage(error);
 
+<<<<<<< HEAD
                     error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_NAME, ref kundNamn, 50);
                     logger.ErrorMessage(error);
                     error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_COUNTRY, ref kundLand, 24);
@@ -826,6 +871,31 @@ namespace UCSTest
                     logger.ErrorMessage(error);
                     error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kundReferens, 50);
                     logger.ErrorMessage(error);
+=======
+
+                    if (!hasDate || DateTime.Parse(fakturaDatum) >= DateTime.Parse(_appStartDatum))
+                    {
+                        error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NUMBER, ref fakturaNr);
+                        logger.ErrorMessage(error);
+                        error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_NUMBER, ref kundNr, 16);
+                        logger.ErrorMessage(error);
+                        error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_TYPE_OF_INVOICE, ref fakturaTyp, 20);
+                        logger.ErrorMessage(error);
+                        error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_OUR_REFERENCE_NAME, ref säljare, 24);
+                        logger.ErrorMessage(error);
+                        error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CURRENCY_CODE, ref valutaKod, 4);
+                        logger.ErrorMessage(error);
+                        error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CARGO_AMOUNT, ref cargoAmount);
+                        logger.ErrorMessage(error);
+                        error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DISPATCH_FEE, ref dispatchFee);
+                        logger.ErrorMessage(error);
+                        error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_VAT_AMOUNT, ref moms);
+                        logger.ErrorMessage(error);
+                        error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_TOTAL_AMOUNT, ref totalKostnad);
+                        logger.ErrorMessage(error);
+                        error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kommentarsFält, 120);
+                        logger.ErrorMessage(error);
+>>>>>>> 48af5d388869e5b6dd1b33b222471af1702e7751
 
 
 
