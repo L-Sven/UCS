@@ -71,8 +71,16 @@
     <Reference Include="AdkNetWrapper">
       <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\SPCS\SPCS Administration\AdkNetWrapper.dll</HintPath>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.5.3\lib\net45\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -81,16 +89,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Artikel.cs" />
+    <Compile Include="ArtikelGrupp.cs" />
+    <Compile Include="Avtal.cs" />
+    <Compile Include="AvtalsRad.cs" />
+    <Compile Include="ErrorLogger.cs" />
+    <Compile Include="Kund.cs" />
     <Compile Include="KundFakturaHuvud.cs" />
+    <Compile Include="Leverantör.cs" />
     <Compile Include="LevFakturaHuvud.cs" />
     <Compile Include="LevFakturaRad.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="KundFakturaRad.cs" />
+    <Compile Include="Resultatenhet.cs" />
+    <Compile Include="SkickaData.cs" />
     <Compile Include="VismaData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">

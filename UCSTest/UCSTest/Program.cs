@@ -11,7 +11,6 @@ namespace UCSTest
 {
     class Program
     {
-
         public static String ftg = String.Empty;
         public static String sys = string.Empty;
         public static String startDatum = String.Empty;
