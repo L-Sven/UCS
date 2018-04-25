@@ -16,7 +16,7 @@ namespace UCSTest
         Adk.Api.ADKERROR error;
         readonly SkickaData sendData = new SkickaData();
 
-        
+        //FAIL
         ErrorLogger logger;
 
         // Sökvägar för visma administration
