@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using NLog;
 
@@ -11,20 +12,11 @@ namespace UCSTest
 {
     class SkickaData
     {
-        //private SqlConnection sqlCon = new SqlConnection(
-        //            @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\fakturaDB.mdf;Integrated Security=True"
-        //            );
-
         //Skapar en sql-connection mot databasen
-        SqlConnection sqlCon = new SqlConnection(
-           @"Data Source=SIMONJO-6570B\UCSTEST;Initial Catalog=UCSTest;Persist Security Info=True;User ID=sa;Password=Ucstest2018");
+        private SqlConnection sqlCon = new SqlConnection(
+              @"Data Source=SIMONJO-6570B\UCSTEST;Initial Catalog=UCSTest;Persist Security Info=True;User ID=sa;Password=Ucstest2018");
 
-        ErrorLogger logger;
-
-        public SkickaData()
-        {
-            logger = new ErrorLogger();
-        }
+        ErrorLogger logger = new ErrorLogger();
 
         public void AvtalTillDatabas(Avtal a)
         {
@@ -53,11 +45,10 @@ namespace UCSTest
                 cmdAddAgreement.ExecuteNonQuery();
                 sqlCon.Close();
             }
-            catch (SqlException ex)
+            catch (Exception e)
             {
-                logger.ErrorMessage(ex);
+                logger.ErrorMessage(e);
             }
-
             
 
             foreach (var rad in a.ListAvtalsRad)
@@ -79,9 +70,9 @@ namespace UCSTest
                     cmdAddAgreementRow.ExecuteNonQuery();
                     sqlCon.Close();
                 }
-                catch (SqlException ex)
+                catch (Exception e)
                 {
-                    logger.ErrorMessage(ex);
+                    logger.ErrorMessage(e);
                 }
             }
         }
@@ -103,9 +94,9 @@ namespace UCSTest
                 cmdAddArticleGroup.ExecuteNonQuery();
                 sqlCon.Close();
             }
-            catch (SqlException ex)
+            catch (Exception e)
             {
-                logger.ErrorMessage(ex);
+                logger.ErrorMessage(e);
             }
         }
 
@@ -117,8 +108,8 @@ namespace UCSTest
 
             // Ger Sql-kommandot information om att den ska anropa en stored procedure
             cmdAddArticle.CommandType = CommandType.StoredProcedure;
-
             
+
             cmdAddArticle.Parameters.Add(new SqlParameter("@artikelNummer", a.ArtikelNummer));
             cmdAddArticle.Parameters.Add(new SqlParameter("@artikelGrupp", a.ArtikelGrupp));
             cmdAddArticle.Parameters.Add(new SqlParameter("@benämning", a.Benämning));
@@ -133,9 +124,9 @@ namespace UCSTest
                 cmdAddArticle.ExecuteNonQuery();
                 sqlCon.Close();
             }
-            catch (SqlException ex)
+            catch (Exception e)
             {
-                logger.ErrorMessage(ex);
+                logger.ErrorMessage(e);
             }
         }
 
@@ -156,9 +147,9 @@ namespace UCSTest
                 cmdAddResultatEnhet.ExecuteNonQuery();
                 sqlCon.Close();
             }
-            catch (SqlException ex)
+            catch (Exception e)
             {
-                logger.ErrorMessage(ex);
+                logger.ErrorMessage(e);
             }
         }
 
@@ -172,6 +163,7 @@ namespace UCSTest
             // Ger Sql-kommandot information om att den ska anropa en stored procedure
             cmdAddInvoice.CommandType = CommandType.StoredProcedure;
 
+
             cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaNummer", kFaktura.FakturaNummer));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaTyp", kFaktura.FakturaTyp));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@kundNummer", int.Parse(kFaktura.KundNummer)));
@@ -183,7 +175,7 @@ namespace UCSTest
             cmdAddInvoice.Parameters.Add(new SqlParameter("@fraktAvgift", kFaktura.Cargo_amount));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@administrationsAvgift", kFaktura.Dispatch_fee));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@moms", kFaktura.Moms));
-            
+            //cmdAddInvoice.Parameters.Add(new SqlParameter("@kommentarsFält", kFaktura.KommentarsFält));
 
             try
             {
@@ -191,9 +183,9 @@ namespace UCSTest
                 cmdAddInvoice.ExecuteNonQuery();
                 sqlCon.Close();
             }
-            catch (SqlException ex)
+            catch (Exception e)
             {
-                logger.ErrorMessage(ex);
+                logger.ErrorMessage(e);
             }
 
             // Snurra som lägger till alla raderna från kundfakturan i databasen
@@ -222,9 +214,9 @@ namespace UCSTest
                     cmdAddRow.ExecuteNonQuery();
                     sqlCon.Close();
                 }
-                catch (SqlException ex)
+                catch (Exception e)
                 {
-                    logger.ErrorMessage(ex);
+                    logger.ErrorMessage(e);
                 }
             }
 
@@ -239,6 +231,11 @@ namespace UCSTest
 
             // Ger Sql-kommandot information om att den ska anropa en stored procedure
             cmdAddInvoice.CommandType = CommandType.StoredProcedure;
+
+            /*
+            var returnParam = cmdAddInvoice.Parameters.Add("@ReturnValue", SqlDbType.Int);
+            returnParam.Direction = ParameterDirection.ReturnValue;
+            */
 
             cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaNummer", lFaktura.FakturaNummer));
             cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaTyp", lFaktura.FakturaTyp));
@@ -255,9 +252,9 @@ namespace UCSTest
                 cmdAddInvoice.ExecuteNonQuery();
                 sqlCon.Close();
             }
-            catch (SqlException ex)
+            catch (Exception e)
             {
-                logger.ErrorMessage(ex);
+                logger.ErrorMessage(e);
             }
 
             // Snurra som lägger till alla raderna från leverantörsfakturan i databasen
@@ -286,9 +283,9 @@ namespace UCSTest
                     cmdAddRow.ExecuteNonQuery();
                     sqlCon.Close();
                 }
-                catch (SqlException ex)
+                catch (Exception e)
                 {
-                    logger.ErrorMessage(ex);
+                    logger.ErrorMessage(e);
                 }
             }
         }
@@ -300,7 +297,7 @@ namespace UCSTest
 
             // Ger Sql-kommandot information om att den ska anropa en stored procedure
             cmdAddCustomer.CommandType = CommandType.StoredProcedure;
-
+            
 
             cmdAddCustomer.Parameters.Add(new SqlParameter("@kundNummer", int.Parse(ku.KundNummer)));
             cmdAddCustomer.Parameters.Add(new SqlParameter("@kundNamn", ku.KundNamn));
@@ -315,9 +312,9 @@ namespace UCSTest
                 cmdAddCustomer.ExecuteNonQuery();
                 sqlCon.Close();
             }
-            catch (SqlException ex)
+            catch (Exception e)
             {
-                logger.ErrorMessage(ex);
+                logger.ErrorMessage(e);
             }
         }
 
@@ -329,7 +326,6 @@ namespace UCSTest
             // Ger Sql-kommandot information om att den ska anropa en stored procedure
             cmdAddSupplier.CommandType = CommandType.StoredProcedure;
 
-           
 
             cmdAddSupplier.Parameters.Add(new SqlParameter("@levNummer", int.Parse(lev.LevNummer)));
             cmdAddSupplier.Parameters.Add(new SqlParameter("@levNamn", lev.LevNamn));
@@ -341,9 +337,9 @@ namespace UCSTest
                 cmdAddSupplier.ExecuteNonQuery();
                 sqlCon.Close();
             }
-            catch (SqlException ex)
+            catch (Exception e)
             {
-                logger.ErrorMessage(ex);
+                logger.ErrorMessage(e);
             }
         }
     }

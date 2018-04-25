@@ -16,7 +16,7 @@ namespace UCSTest
 
         public ErrorLogger()
         {
-            logger = LogManager.GetLogger("fileLogger");
+            logger = LogManager.GetCurrentClassLogger();
         }
 
         public void ErrorMessage(Exception ex)

@@ -30,8 +30,6 @@ namespace UCSTest
         //String ftg = @"C:\Documents and Settings\All Users\Application Data\SPCS\SPCS Administration\Företag\Ovnbol2000";
 
         int pData;
-        private int kData;
-        private int lData;
         int antalFakturorUtanNr = 1; // Används för att ge fakturor utan nummer ett fakturanummer
         int levRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
         int kundRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
@@ -40,11 +38,7 @@ namespace UCSTest
         public VismaData()
         {
             logger = new ErrorLogger();
-<<<<<<< HEAD
-            
-=======
 
->>>>>>> 05c2c613541dd513a70367ec571e1fc26256e0ea
             GetResultatEnhet();
             Console.WriteLine("Resultatenhet klar!");
 
@@ -103,16 +97,9 @@ namespace UCSTest
                 r.resultatEnhetNamn = resultatEnhetNamn;
 
 
-                try
-                {
-                    sendData.ResultatenhetTillDatabas(r);
-                }
-                catch (Exception ex)
-                {
-                    logger.ErrorMessage(ex);
-                }
+                sendData.ResultatenhetTillDatabas(r);
 
-                
+
 
                 // Sätter vidare pekaren till nästa artikelgrupp
                 error = AdkNetWrapper.Api.AdkNext(pData);
@@ -280,15 +267,8 @@ namespace UCSTest
                     a.TotalKostnad += (double)element.TotalKostnad;
                 }
 
-                
-                try
-                {
-                    sendData.AvtalTillDatabas(a);
-                }
-                catch (Exception ex)
-                {
-                    logger.ErrorMessage(ex);
-                }
+
+                sendData.AvtalTillDatabas(a);
 
                 // Sätter vidare pekaren till nästa artikelgrupp
                 error = AdkNetWrapper.Api.AdkNext(pData);
@@ -366,14 +346,7 @@ namespace UCSTest
                 aGrupp.ArtikelGruppKod = aGruppKod;
                 aGrupp.Benämning = aGruppBenämning;
 
-                try
-                {
-                    sendData.ArtikelGruppTillDatabas(aGrupp);
-                }
-                catch (Exception ex)
-                {
-                    logger.ErrorMessage(ex);
-                }
+                sendData.ArtikelGruppTillDatabas(aGrupp);
 
                 // Sätter vidare pekaren till nästa artikelgrupp
                 error = AdkNetWrapper.Api.AdkNext(pData);
@@ -438,16 +411,9 @@ namespace UCSTest
                 artikel.OvrigKostnad = ovrigKostnad;
 
                 // Skickar data till sendData
-                
 
-                try
-                {
-                    sendData.ArtikelTillDatabas(artikel);
-                }
-                catch (Exception ex)
-                {
-                    logger.ErrorMessage(ex);
-                }
+
+                sendData.ArtikelTillDatabas(artikel);
 
                 // Sätter vidare pekaren till nästa artikel
                 error = AdkNetWrapper.Api.AdkNext(pData);
@@ -568,14 +534,7 @@ namespace UCSTest
 
 
                     // Anropr till metod som lägger in data i databasen
-                    try
-                    {
-                        sendData.LevFakturaTillDatabas(lFakturaHuvud);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.ErrorMessage(ex);
-                    }
+                    sendData.LevFakturaTillDatabas(lFakturaHuvud);
 
                     // Sätter vidare pekaren på nästa instans
                     error = AdkNetWrapper.Api.AdkNext(pData);
@@ -914,14 +873,7 @@ namespace UCSTest
                         kFaktura.TotalKostnad *= -1;
                     }
 
-                    try
-                    {
-                        sendData.KundFakturaTillDatabas(kFaktura);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.ErrorMessage(ex);
-                    }
+                    sendData.KundFakturaTillDatabas(kFaktura);
 
                 } // Slut på else
 
