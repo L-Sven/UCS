@@ -14,3 +14,5 @@ C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\obj\Debug\UCSTes
 C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\obj\Debug\UCSTest.csproj.CopyComplete
 C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\obj\Debug\UCSTest.exe
 C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\obj\Debug\UCSTest.pdb
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\bin\Debug\NLog.dll
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UCSTest\bin\Debug\NLog.xml

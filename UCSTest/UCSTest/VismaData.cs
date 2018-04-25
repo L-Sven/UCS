@@ -40,8 +40,6 @@ namespace UCSTest
 
         public VismaData(string ftg, string sys, string startDatum)
         {
-
-
             DateTime temp;
             this.ftg = ftg;
             this.sys = sys;
@@ -296,14 +294,15 @@ namespace UCSTest
                     sendData.AvtalTillDatabas(a);
 
                     // Sätter vidare pekaren till nästa artikelgrupp
-                    error = AdkNetWrapper.Api.AdkNext(pData);
+                    
 
                 }
-
-                // Stänger företaget
-                AdkNetWrapper.Api.AdkClose();
+                error = AdkNetWrapper.Api.AdkNext(pData);
+                
 
             }
+            // Stänger företaget
+            AdkNetWrapper.Api.AdkClose();
         }
 
         private void GetAvtalRad(Avtal avtal, int pData)
@@ -494,6 +493,11 @@ namespace UCSTest
                     Double moms = new Double();
 
                     String levNamn = new String(' ', 50);
+
+                    // Hämtar data ur databas och lagrar i de lokala variablerna
+                    error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_INVOICE_DATE, ref tmpDatum);
+                    logger.ErrorMessage(error);
+                    error = AdkNetWrapper.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
 
                     if (!hasDate || DateTime.Parse(fakturaDatum) >= DateTime.Parse(_appStartDatum))
                     {
