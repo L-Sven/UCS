@@ -43,7 +43,7 @@ namespace UCSTest
         public VismaData()
         {
             logger = new ErrorLogger();
-            logger.ErrorMessage("hej");
+            
             GetResultatEnhet();
             Console.WriteLine("Resultatenhet klar!");
 
