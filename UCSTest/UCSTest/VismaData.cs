@@ -36,14 +36,15 @@ namespace UCSTest
         int levRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
         int kundRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
         int avtalsRadID = 0; // Används för att skapa individuella identiteter för avtalsraderna i fatabasen   
-        private List<Kund> kundList = new List<Kund>();
-        private List<Leverantör> levList = new List<Leverantör>();
-        private List<LevFakturaHuvud> levFakturaList = new List<LevFakturaHuvud>();
 
         public VismaData()
         {
             logger = new ErrorLogger();
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> 05c2c613541dd513a70367ec571e1fc26256e0ea
             GetResultatEnhet();
             Console.WriteLine("Resultatenhet klar!");
 
@@ -65,10 +66,10 @@ namespace UCSTest
 
             GetAvtal();
             Console.WriteLine("Avtal klar!");
-
             Console.WriteLine("Tryck en tangent för att avsluta!");
-            Console.ReadKey();
 
+            Console.ReadKey();
+            
         }
 
         private void GetResultatEnhet()
@@ -126,7 +127,6 @@ namespace UCSTest
 
         private void GetAvtal()
         {
-
             // Öppnar upp ett företag
             error = Adk.Api.AdkOpen(ref sys, ref ftg);
             logger.ErrorMessage(error);
@@ -212,8 +212,7 @@ namespace UCSTest
                         datum = data[1].TrimStart(' ').Substring(0, 10);
                         int uppsägningstid = int.Parse(data[2].TrimStart(' ').Substring(0, 1));
                         int förlängningstid = int.Parse(data[3].TrimStart(' ').Substring(0, 1));
-                        DateTime temp;
-                        if (DateTime.TryParse(datum, out temp))
+                        if (DateTime.TryParse(datum, out var temp))
                         {
                             a.KommenteratSlutDatum = datum;
                         }
@@ -304,7 +303,6 @@ namespace UCSTest
 
         private void GetAvtalRad(Avtal avtal, int pData)
         {
-
             Double NROWS = new Double();
 
             error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_NROWS, ref NROWS);
@@ -384,7 +382,6 @@ namespace UCSTest
 
             // Stänger företaget
             AdkNetWrapper.Api.AdkClose();
-
         }
 
         // Metod som hämtar artikeldata
@@ -556,6 +553,7 @@ namespace UCSTest
                     // Anrop till metod som hämtar alla leverantörsfakturarader i den aktuella fakturan
                     GetLevFakturaRad(lFakturaHuvud, pData);
 
+                    //Totalkostnaden räknas ut genom att slå ihop beloppet i alla rader.
                     if (lFakturaHuvud.FakturaTyp.ToLower() != "k")
                     {
                         lFakturaHuvud.TotalKostnad *= -1;
@@ -570,8 +568,6 @@ namespace UCSTest
 
 
                     // Anropr till metod som lägger in data i databasen
-                    
-
                     try
                     {
                         sendData.LevFakturaTillDatabas(lFakturaHuvud);
@@ -917,9 +913,6 @@ namespace UCSTest
                         kFaktura.Moms *= -1;
                         kFaktura.TotalKostnad *= -1;
                     }
-
-
-                    
 
                     try
                     {
