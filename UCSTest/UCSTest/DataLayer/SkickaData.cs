@@ -45,7 +45,7 @@ namespace UCSTest
                 cmdAddAgreement.ExecuteNonQuery();
                 sqlCon.Close();
             }
-            catch (SqlException e)
+            catch (Exception e)
             {
                 logger.ErrorMessage(e);
             }
@@ -70,7 +70,7 @@ namespace UCSTest
                     cmdAddAgreementRow.ExecuteNonQuery();
                     sqlCon.Close();
                 }
-                catch (SqlException e)
+                catch (Exception e)
                 {
                     logger.ErrorMessage(e);
                 }
@@ -94,7 +94,7 @@ namespace UCSTest
                 cmdAddArticleGroup.ExecuteNonQuery();
                 sqlCon.Close();
             }
-            catch (SqlException e)
+            catch (Exception e)
             {
                 logger.ErrorMessage(e);
             }
@@ -124,7 +124,7 @@ namespace UCSTest
                 cmdAddArticle.ExecuteNonQuery();
                 sqlCon.Close();
             }
-            catch (SqlException e)
+            catch (Exception e)
             {
                 logger.ErrorMessage(e);
             }
@@ -147,7 +147,7 @@ namespace UCSTest
                 cmdAddResultatEnhet.ExecuteNonQuery();
                 sqlCon.Close();
             }
-            catch (SqlException e)
+            catch (Exception e)
             {
                 logger.ErrorMessage(e);
             }
@@ -183,7 +183,7 @@ namespace UCSTest
                 cmdAddInvoice.ExecuteNonQuery();
                 sqlCon.Close();
             }
-            catch (SqlException e)
+            catch (Exception e)
             {
                 logger.ErrorMessage(e);
             }
@@ -214,7 +214,7 @@ namespace UCSTest
                     cmdAddRow.ExecuteNonQuery();
                     sqlCon.Close();
                 }
-                catch (SqlException e)
+                catch (Exception e)
                 {
                     logger.ErrorMessage(e);
                 }
@@ -252,7 +252,7 @@ namespace UCSTest
                 cmdAddInvoice.ExecuteNonQuery();
                 sqlCon.Close();
             }
-            catch (SqlException e)
+            catch (Exception e)
             {
                 logger.ErrorMessage(e);
             }
@@ -283,7 +283,7 @@ namespace UCSTest
                     cmdAddRow.ExecuteNonQuery();
                     sqlCon.Close();
                 }
-                catch (SqlException e)
+                catch (Exception e)
                 {
                     logger.ErrorMessage(e);
                 }
@@ -312,7 +312,7 @@ namespace UCSTest
                 cmdAddCustomer.ExecuteNonQuery();
                 sqlCon.Close();
             }
-            catch (SqlException e)
+            catch (Exception e)
             {
                 logger.ErrorMessage(e);
             }
@@ -337,7 +337,7 @@ namespace UCSTest
                 cmdAddSupplier.ExecuteNonQuery();
                 sqlCon.Close();
             }
-            catch (SqlException e)
+            catch (Exception e)
             {
                 logger.ErrorMessage(e);
             }

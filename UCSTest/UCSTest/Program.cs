@@ -14,20 +14,19 @@ namespace UCSTest
 
         public static String ftg = String.Empty;
         public static String sys = string.Empty;
+        public static String startDatum = String.Empty;
 
         [STAThreadAttribute]
         static void Main(string[] args)
         {
-
-
-
-
+            Console.Title = "Power Bi Datafetcher";
             ftg = ConfigurationManager.AppSettings["ftgPath"];
             sys = ConfigurationManager.AppSettings["sysPath"];
+            startDatum = ConfigurationManager.AppSettings["datum"];
 
             //ChooseVismaFilePath();
             //VismaTidData vismaTid = new VismaTidData(ftg, sys);
-            VismaData go = new VismaData();
+            VismaData go = new VismaData(ftg, sys, startDatum);
             // C:\users\sijoh0500\Work Folders\Documents\Github\UCSTest\UCSTest\fakturaDB.mdf
         }
 
