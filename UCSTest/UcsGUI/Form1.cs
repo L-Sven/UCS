@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -97,6 +98,11 @@ namespace UcsGUI
         private void datePickStartDatum_ValueChanged(object sender, EventArgs e)
         {
             _datum = datePickStartDatum.Value.Date.ToString("yyyy-MM-dd");
+        }
+
+        private void btnÖppnaErrorLog_Click(object sender, EventArgs e)
+        {
+            Process.Start(@"C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UcsGUI\bin\Debug\testlogs\Errorlog " + DateTime.Today.ToString("yyyy-MM-dd") + ".txt");
         }
     }
 }
