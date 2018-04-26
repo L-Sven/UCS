@@ -7,3 +7,9 @@ C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UcsGUI\obj\Debug\UcsGUI.
 C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UcsGUI\obj\Debug\UcsGUI.csproj.CoreCompileInputs.cache
 C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UcsGUI\obj\Debug\UcsGUI.exe
 C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UcsGUI\obj\Debug\UcsGUI.pdb
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UcsGUI\obj\Debug\UcsGUI.Form1.resources
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UcsGUI\bin\Debug\AdkNetWrapper.dll
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UcsGUI\bin\Debug\NLog.dll
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UcsGUI\bin\Debug\NLog.xml
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UcsGUI\obj\Debug\UcsGUI.csproj.CopyComplete
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UcsGUI\bin\Debug\NLog.config

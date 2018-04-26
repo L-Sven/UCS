@@ -8,48 +8,53 @@ using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using NLog;
+using UcsGUI;
 using Adk = AdkNetWrapper;
 
-namespace UCSTest
+namespace UcsGui
 {
+    public delegate void AddInfoToTextBoxDelegate(string s);
+
     class VismaData
     {
-        Adk.Api.ADKERROR error;
-        readonly SkickaData sendData = new SkickaData();
+        public static event AddInfoToTextBoxDelegate AddInfoToTextBoxEvent;
+        static Adk.Api.ADKERROR error;
+        static readonly SkickaData sendData = new SkickaData();
 
-        
-        ErrorLogger logger;
+
+        static ErrorLogger logger;
 
         // Sökvägar för visma administration
 
        
-        private string ftg;
-        private string sys;
-        string _appStartDatum;
-        bool hasDate;
-        
+        private static string ftg;
+        private static string sys;
+        static string _appStartDatum;
+        static bool hasDate;
+
 
         // Följande sökvägar verkar också fungera
         //String sys = @"C:\Documents and Settings\All Users\Application Data\SPCS\SPCS Administration\Gemensamma filer";
         //String ftg = @"C:\Documents and Settings\All Users\Application Data\SPCS\SPCS Administration\Företag\Ovnbol2000";
 
-        int pData;
-        int antalFakturorUtanNr = 1; // Används för att ge fakturor utan nummer ett fakturanummer
-        int levRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
-        int kundRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
-        int avtalsRadID = 0; // Används för att skapa individuella identiteter för avtalsraderna i fatabasen   
+        static int pData;
+        static int antalFakturorUtanNr = 1; // Används för att ge fakturor utan nummer ett fakturanummer
+        static int levRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
+        static int kundRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
+        static int avtalsRadID = 0; // Används för att skapa individuella identiteter för avtalsraderna i fatabasen   
 
-        public VismaData(string ftg, string sys, string startDatum)
+        public VismaData(string _ftg, string _sys, string startDatum)
         {
             DateTime temp;
-            this.ftg = ftg;
-            this.sys = sys;
+            ftg = _ftg;
+            sys = _sys;
 
             if (DateTime.TryParse(startDatum, out temp))
             {
-                this._appStartDatum = startDatum;
+                _appStartDatum = startDatum;
                 hasDate = true;
             }
 
@@ -57,42 +62,46 @@ namespace UCSTest
             {
                 hasDate = false;
             }
-            
-
-
-
             logger = new ErrorLogger();
-
+            
+        }
+        public void StartFetchingData()
+        {
+            
             GetResultatEnhet();
-            Console.WriteLine("Resultatenhet klar!");
+            
+            AddInfoToTextBoxEvent("Resultatenheter klar!");
 
             // Anropar metod som hämtar data om alla artikelgrupper
             GetArtikelGrupper();
-            Console.WriteLine("Artikelgrupper klar!");
+            AddInfoToTextBoxEvent("Artikelgrupper klar!");
+            
+            //allDone.WaitOne();
 
             // Anropar metod som hämtar data om alla artiklar 
             GetArtikelData();
-            Console.WriteLine("Artikeldata klar!");
+            AddInfoToTextBoxEvent("Artikeldata klar!");
+            
 
             // Anropar metod som hämtar data om alla kundfakturor
             GetKundFakturaHuvudData();
-            Console.WriteLine("Kundfakturadata klar!");
+            AddInfoToTextBoxEvent("Kundfakturadata klar!");
+            
 
             //Anropar metod som hämtar data om alla leverantörsfakturor
             GetLevFakturaHuvudData();
-            Console.WriteLine("Leverantörsfakturadata klar!");
-
-            GetAvtal();
-            Console.WriteLine("Avtal klar!");
-            Console.WriteLine("Tryck en tangent för att avsluta!");
-
-            Console.ReadKey();
+            AddInfoToTextBoxEvent("Leverantörsfakturadata klar!");
             
+            GetAvtal();
+            AddInfoToTextBoxEvent("Avtal klar!");
+
+            AddInfoToTextBoxEvent("Hämtat all data, FÄRDIG!");
+
+            AddInfoToTextBoxEvent("Totala mängd fel: " + logger.counter);
+
         }
-
         
-
-        private void GetResultatEnhet()
+        private static void GetResultatEnhet()
         {
             // Öppnar upp ett företag
             error = Adk.Api.AdkOpen(ref sys, ref ftg);
@@ -138,7 +147,7 @@ namespace UCSTest
 
         }
 
-        private void GetAvtal()
+        private static void GetAvtal()
         {
             // Öppnar upp ett företag
             error = Adk.Api.AdkOpen(ref sys, ref ftg);
@@ -310,7 +319,7 @@ namespace UCSTest
             AdkNetWrapper.Api.AdkClose();
         }
 
-        private void GetAvtalRad(Avtal avtal, int pData)
+        private static void GetAvtalRad(Avtal avtal, int pData)
         {
             Double NROWS = new Double();
 
@@ -347,7 +356,7 @@ namespace UCSTest
             }
         }
 
-        private void GetArtikelGrupper()
+        private static void GetArtikelGrupper()
         {
             // Öppnar upp ett företag
             error = Adk.Api.AdkOpen(ref sys, ref ftg);
@@ -387,7 +396,7 @@ namespace UCSTest
         }
 
         // Metod som hämtar artikeldata
-        private void GetArtikelData()
+        private static void GetArtikelData()
         {
             // Öppnar upp ett företag
             error = Adk.Api.AdkOpen(ref sys, ref ftg);
@@ -454,7 +463,7 @@ namespace UCSTest
         }
 
         // Metod som hämtar data om ett leverantörsfakturahuvud
-        private void GetLevFakturaHuvudData()
+        private static void GetLevFakturaHuvudData()
         {
             // Öppnar upp ett företag
             error = Adk.Api.AdkOpen(ref sys, ref ftg);
@@ -584,7 +593,7 @@ namespace UCSTest
         }
 
         // Metod som hämtar rader från en leverantörsfaktura
-        private void GetLevFakturaRad(LevFakturaHuvud lFaktura, int pData)
+        private static void GetLevFakturaRad(LevFakturaHuvud lFaktura, int pData)
         {
 
             Double NROWS = new Double();
@@ -770,7 +779,7 @@ namespace UCSTest
         }
 
         // Metod som hämtar data från fakturahuvud i visma
-        private void GetKundFakturaHuvudData()
+        private static void GetKundFakturaHuvudData()
         {
 
             // Öppnar upp ett företag
@@ -925,7 +934,7 @@ namespace UCSTest
         }
 
         // Metod som hämtar information om raderna i fakturorna 
-        private void GetKundFakturaRad(KundFakturaHuvud Faktura, int pData)
+        private static void GetKundFakturaRad(KundFakturaHuvud Faktura, int pData)
         {
             Double NROWS = new Double();
             // Hämtar antalet rader på fakturan
