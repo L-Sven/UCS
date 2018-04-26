@@ -1,0 +1,9 @@
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UcsGUI\bin\Debug\UcsGUI.exe.config
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UcsGUI\bin\Debug\UcsGUI.exe
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UcsGUI\bin\Debug\UcsGUI.pdb
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UcsGUI\obj\Debug\UcsGUI.csprojResolveAssemblyReference.cache
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UcsGUI\obj\Debug\UcsGUI.Properties.Resources.resources
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UcsGUI\obj\Debug\UcsGUI.csproj.GenerateResource.cache
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UcsGUI\obj\Debug\UcsGUI.csproj.CoreCompileInputs.cache
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UcsGUI\obj\Debug\UcsGUI.exe
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UcsGUI\obj\Debug\UcsGUI.pdb
