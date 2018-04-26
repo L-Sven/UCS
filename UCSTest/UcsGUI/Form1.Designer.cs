@@ -1,6 +1,6 @@
 ﻿namespace UcsGUI
 {
-    partial class Form1
+    partial class radBtnHämtaAllData
     {
         /// <summary>
         /// Required designer variable.
@@ -33,8 +33,11 @@
             this.btnKörProgrammet = new System.Windows.Forms.Button();
             this.txtBoxInfo = new System.Windows.Forms.TextBox();
             this.datePickStartDatum = new System.Windows.Forms.DateTimePicker();
-            this.label1 = new System.Windows.Forms.Label();
+            this.datumLabel = new System.Windows.Forms.Label();
             this.btnÖppnaErrorLog = new System.Windows.Forms.Button();
+            this.radBtnFrånVissDatum = new System.Windows.Forms.RadioButton();
+            this.radBtnAllData = new System.Windows.Forms.RadioButton();
+            this.btnStopTask = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnVäljFöretag
@@ -87,13 +90,13 @@
             this.datePickStartDatum.TabIndex = 4;
             this.datePickStartDatum.ValueChanged += new System.EventHandler(this.datePickStartDatum_ValueChanged);
             // 
-            // label1
+            // datumLabel
             // 
-            this.label1.Location = new System.Drawing.Point(616, 211);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(170, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Välj datum för när data ska hämtas";
+            this.datumLabel.Location = new System.Drawing.Point(616, 211);
+            this.datumLabel.Name = "datumLabel";
+            this.datumLabel.Size = new System.Drawing.Size(170, 23);
+            this.datumLabel.TabIndex = 0;
+            this.datumLabel.Text = "Välj datum för när data ska hämtas";
             // 
             // btnÖppnaErrorLog
             // 
@@ -105,19 +108,57 @@
             this.btnÖppnaErrorLog.UseVisualStyleBackColor = true;
             this.btnÖppnaErrorLog.Click += new System.EventHandler(this.btnÖppnaErrorLog_Click);
             // 
-            // Form1
+            // radBtnFrånVissDatum
+            // 
+            this.radBtnFrånVissDatum.AutoSize = true;
+            this.radBtnFrånVissDatum.Location = new System.Drawing.Point(619, 169);
+            this.radBtnFrånVissDatum.Name = "radBtnFrånVissDatum";
+            this.radBtnFrånVissDatum.Size = new System.Drawing.Size(164, 17);
+            this.radBtnFrånVissDatum.TabIndex = 6;
+            this.radBtnFrånVissDatum.Text = "Hämta data fr.o.m vald datum";
+            this.radBtnFrånVissDatum.UseVisualStyleBackColor = true;
+            this.radBtnFrånVissDatum.CheckedChanged += new System.EventHandler(this.radBtnFrånVissDatum_CheckedChanged);
+            // 
+            // radBtnAllData
+            // 
+            this.radBtnAllData.AutoSize = true;
+            this.radBtnAllData.Checked = true;
+            this.radBtnAllData.Location = new System.Drawing.Point(619, 146);
+            this.radBtnAllData.Name = "radBtnAllData";
+            this.radBtnAllData.Size = new System.Drawing.Size(93, 17);
+            this.radBtnAllData.TabIndex = 7;
+            this.radBtnAllData.TabStop = true;
+            this.radBtnAllData.Text = "Hämta all data";
+            this.radBtnAllData.UseVisualStyleBackColor = true;
+            this.radBtnAllData.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
+            // 
+            // btnStopTask
+            // 
+            this.btnStopTask.Enabled = false;
+            this.btnStopTask.Location = new System.Drawing.Point(373, 262);
+            this.btnStopTask.Name = "btnStopTask";
+            this.btnStopTask.Size = new System.Drawing.Size(85, 23);
+            this.btnStopTask.TabIndex = 8;
+            this.btnStopTask.Text = "Stoppa Kör!!!";
+            this.btnStopTask.UseVisualStyleBackColor = true;
+            this.btnStopTask.Click += new System.EventHandler(this.btnStopTask_Click);
+            // 
+            // radBtnHämtaAllData
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnStopTask);
+            this.Controls.Add(this.radBtnAllData);
+            this.Controls.Add(this.radBtnFrånVissDatum);
             this.Controls.Add(this.btnÖppnaErrorLog);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.datumLabel);
             this.Controls.Add(this.datePickStartDatum);
             this.Controls.Add(this.txtBoxInfo);
             this.Controls.Add(this.btnKörProgrammet);
             this.Controls.Add(this.btnAvsluta);
             this.Controls.Add(this.btnVäljFöretag);
-            this.Name = "Form1";
+            this.Name = "radBtnHämtaAllData";
             this.Text = "Form1";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -131,8 +172,11 @@
         private System.Windows.Forms.Button btnKörProgrammet;
         private System.Windows.Forms.TextBox txtBoxInfo;
         private System.Windows.Forms.DateTimePicker datePickStartDatum;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label datumLabel;
         private System.Windows.Forms.Button btnÖppnaErrorLog;
+        private System.Windows.Forms.RadioButton radBtnFrånVissDatum;
+        private System.Windows.Forms.RadioButton radBtnAllData;
+        private System.Windows.Forms.Button btnStopTask;
     }
 }
 

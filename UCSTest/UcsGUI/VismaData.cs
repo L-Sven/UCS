@@ -65,32 +65,60 @@ namespace UcsGui
             logger = new ErrorLogger();
             
         }
-        public void StartFetchingData()
+
+        public int StartFetchingData(CancellationToken token)
         {
-            
+
             GetResultatEnhet();
-            
             AddInfoToTextBoxEvent("Resultatenheter klar!");
+            if (token.IsCancellationRequested)
+            {
+                AddInfoToTextBoxEvent("Task has been cancelled!");
+                return 0;
+            }
+
 
             // Anropar metod som hämtar data om alla artikelgrupper
             GetArtikelGrupper();
             AddInfoToTextBoxEvent("Artikelgrupper klar!");
+            if (token.IsCancellationRequested)
+            {
+                AddInfoToTextBoxEvent("Task has been cancelled!");
+                return 0;
+            }
             
-            //allDone.WaitOne();
+            
 
             // Anropar metod som hämtar data om alla artiklar 
             GetArtikelData();
             AddInfoToTextBoxEvent("Artikeldata klar!");
+            if (token.IsCancellationRequested)
+            {
+                AddInfoToTextBoxEvent("Task has been cancelled!");
+                return 0;
+            }
+           
             
-
             // Anropar metod som hämtar data om alla kundfakturor
-            GetKundFakturaHuvudData();
+            GetKundFakturaHuvudData(token);
             AddInfoToTextBoxEvent("Kundfakturadata klar!");
+            if (token.IsCancellationRequested)
+            {
+                AddInfoToTextBoxEvent("Task has been cancelled!");
+                return 0;
+            }
+            
             
 
             //Anropar metod som hämtar data om alla leverantörsfakturor
-            GetLevFakturaHuvudData();
+            GetLevFakturaHuvudData(token);
             AddInfoToTextBoxEvent("Leverantörsfakturadata klar!");
+            if (token.IsCancellationRequested)
+            {
+                AddInfoToTextBoxEvent("Task has been cancelled!");
+                return 0;
+            }
+            
             
             GetAvtal();
             AddInfoToTextBoxEvent("Avtal klar!");
@@ -99,6 +127,9 @@ namespace UcsGui
 
             AddInfoToTextBoxEvent("Totala mängd fel: " + logger.counter);
 
+            return logger.counter;
+
+
         }
         
         private static void GetResultatEnhet()
@@ -106,7 +137,6 @@ namespace UcsGui
             // Öppnar upp ett företag
             error = Adk.Api.AdkOpen(ref sys, ref ftg);
             logger.ErrorMessage(error);
-            
 
             // Gör pData till en referens av typen Artikelgrupp
             pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_CODE_OF_PROFIT_CENTRE);
@@ -275,7 +305,6 @@ namespace UcsGui
                         }
                         else
                         {
-                            Console.WriteLine("fail");
                             errorText = "Avtal med dokumentnummer " + dokumentNummer + " har ingen kommentar";
                             logger.ErrorMessage(errorText);
 
@@ -463,7 +492,7 @@ namespace UcsGui
         }
 
         // Metod som hämtar data om ett leverantörsfakturahuvud
-        private static void GetLevFakturaHuvudData()
+        private static void GetLevFakturaHuvudData(CancellationToken token)
         {
             // Öppnar upp ett företag
             error = Adk.Api.AdkOpen(ref sys, ref ftg);
@@ -479,6 +508,10 @@ namespace UcsGui
             while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns fakturor
                                                  // for (int i = 0; i < 30; i++) // Test som bara kör 30 varv
             {
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
                 // Kontroll om fakturan inte är färdig eller makulerad
                 int makulerad = new int();
 
@@ -779,7 +812,7 @@ namespace UcsGui
         }
 
         // Metod som hämtar data från fakturahuvud i visma
-        private static void GetKundFakturaHuvudData()
+        private static void GetKundFakturaHuvudData(CancellationToken token)
         {
 
             // Öppnar upp ett företag
@@ -795,6 +828,11 @@ namespace UcsGui
 
             while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns fakturor            
             {
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
+
                 // Kontroll om fakturan inte är färdig eller makulerad
                 int validFaktura = new int();
                 int makulerad = new int();

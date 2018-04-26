@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,24 +17,27 @@ using UcsGui;
 
 namespace UcsGUI
 {
-    public partial class Form1 : Form
+    public partial class radBtnHämtaAllData : Form
     {
         private VismaData _go = null;
-        private static CancellationTokenSource tokensource = new CancellationTokenSource();
-        CancellationToken token = tokensource.Token;
+        private static CancellationTokenSource Tokensource;
+        private Thread _localThread = null;
+
         private readonly string sys;
         private string _ftg;
-        private string _datum;
+        private string _datum = null;
 
-        public Form1()
+        public radBtnHämtaAllData()
         {
             InitializeComponent();
-            
-            VismaData.AddInfoToTextBoxEvent += AddInfo;
 
+            datePickStartDatum.Enabled = false;
+            btnÖppnaErrorLog.Visible = false;
+
+            VismaData.AddInfoToTextBoxEvent += AddInfo;
+            
             _ftg = ConfigurationManager.AppSettings["ftgPath"];
             sys = ConfigurationManager.AppSettings["sysPath"];
-            _datum = ConfigurationManager.AppSettings["datum"];
         }
 
         #region ===== Buttons =====
@@ -44,36 +49,92 @@ namespace UcsGUI
 
         private void btnAvsluta_Click(object sender, EventArgs e)
         {
-            //Vi avbryter vår Task innan vi avslutar programmet.
-            tokensource.Cancel();
             Application.Exit();
         }
 
         private async void btnKörProgrammet_Click(object sender, EventArgs e)
         {
-            txtBoxInfo.Clear();
-            
-            _go = new VismaData(_ftg, sys, _datum);
-            
-            //Vi gömmer kör knappen medans programmet arbetar.
+            //Instantierar tokensource här, då det ska vid varje knapptryckning skapas en ny fräsch tokensource som inte har fått sitt värde ändrat.
+            Tokensource = new CancellationTokenSource();
+            CancellationToken _token = Tokensource.Token;
+
+            btnAvsluta.Enabled = false;
+            btnStopTask.Enabled = true;
+            btnÖppnaErrorLog.Visible = false;
             btnKörProgrammet.Visible = false;
 
+            txtBoxInfo.Clear();
+            int counter = 0;
+
+            _go = new VismaData(_ftg, sys, _datum);
+            
             txtBoxInfo.Visible = true;
             //För att inte blockera main thread så kör vi det i en task, och väntar på att Task är färdig innan metoden är färdig.
             Task t = Task.Run(() =>
             {
-                //tokensource påverkas av avsluta knappen som avbryter vår Task i så fall.
-                while (!tokensource.IsCancellationRequested)
-                {
-                    _go.StartFetchingData();
-                }
-            }, token);
-            await t;
+                _localThread = Thread.CurrentThread;
+                counter = _go.StartFetchingData(_token);
 
+            }, _token);
+            await t;
+            
             btnKörProgrammet.Visible = true;
+
+            if (counter > 0)
+            {
+                btnÖppnaErrorLog.Visible = true;
+            }
+
+            btnAvsluta.Enabled = true;
+            btnStopTask.Enabled = false;
+        }
+
+        private void btnÖppnaErrorLog_Click(object sender, EventArgs e)
+        {
+            string path = (Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+            Process.Start(path + @"\Errorlog " + DateTime.Today.ToString("yyyy-MM-dd") + ".txt");
+        }
+
+        private void btnStopTask_Click(object sender, EventArgs e)
+        {
+            Tokensource.Cancel();
+
+            btnStopTask.Enabled = false;
+            btnAvsluta.Enabled = false;
         }
 
         #endregion
+
+
+        #region ===== Radio Buttons =====
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+            switch (radBtnFrånVissDatum.Checked)
+            {
+                case true:
+                    radBtnFrånVissDatum.Checked = false;
+                    radBtnAllData.Checked = true;
+                    datePickStartDatum.Enabled = false;
+                    _datum = null;
+                    break;
+            }
+        }
+
+        private void radBtnFrånVissDatum_CheckedChanged(object sender, EventArgs e)
+        {
+            switch (radBtnAllData.Checked)
+            {
+                case true:
+                    radBtnAllData.Checked = false;
+                    radBtnFrånVissDatum.Checked = true;
+                    datePickStartDatum.Enabled = true;
+                    _datum = datePickStartDatum.Value.Date.ToString("yyyy-MM-dd");
+                    break;
+            }
+        }
+        #endregion
+
 
         public void AddInfo(string s)
         {
@@ -88,10 +149,23 @@ namespace UcsGUI
             FolderBrowserDialog selectFolder = new FolderBrowserDialog();
             selectFolder.SelectedPath = @"C:\ProgramData\SPCS\SPCS Administration";
             selectFolder.Description = "Vänligen ange sökvägen till Företaget som ska öppnas.";
-            if (selectFolder.ShowDialog() == DialogResult.OK)
-            {
-                _ftg = selectFolder.SelectedPath;
-            }
+            _ftg = "";
+                if (selectFolder.ShowDialog() == DialogResult.OK)
+                {
+                    _ftg = selectFolder.SelectedPath;
+                    if (_ftg.Contains(@"\SPCS\SPCS Administration\"))
+                    {
+                        
+                        btnKörProgrammet.Enabled = true;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Error, ej korrekt sökväg!");
+                        btnKörProgrammet.Enabled = false;
+                    }
+                
+                }
+                
             selectFolder.Dispose();
         }
 
@@ -100,9 +174,6 @@ namespace UcsGUI
             _datum = datePickStartDatum.Value.Date.ToString("yyyy-MM-dd");
         }
 
-        private void btnÖppnaErrorLog_Click(object sender, EventArgs e)
-        {
-            Process.Start(@"C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\UcsGUI\bin\Debug\testlogs\Errorlog " + DateTime.Today.ToString("yyyy-MM-dd") + ".txt");
-        }
+        
     }
 }
