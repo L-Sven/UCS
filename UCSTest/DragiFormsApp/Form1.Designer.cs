@@ -40,6 +40,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.btnAcceptChanges = new System.Windows.Forms.Button();
             this.radioBtnUseExistingUserName = new System.Windows.Forms.RadioButton();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // listViewExistingNames
@@ -152,11 +153,20 @@
             this.radioBtnUseExistingUserName.Text = "Använd existerande anställds namn";
             this.radioBtnUseExistingUserName.UseVisualStyleBackColor = true;
             // 
+            // progressBar
+            // 
+            this.progressBar.Location = new System.Drawing.Point(265, 239);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(217, 30);
+            this.progressBar.TabIndex = 12;
+            this.progressBar.Visible = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.radioBtnUseExistingUserName);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -169,6 +179,7 @@
             this.Controls.Add(this.btnAcceptChanges);
             this.Controls.Add(this.listViewNamesToChange);
             this.Controls.Add(this.listViewExistingNames);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
@@ -190,6 +201,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnAcceptChanges;
         private System.Windows.Forms.RadioButton radioBtnUseExistingUserName;
+        private System.Windows.Forms.ProgressBar progressBar;
     }
 }
 

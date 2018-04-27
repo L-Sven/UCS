@@ -5,8 +5,10 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using NLog;
 
 namespace DragiFormsApp
 {
@@ -14,18 +16,24 @@ namespace DragiFormsApp
     {
         public Form1()
         {
-            GetDataFromDB = Functionality.FillUwpNameList;
             InitializeComponent();
-            Functionality.AddNameToList += AddNameToList;
-            GetDataFromDB();
+            
+            _func = new Functionality();
+            _getDataFromDb =_func.FillUwpNameList;
+            _getDataFromDb();   //Hämtar  referenser från Db och visar i listview
+            _func.AddNameToList += AddNameToList;
+            ApiMethods.progressBarEvent += ProgressBarHandler;
         }
+
+        private static Functionality _func;
+        public static ManualResetEvent formProgressMRE = new ManualResetEvent(false);
 
         private string _nameToReplace;
 
         #region ===== Delegates =====
 
-        private readonly StartGettingData GetDataFromDB;
-        private readonly ReplaceNameAndReferenceDelegate _replaceNameAndReference = Functionality.ReplaceNameAndReference;
+        private readonly StartGettingData _getDataFromDb;
+        private readonly ReplaceNameAndReferenceDelegate _replaceNameAndReference = Functionality.ReplaceNameAndReference;//_func.ReplaceNameAndReference;
         private readonly DisplayMessageBoxDelegate _displayMessageBox = Functionality.DisplayMessageBox;
 
 
@@ -67,7 +75,13 @@ namespace DragiFormsApp
                     };
                     break;
             }
-            _replaceNameAndReference(_nameToReplace, listViewNamesToChange);
+            List<string> names = new List<string>();
+            foreach (ListViewItem item in listViewNamesToChange.Items)
+            {
+                names.Add(item.Text);
+            }
+
+            _replaceNameAndReference(_nameToReplace, names);
 
         }
 
@@ -97,6 +111,43 @@ namespace DragiFormsApp
         public void AddNameToList(string s)
         {
             listViewExistingNames.Items.Add(s);
+        }
+
+        //Uppdaterar och ändrar progressbar
+        public void ProgressBarHandler(int amountOfAgreements)
+        {
+            
+            //progressBar.Value = 0;
+            //progressBar.Step = 1; //Notis till mig själv, step betyder med hur mycket det ska öka varje steg.
+            
+                this.BeginInvoke((Action)delegate   //DÅ vi anropar metoden från en annan tråd måste vi säkerställa att den körs på UI tråden.
+                {
+                    progressBar.Maximum = amountOfAgreements;
+                    using (Graphics gr = progressBar.CreateGraphics())
+                    {
+                        progressBar.Visible = true;
+                        this.Cursor = Cursors.WaitCursor;
+
+                        for (int i = 0; i < amountOfAgreements; i++)
+                        {
+                            ApiMethods.progressMRE.WaitOne();   //Vi väntar på besked från ApiMethods att få fortsätta.
+                            progressBar.Value = i;  //Detta steg gör progressBar.Step överflödig. Value måste sättas innan gr.DrawString utförs!!!!
+
+                            gr.DrawString(progressBar.Value + " av " + amountOfAgreements,  //Ett helvete av information om hur datan ska visas i ProgressBar.
+                                SystemFonts.DefaultFont, Brushes.Black,
+                                new PointF( //PointF är i grunden uträknaren för vart texten ska vara placerad i progressBar
+                                    progressBar.Width / 2.3F -
+                                    (gr.MeasureString(progressBar.Value.ToString(), SystemFonts.DefaultFont).Width / 2.0F),
+                                    progressBar.Height / 2F -
+                                    (gr.MeasureString(progressBar.Value.ToString(), SystemFonts.DefaultFont).Height / 2.0F)));
+
+                            Thread.Sleep(300); //Används för att testa ProgressBar pga. kort tidsintervall
+                            formProgressMRE.Set();  //Signalisera ApiMethods tråden att den kan fortsätta.
+                        }
+                        progressBar.Visible = false;    //Allt färdig, gör progressbar osynlig.
+                        this.Cursor = Cursors.Default;
+                    }
+                });
         }
     }
 }
