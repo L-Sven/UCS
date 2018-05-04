@@ -17,22 +17,31 @@ namespace UCSTest
 
         private Logger logger;
 
+        public int counter { get; set; }
+
         public ErrorLogger()
         {
             logger = LogManager.GetCurrentClassLogger();
+            counter = 0;
         }
 
+        // Loggar meddelanden för identifierade exceptions
         public void ErrorMessage(Exception ex)
         {
 
             logger.Error(ex, "Exception discovered");
+            counter++;
         }
+
+        // Loggar meddelanden för strängar (exempelvis vid felaktiga kommentarer på avtal)
         public void ErrorMessage(string msg)
         {
 
             logger.Error(msg, "Error discovered");
+            counter++;
         }
 
+        // Loggar errors vid anrop via API
         public void ErrorMessage(Adk.Api.ADKERROR error)
         {
 
@@ -43,6 +52,7 @@ namespace UCSTest
                 Adk.Api.AdkGetErrorText(ref error, errtype,
                     ref errortext, 200);
                 logger.Error(errortext, "ADK error!");
+                counter++;
             }
         }
     }

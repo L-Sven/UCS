@@ -11,17 +11,16 @@ namespace UCSTest
 {
     class Program
     {
-        public static String ftg = String.Empty;
-        public static String sys = string.Empty;
-        public static String startDatum = String.Empty;
+        
+        
 
         [STAThreadAttribute]
         static void Main(string[] args)
         {
             Console.Title = "Power Bi Datafetcher";
-            ftg = ConfigurationManager.AppSettings["ftgPath"];
-            sys = ConfigurationManager.AppSettings["sysPath"];
-            startDatum = ConfigurationManager.AppSettings["datum"];
+            string ftg = ConfigurationManager.AppSettings["ftgPath"];
+            string sys = ConfigurationManager.AppSettings["sysPath"];
+            string startDatum = ConfigurationManager.AppSettings["datum"];
 
             //ChooseVismaFilePath();
             //VismaTidData vismaTid = new VismaTidData(ftg, sys);
