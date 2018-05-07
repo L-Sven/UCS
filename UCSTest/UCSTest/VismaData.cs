@@ -19,27 +19,18 @@ namespace UCSTest
         Adk.Api.ADKERROR error;
         readonly SkickaData sendData = new SkickaData();
 
-        
         ErrorLogger logger;
-
-        // Sökvägar för visma administration
-
        
         private string ftg;
         private string sys;
         string _appStartDatum;
         bool hasDate;
-        
-
-        // Följande sökvägar verkar också fungera
-        //String sys = @"C:\Documents and Settings\All Users\Application Data\SPCS\SPCS Administration\Gemensamma filer";
-        //String ftg = @"C:\Documents and Settings\All Users\Application Data\SPCS\SPCS Administration\Företag\Ovnbol2000";
-
+  
         int pData;
         int antalFakturorUtanNr = 1; // Används för att ge fakturor utan nummer ett fakturanummer
         int levRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
         int kundRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
-        int avtalsRadID = 0; // Används för att skapa individuella identiteter för avtalsraderna i fatabasen   
+        int avtalsRadID = 0; // Används för att skapa individuella identiteter för avtalsraderna i databasen   
 
         public VismaData(string ftg, string sys, string startDatum)
         {
@@ -47,6 +38,7 @@ namespace UCSTest
             this.ftg = ftg;
             this.sys = sys;
 
+            // Kontroll för om det finns ett korrekt startdatum för när data ska hämtas från
             if (DateTime.TryParse(startDatum, out temp))
             {
                 this._appStartDatum = startDatum;
@@ -57,12 +49,11 @@ namespace UCSTest
             {
                 hasDate = false;
             }
-            
-
 
 
             logger = new ErrorLogger();
 
+            // Anropar metd som hämtar data om alla resultatenheter
             GetResultatEnhet();
             Console.WriteLine("Resultatenhet klar!");
 
@@ -82,8 +73,12 @@ namespace UCSTest
             GetLevFakturaHuvudData();
             Console.WriteLine("Leverantörsfakturadata klar!");
 
+            // Anropar metod som hämtar data om alla avtal
             GetAvtal();
             Console.WriteLine("Avtal klar!");
+
+            Console.WriteLine("All information är hämtad!");
+            Console.WriteLine("Så här många errors har loggats: " + logger.counter);
             Console.WriteLine("Tryck en tangent för att avsluta!");
 
             Console.ReadKey();
@@ -122,10 +117,8 @@ namespace UCSTest
                 r.resultatEnhetID = resultatEnhetID;
                 r.resultatEnhetNamn = resultatEnhetNamn;
 
-
+                // Skickar det aktuella objektet av en resultatenhet till databasen
                 sendData.ResultatenhetTillDatabas(r);
-
-
 
                 // Sätter vidare pekaren till nästa artikelgrupp
                 error = AdkNetWrapper.Api.AdkNext(pData);
@@ -175,6 +168,7 @@ namespace UCSTest
                 error = AdkNetWrapper.Api.AdkLongToDate(date, ref avtalsDatum, 16);
                 logger.ErrorMessage(error);
 
+                // Kontroll för att enbart hämta data efter det startdatum som hämtats från App.config
                 if (!hasDate || DateTime.Parse(avtalsDatum) >= DateTime.Parse(_appStartDatum))
                 {
                     error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DOCUMENT_NUMBER, ref dokumentNummer);
@@ -203,8 +197,10 @@ namespace UCSTest
                     error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_END, ref date);
                     logger.ErrorMessage(error);
 
+                    // Kontroll om det finns ett angivet slutdatum på avtalet
                     if (date == 0)
                     {
+                        // Fullösning för ett preliminärt datum som sedan skrivs om till null i databasen. Detta eftersom databasen inte vill ta emot en null-sträng
                         avtalsDatumSlut = "1111-11-11";
                     }
                     else
@@ -215,15 +211,17 @@ namespace UCSTest
 
                     String datum = new String(' ', 10);
                     string errorText;
+
                     try
                     {
+                        // Hantering av kommentarsfältet på avtalet
                         if (kommentarsFält != "" /*|| avtalsDatumSlut == ""*/)
                         {
                             string[] data = kommentarsFält.Split('#');
 
                             //Vi tar arrayens första element, trimmar bort mellanslaget i början samt tar de första tio tecken.
                             //För detta måste formatet vara yyyy-mm-dd.
-                            //För uppsägningstid och förlängningstiden så måste tar vi bort mellanslaget från båda samt tar bara et tecken.
+                            //För uppsägningstid och förlängningstiden så måste tar vi bort mellanslaget från båda samt tar bara ett tecken.
                             datum = data[1].TrimStart(' ').Substring(0, 10);
                             int uppsägningstid = int.Parse(data[2].TrimStart(' ').Substring(0, 1));
                             int förlängningstid = int.Parse(data[3].TrimStart(' ').Substring(0, 1));
@@ -238,11 +236,11 @@ namespace UCSTest
                             }
 
 
-                            //if (int.Parse(data[2]) > 0 && int.Parse(data[2]) <= 12)
+                            
                             if (uppsägningstid > 0 && uppsägningstid <= 12)
                             {
                                 a.Uppsägningstid = uppsägningstid;
-                                //a.Uppsägningstid = int.Parse(data[2]);
+                                
                             }
                             else
                             {
@@ -250,11 +248,11 @@ namespace UCSTest
                                 logger.ErrorMessage(errorText);
                             }
 
-                            //if (int.Parse(data[3]) > 0 && int.Parse(data[3]) <= 12)
+                            
                             if (förlängningstid > 0 && förlängningstid <= 12)
                             {
                                 a.Förlängningstid = förlängningstid;
-                                //a.Förlängningstid = int.Parse(data[3]);
+                                
                             }
                             else
                             {
@@ -266,7 +264,6 @@ namespace UCSTest
                         }
                         else
                         {
-                            Console.WriteLine("fail");
                             errorText = "Avtal med dokumentnummer " + dokumentNummer + " har ingen kommentar";
                             logger.ErrorMessage(errorText);
 
@@ -288,6 +285,7 @@ namespace UCSTest
                     a.PeriodStart = periodStart;
                     a.PeriodEnd = periodEnd;
 
+                    // Hämtar avtalsraderna på avtalet
                     GetAvtalRad(a, pData);
 
                     foreach (var element in a.ListAvtalsRad)
@@ -295,13 +293,14 @@ namespace UCSTest
                         a.TotalKostnad += (double)element.TotalKostnad;
                     }
 
-
+                    // Skickar avtalet till databasen
                     sendData.AvtalTillDatabas(a);
 
-                    // Sätter vidare pekaren till nästa artikelgrupp
+                    
                     
 
                 }
+                // Sätter vidare pekaren till nästa artikelgrupp
                 error = AdkNetWrapper.Api.AdkNext(pData);
                 
 
@@ -341,6 +340,7 @@ namespace UCSTest
                     enAvtalsRad.RadId = avtalsRadID;
                     enAvtalsRad.TotalKostnad = totalKostnad;
 
+                    // Lägger till avtalsraden i listan över det aktuella avtalets avtalsrader
                     avtal.ListAvtalsRad.Add(enAvtalsRad);
                 }
 
@@ -439,9 +439,7 @@ namespace UCSTest
                 artikel.Frakt = frakt;
                 artikel.OvrigKostnad = ovrigKostnad;
 
-                // Skickar data till sendData
-
-
+                // Skickar data till sendData som i sin tur lägger in artikeln i databasen
                 sendData.ArtikelTillDatabas(artikel);
 
                 // Sätter vidare pekaren till nästa artikel
@@ -470,7 +468,7 @@ namespace UCSTest
             while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns fakturor
                                                  // for (int i = 0; i < 30; i++) // Test som bara kör 30 varv
             {
-                // Kontroll om fakturan inte är färdig eller makulerad
+                // Kontroll om fakturan är makulerad
                 int makulerad = new int();
 
                 error = AdkNetWrapper.Api.AdkGetBool(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CANCELLED, ref makulerad);
@@ -479,7 +477,7 @@ namespace UCSTest
                 if (makulerad == 1)
                 {
                     // Do nothing
-                    Console.WriteLine("Makulerad");
+                    Console.WriteLine("Makulerad leverantörsfaktura identifierad");
                 }
                 else
                 {
@@ -489,7 +487,7 @@ namespace UCSTest
                     Double lopNummer = new double();
                     String levNummer = new String(' ', 16);
                     String fakturaNummer = new String(' ', 16);
-                    int tmpDatum = new int(); // Temporär datumhållare eftersom data hämtas som 8 siffror
+                    int tmpDatum = new int(); // Temporär datumhållare 
                     String fakturaDatum = new String(' ', 11);
                     String valutaKod = new String(' ', 4);
                     double valutaKurs = 0.00;
@@ -499,11 +497,13 @@ namespace UCSTest
 
                     String levNamn = new String(' ', 50);
 
-                    // Hämtar data ur databas och lagrar i de lokala variablerna
+                    
                     error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_INVOICE_DATE, ref tmpDatum);
                     logger.ErrorMessage(error);
                     error = AdkNetWrapper.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
+                    logger.ErrorMessage(error);
 
+                    // Kontrollerar om fakturan är inom korrekt datum
                     if (!hasDate || DateTime.Parse(fakturaDatum) >= DateTime.Parse(_appStartDatum))
                     {
 
@@ -523,7 +523,7 @@ namespace UCSTest
 
                         // Hämtar data ur databas och lagrar i de lokala variablerna
 
-                        logger.ErrorMessage(error);
+                        
                         error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_CODE, ref valutaKod, 4);
                         logger.ErrorMessage(error);
                         error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_RATE, ref valutaKurs);
@@ -537,7 +537,7 @@ namespace UCSTest
                         error = Adk.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_SUPPLIER_NAME, ref levNamn, 50);
                         logger.ErrorMessage(error);
 
-                        // Lägger till data i instansen och lFakturaHuvud
+                        // Ger leverantörsfakturan prefixet "LF-" för att undvika samma fakturanummer som kundfakturorna
                         lFakturaHuvud.LopNummer = "LF-" + lopNummer;
                         lFakturaHuvud.LevNummer = levNummer;
                         lFakturaHuvud.FakturaNummer = fakturaNummer;
@@ -552,7 +552,7 @@ namespace UCSTest
                         // Anrop till metod som hämtar alla leverantörsfakturarader i den aktuella fakturan
                         GetLevFakturaRad(lFakturaHuvud, pData);
 
-                        //Totalkostnaden räknas ut genom att slå ihop beloppet i alla rader.
+                        //Totalkostnaden görs negativ vid krediterad faktura
                         if (lFakturaHuvud.FakturaTyp.ToLower() != "k")
                         {
                             lFakturaHuvud.TotalKostnad *= -1;
@@ -632,7 +632,7 @@ namespace UCSTest
                         //Do Nothing
                     }
 
-                    // Om det inte är en rad som presenterar totalkostnaden
+                    // Om det inte är en rad som presenterar totalkostnaden eller moms
                     else
                     {
                         // Hämtar data ur databas och lagrar i de lokala variablerna
@@ -659,8 +659,10 @@ namespace UCSTest
                         enFakturaRad.TotalKostnad = totalKostnad;
                         enFakturaRad.ResultatEnhet = resultatEnhet;
 
+                        // Ökar totalkostnaden på fakturan med kostnaden för aktuell rad
                         lFaktura.TotalKostnad += totalKostnad;
 
+                        // Lägger till raden i den aktuella leverantörsfakturan lista över rader
                         lFaktura.fakturaRader.Add(enFakturaRad);
                     }
 
@@ -669,6 +671,10 @@ namespace UCSTest
             }
         }
 
+
+        // Används inte just nu eftersom vi hämtar kunder direkt från fakturorna istället för kunddatabasen.
+        // Detta för att det kan finnas kunder utan fakturor, nu kommer enbart kunder med som har fakturor i databasen.
+        /*
         private void GetKunder()
         {
             // Öppnar upp ett företag
@@ -718,7 +724,11 @@ namespace UCSTest
             // Stänger företaget
             AdkNetWrapper.Api.AdkClose();
         }
+        */
 
+        // Används inte eftersom vi hämtar leverantörerna direkt från leverantörsfakturorna istället för databasen med leverantörer.
+        // Detta för att inte hämta leverantörer som inte finns med på några leverantörsfakturor
+        /*
         private void GetLeverantörer()
         {
             // Öppnar upp ett företag
@@ -768,8 +778,9 @@ namespace UCSTest
             // Stänger företaget
             AdkNetWrapper.Api.AdkClose();
         }
+        */
 
-        // Metod som hämtar data från fakturahuvud i visma
+        // Metod som hämtar data från kundfakturahuvuden i visma
         private void GetKundFakturaHuvudData()
         {
 
@@ -799,7 +810,7 @@ namespace UCSTest
                 if (validFaktura == 1 || makulerad == 1)
                 {
                     // Do nothing
-                    Console.WriteLine("Makulerad eller ofärdig faktura");
+                    Console.WriteLine("Makulerad eller ofärdig kundfaktura identifierad");
                 }
 
                 else
@@ -832,7 +843,7 @@ namespace UCSTest
                     error = AdkNetWrapper.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
                     logger.ErrorMessage(error);
 
-
+                    // Kontroll om fakturna är inom korrekt datum från vad som angivits i App.config
                     if (!hasDate || DateTime.Parse(fakturaDatum) >= DateTime.Parse(_appStartDatum))
                     {
                         error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NUMBER, ref fakturaNr);
@@ -866,16 +877,15 @@ namespace UCSTest
                         logger.ErrorMessage(error);
 
 
-
-                        // Lägger info i kundfakturan
-
                         kFaktura.TotalKostnad = totalKostnad;
                         kFaktura.FakturaDatum = fakturaDatum;
 
+                        // Ger alla kundfakturor prefixet "KF-" för att de inte ska kunna ha samma nummer som leverantörsfakturorna
                         String fakturaNummer = new String(' ', 20);
                         fakturaNummer = fakturaNr.ToString();
                         fakturaNummer = "KF-" + fakturaNummer;
                         kFaktura.FakturaNummer = fakturaNummer;
+
                         kFaktura.KundNummer = kundNr;
                         kFaktura.FakturaTyp = fakturaTyp;
                         kFaktura.Säljare = säljare;
@@ -903,12 +913,14 @@ namespace UCSTest
 
                         }
 
+                        // Om det är en krediterad faktura görs värdena negativa
                         if (fakturaTyp.ToUpper() == "K")
                         {
                             kFaktura.Moms *= -1;
                             kFaktura.TotalKostnad *= -1;
                         }
 
+                        // Skickar kundfakturan till sendData som i sin tur lägger itll den i databasen
                         sendData.KundFakturaTillDatabas(kFaktura);
                     }
 
@@ -952,7 +964,7 @@ namespace UCSTest
 
                     enFakturaRad.ArtikelNummer = artikelNummer;
 
-                    //Fakturarader som är avtalsperioder tas inte med, dess data är för sammanställningen irrelevant?
+                    //Fakturarader som är avtalsperioder tas inte med, dess data hämtas i samband med när avtalen hämtas
                     if (enFakturaRad.ArtikelNummer != "Avtalsperiod")   
                     {
                         // Autoinkrementerad primärnyckel för databasen
