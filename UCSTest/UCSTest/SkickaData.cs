@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -14,8 +15,7 @@ namespace UCSTest
     {
 
         //Skapar en sql-connection mot databasen
-        private SqlConnection sqlCon = new SqlConnection(
-              @"Data Source=SIMONJO-6570B\UCSTEST;Initial Catalog=UCSTest;Persist Security Info=True;User ID=sa;Password=Ucstest2018");
+        private SqlConnection sqlCon = new SqlConnection(@ConfigurationManager.AppSettings["dbPath"]);
 
         ErrorLogger logger = new ErrorLogger();
 

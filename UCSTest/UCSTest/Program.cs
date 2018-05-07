@@ -12,8 +12,6 @@ namespace UCSTest
     class Program
     {
         
-        
-
         [STAThreadAttribute]
         static void Main(string[] args)
         {
