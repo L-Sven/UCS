@@ -17,7 +17,7 @@ namespace UCSTest
         [STAThreadAttribute]
         static void Main(string[] args)
         {
-            // Test
+            // Test igen
             Console.Title = "Power Bi Datafetcher";
 
             // Hämtar sökväg till företaget från App.config
