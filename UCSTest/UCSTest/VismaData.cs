@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
@@ -31,7 +32,7 @@ namespace UCSTest
         int levRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
         int kundRadID = 0;  //Används för att skapa individuella Identiteter för Leverantörsfafakturaraderna i databasen.
         int avtalsRadID = 0; // Används för att skapa individuella identiteter för avtalsraderna i databasen   
-
+        
         public VismaData(string ftg, string sys, string startDatum)
         {
             DateTime temp;
@@ -49,9 +50,29 @@ namespace UCSTest
             {
                 hasDate = false;
             }
-
-
+            
             logger = new ErrorLogger();
+
+            try
+            {
+                ftg = null;
+                // Öppnar upp ett företag
+                error = Adk.Api.AdkOpen(ref sys, ref ftg);
+                if (error.lRc != Adk.Api.ADKE_OK)
+                {
+                    string errortext = new string(' ', 200);
+                    int errtype = (int)Adk.Api.ADK_ERROR_TEXT_TYPE.elRc;
+                    Adk.Api.AdkGetErrorText(ref error, errtype, ref errortext, 200);
+                    logger.ErrorMessage(errortext);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorMessage(ex + ". Ftg eller Sys sökväg får ej vara null!");
+                return;
+            }
+            
 
             // Anropar metd som hämtar data om alla resultatenheter
             GetResultatEnhet();
@@ -77,6 +98,9 @@ namespace UCSTest
             GetAvtal();
             Console.WriteLine("Avtal klar!");
 
+            // Stänger företaget
+            AdkNetWrapper.Api.AdkClose();
+
             Console.WriteLine("All information är hämtad!");
             Console.WriteLine("Så här många errors har loggats: " + logger.counter);
             Console.WriteLine("Tryck en tangent för att avsluta!");
@@ -89,11 +113,6 @@ namespace UCSTest
 
         private void GetResultatEnhet()
         {
-            // Öppnar upp ett företag
-            error = Adk.Api.AdkOpen(ref sys, ref ftg);
-            logger.ErrorMessage(error);
-            
-
             // Gör pData till en referens av typen Artikelgrupp
             pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_CODE_OF_PROFIT_CENTRE);
 
@@ -124,19 +143,10 @@ namespace UCSTest
                 error = AdkNetWrapper.Api.AdkNext(pData);
                 
             }
-
-            // Stänger företaget
-            AdkNetWrapper.Api.AdkClose();
-
-
         }
 
         private void GetAvtal()
         {
-            // Öppnar upp ett företag
-            error = Adk.Api.AdkOpen(ref sys, ref ftg);
-            logger.ErrorMessage(error);
-
             // Gör pData till en referens av typen Artikelgrupp
             pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_AGREEMENT_HEAD);
 
@@ -225,6 +235,7 @@ namespace UCSTest
                             datum = data[1].TrimStart(' ').Substring(0, 10);
                             int uppsägningstid = int.Parse(data[2].TrimStart(' ').Substring(0, 1));
                             int förlängningstid = int.Parse(data[3].TrimStart(' ').Substring(0, 1));
+
                             if (DateTime.TryParse(datum, out var temp))
                             {
                                 a.KommenteratSlutDatum = datum;
@@ -271,7 +282,7 @@ namespace UCSTest
                     }
                     catch (Exception ex)
                     {
-                        logger.ErrorMessage(ex);
+                        logger.ErrorMessage(ex + "Avtalnummer: " + dokumentNummer + ". Felaktig kommentarsfält.");
                     }
 
 
@@ -295,18 +306,13 @@ namespace UCSTest
 
                     // Skickar avtalet till databasen
                     sendData.AvtalTillDatabas(a);
-
                     
-                    
-
                 }
                 // Sätter vidare pekaren till nästa artikelgrupp
                 error = AdkNetWrapper.Api.AdkNext(pData);
                 
 
             }
-            // Stänger företaget
-            AdkNetWrapper.Api.AdkClose();
         }
 
         private void GetAvtalRad(Avtal avtal, int pData)
@@ -349,10 +355,6 @@ namespace UCSTest
 
         private void GetArtikelGrupper()
         {
-            // Öppnar upp ett företag
-            error = Adk.Api.AdkOpen(ref sys, ref ftg);
-            logger.ErrorMessage(error);
-
             // Gör pData till en referens av typen Artikelgrupp
             pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_CODE_OF_ARTICLE_GROUP);
 
@@ -381,18 +383,11 @@ namespace UCSTest
                 error = AdkNetWrapper.Api.AdkNext(pData);
                 
             }
-
-            // Stänger företaget
-            AdkNetWrapper.Api.AdkClose();
         }
 
         // Metod som hämtar artikeldata
         private void GetArtikelData()
         {
-            // Öppnar upp ett företag
-            error = Adk.Api.AdkOpen(ref sys, ref ftg);
-            logger.ErrorMessage(error);
-
             // Gör pData till en referens av typen Artikel
             pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_ARTICLE);
 
@@ -446,18 +441,11 @@ namespace UCSTest
                 error = AdkNetWrapper.Api.AdkNext(pData);
                 
             }
-
-            // Stänger företaget
-            AdkNetWrapper.Api.AdkClose();
         }
 
         // Metod som hämtar data om ett leverantörsfakturahuvud
         private void GetLevFakturaHuvudData()
         {
-            // Öppnar upp ett företag
-            error = Adk.Api.AdkOpen(ref sys, ref ftg);
-            logger.ErrorMessage(error);
-
             // Gör pData till en referens av typen leverantörsfaktura
             pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_SUPPLIER_INVOICE_HEAD);
 
@@ -538,17 +526,24 @@ namespace UCSTest
                         logger.ErrorMessage(error);
 
                         // Ger leverantörsfakturan prefixet "LF-" för att undvika samma fakturanummer som kundfakturorna
-                        lFakturaHuvud.LopNummer = "LF-" + lopNummer;
-                        lFakturaHuvud.LevNummer = levNummer;
-                        lFakturaHuvud.FakturaNummer = fakturaNummer;
-                        lFakturaHuvud.FakturaDatum = fakturaDatum;
-                        lFakturaHuvud.ValutaKod = valutaKod;
-                        lFakturaHuvud.ValutaKurs = decimal.Parse(valutaKurs.ToString());
-                        lFakturaHuvud.FakturaTyp = fakturaTyp;
-                        lFakturaHuvud.ProjektHuvud = projektHuvud;
-                        lFakturaHuvud.Moms = moms;
-                        lFakturaHuvud.LevNamn = levNamn;
-
+                        try
+                        {
+                            lFakturaHuvud.LopNummer = "LF-" + lopNummer;
+                            lFakturaHuvud.LevNummer = levNummer;
+                            lFakturaHuvud.FakturaNummer = fakturaNummer;
+                            lFakturaHuvud.FakturaDatum = fakturaDatum;
+                            lFakturaHuvud.ValutaKod = valutaKod;
+                            lFakturaHuvud.ValutaKurs = decimal.Parse(valutaKurs.ToString());
+                            lFakturaHuvud.FakturaTyp = fakturaTyp;
+                            lFakturaHuvud.ProjektHuvud = projektHuvud;
+                            lFakturaHuvud.Moms = moms;
+                            lFakturaHuvud.LevNamn = levNamn;
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.ErrorMessage(ex);
+                        }
+                        
                         // Anrop till metod som hämtar alla leverantörsfakturarader i den aktuella fakturan
                         GetLevFakturaRad(lFakturaHuvud, pData);
 
@@ -573,20 +568,12 @@ namespace UCSTest
                     error = AdkNetWrapper.Api.AdkNext(pData);
 
                 }
-
-            
-
             }
-
-            // Stänger företaget
-            AdkNetWrapper.Api.AdkClose();
-
         }
 
         // Metod som hämtar rader från en leverantörsfaktura
         private void GetLevFakturaRad(LevFakturaHuvud lFaktura, int pData)
         {
-
             Double NROWS = new Double();
 
             // Hämtar antalet rader som finns på leverantörsfakturan
@@ -783,11 +770,6 @@ namespace UCSTest
         // Metod som hämtar data från kundfakturahuvuden i visma
         private void GetKundFakturaHuvudData()
         {
-
-            // Öppnar upp ett företag
-            error = Adk.Api.AdkOpen(ref sys, ref ftg);
-            logger.ErrorMessage(error);
-
             // gör pData till en kundfakturahuvud-referens
             pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_INVOICE_HEAD);
 
@@ -930,10 +912,6 @@ namespace UCSTest
                 error = AdkNetWrapper.Api.AdkNext(pData);
                 
             }
-            // Stänger företaget
-            AdkNetWrapper.Api.AdkClose();
-
-
         }
 
         // Metod som hämtar information om raderna i fakturorna 
@@ -1014,9 +992,7 @@ namespace UCSTest
                             enFakturaRad.TotalKostnad *= -1;
                             enFakturaRad.TäckningsBidrag *= -1;
                         }
-
                         
-
                         Faktura.fakturaRader.Add(enFakturaRad);
 
                     }

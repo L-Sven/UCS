@@ -109,7 +109,6 @@ namespace UCSTest
             // Ger Sql-kommandot information om att den ska anropa en stored procedure
             cmdAddArticle.CommandType = CommandType.StoredProcedure;
             
-
             cmdAddArticle.Parameters.Add(new SqlParameter("@artikelNummer", a.ArtikelNummer));
             cmdAddArticle.Parameters.Add(new SqlParameter("@artikelGrupp", a.ArtikelGrupp));
             cmdAddArticle.Parameters.Add(new SqlParameter("@benämning", a.Benämning));
@@ -163,18 +162,25 @@ namespace UCSTest
             // Ger Sql-kommandot information om att den ska anropa en stored procedure
             cmdAddInvoice.CommandType = CommandType.StoredProcedure;
 
-
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaNummer", kFaktura.FakturaNummer));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaTyp", kFaktura.FakturaTyp));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@kundNummer", int.Parse(kFaktura.KundNummer)));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@säljare", kFaktura.Säljare));            
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaDatum", kFaktura.FakturaDatum));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@totalKostnad", decimal.Parse(kFaktura.TotalKostnad.ToString())));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@förfalloDatum", ""));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@slutDatum", ""));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@fraktAvgift", kFaktura.Cargo_amount));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@administrationsAvgift", kFaktura.Dispatch_fee));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@moms", kFaktura.Moms));
+            try
+            {
+                cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaNummer", kFaktura.FakturaNummer));
+                cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaTyp", kFaktura.FakturaTyp));
+                cmdAddInvoice.Parameters.Add(new SqlParameter("@kundNummer", kFaktura.KundNummer));
+                cmdAddInvoice.Parameters.Add(new SqlParameter("@säljare", kFaktura.Säljare));
+                cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaDatum", kFaktura.FakturaDatum));
+                cmdAddInvoice.Parameters.Add(new SqlParameter("@totalKostnad", decimal.Parse(kFaktura.TotalKostnad.ToString())));
+                cmdAddInvoice.Parameters.Add(new SqlParameter("@förfalloDatum", ""));
+                cmdAddInvoice.Parameters.Add(new SqlParameter("@slutDatum", ""));
+                cmdAddInvoice.Parameters.Add(new SqlParameter("@fraktAvgift", kFaktura.Cargo_amount));
+                cmdAddInvoice.Parameters.Add(new SqlParameter("@administrationsAvgift", kFaktura.Dispatch_fee));
+                cmdAddInvoice.Parameters.Add(new SqlParameter("@moms", kFaktura.Moms));
+            }
+            catch(Exception ex)
+            {
+                logger.ErrorMessage(ex);
+            }
+            
             //cmdAddInvoice.Parameters.Add(new SqlParameter("@kommentarsFält", kFaktura.KommentarsFält));
 
             try
@@ -197,16 +203,24 @@ namespace UCSTest
                 // Ger Sql-kommandot information om att den ska anropa en stored procedure
                 cmdAddRow.CommandType = CommandType.StoredProcedure;
 
-                cmdAddRow.Parameters.Add(new SqlParameter("@radID", fRad.KundRadID));
-                cmdAddRow.Parameters.Add(new SqlParameter("@artikelNummer", fRad.ArtikelNummer));
-                cmdAddRow.Parameters.Add(new SqlParameter("@levAntal", fRad.LevAntal));
-                cmdAddRow.Parameters.Add(new SqlParameter("@totalKostnad", fRad.TotalKostnad));
-                cmdAddRow.Parameters.Add(new SqlParameter("@fakturaNummer", kFaktura.FakturaNummer));
-                cmdAddRow.Parameters.Add(new SqlParameter("@projekt", fRad.Projekt));
-                cmdAddRow.Parameters.Add(new SqlParameter("@täckningsGrad", decimal.Parse(fRad.TäckningsGrad.ToString())));
-                cmdAddRow.Parameters.Add(new SqlParameter("@benämning", fRad.Benämning));
-                cmdAddRow.Parameters.Add(new SqlParameter("@täckningsBidrag", decimal.Parse(fRad.TäckningsBidrag.ToString())));
-                cmdAddRow.Parameters.Add(new SqlParameter("@resultatEnhetID", fRad.ResultatEnhet));
+                try
+                {
+                    cmdAddRow.Parameters.Add(new SqlParameter("@radID", fRad.KundRadID));
+                    cmdAddRow.Parameters.Add(new SqlParameter("@artikelNummer", fRad.ArtikelNummer));
+                    cmdAddRow.Parameters.Add(new SqlParameter("@levAntal", fRad.LevAntal));
+                    cmdAddRow.Parameters.Add(new SqlParameter("@totalKostnad", fRad.TotalKostnad));
+                    cmdAddRow.Parameters.Add(new SqlParameter("@fakturaNummer", kFaktura.FakturaNummer));
+                    cmdAddRow.Parameters.Add(new SqlParameter("@projekt", fRad.Projekt));
+                    cmdAddRow.Parameters.Add(new SqlParameter("@täckningsGrad", decimal.Parse(fRad.TäckningsGrad.ToString())));
+                    cmdAddRow.Parameters.Add(new SqlParameter("@benämning", fRad.Benämning));
+                    cmdAddRow.Parameters.Add(new SqlParameter("@täckningsBidrag", decimal.Parse(fRad.TäckningsBidrag.ToString())));
+                    cmdAddRow.Parameters.Add(new SqlParameter("@resultatEnhetID", fRad.ResultatEnhet));
+                }
+                catch (Exception ex)
+                {
+                    logger.ErrorMessage(ex);
+                }
+                
 
                 try
                 {
@@ -232,20 +246,22 @@ namespace UCSTest
             // Ger Sql-kommandot information om att den ska anropa en stored procedure
             cmdAddInvoice.CommandType = CommandType.StoredProcedure;
 
-            /*
-            var returnParam = cmdAddInvoice.Parameters.Add("@ReturnValue", SqlDbType.Int);
-            returnParam.Direction = ParameterDirection.ReturnValue;
-            */
-
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaNummer", lFaktura.FakturaNummer));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaTyp", lFaktura.FakturaTyp));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@levNummer", lFaktura.LevNummer));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@lopNummer", lFaktura.LopNummer));           
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaDatum", lFaktura.FakturaDatum));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@totalKostnad", decimal.Parse(lFaktura.TotalKostnad.ToString())));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@projektHuvud", lFaktura.ProjektHuvud));
-            cmdAddInvoice.Parameters.Add(new SqlParameter("@moms", lFaktura.Moms));
-
+            try
+            {
+                cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaNummer", lFaktura.FakturaNummer));
+                cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaTyp", lFaktura.FakturaTyp));
+                cmdAddInvoice.Parameters.Add(new SqlParameter("@levNummer", lFaktura.LevNummer));
+                cmdAddInvoice.Parameters.Add(new SqlParameter("@lopNummer", lFaktura.LopNummer));
+                cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaDatum", lFaktura.FakturaDatum));
+                cmdAddInvoice.Parameters.Add(new SqlParameter("@totalKostnad", decimal.Parse(lFaktura.TotalKostnad.ToString())));
+                cmdAddInvoice.Parameters.Add(new SqlParameter("@projektHuvud", lFaktura.ProjektHuvud));
+                cmdAddInvoice.Parameters.Add(new SqlParameter("@moms", lFaktura.Moms));
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorMessage(ex);
+            }
+            
             try
             {
                 sqlCon.Open();
@@ -266,17 +282,23 @@ namespace UCSTest
                 // Ger Sql-kommandot information om att den ska anropa en stored procedure
                 cmdAddRow.CommandType = CommandType.StoredProcedure;
 
-                cmdAddRow.Parameters.Add(new SqlParameter("@radID", lRad.LevRadID));
-                cmdAddRow.Parameters.Add(new SqlParameter("@artikelNummer", lRad.ArtikelNummer));
-                cmdAddRow.Parameters.Add(new SqlParameter("@information", lRad.Information));
-                cmdAddRow.Parameters.Add(new SqlParameter("@kvantitet", decimal.Parse(lRad.Kvantitet.ToString())));
-                cmdAddRow.Parameters.Add(new SqlParameter("@levArtikelNummer", lRad.LevArtikelNummer));
-                cmdAddRow.Parameters.Add(new SqlParameter("@totalKostnad", decimal.Parse(lRad.TotalKostnad.ToString())));
-                cmdAddRow.Parameters.Add(new SqlParameter("@löpNummer", lFaktura.LopNummer.ToString()));
-                cmdAddRow.Parameters.Add(new SqlParameter("@projektRad", lRad.ProjektRad));
-                cmdAddRow.Parameters.Add(new SqlParameter("@resultatEnhetID", lRad.ResultatEnhet));
-
-
+                try
+                {
+                    cmdAddRow.Parameters.Add(new SqlParameter("@radID", lRad.LevRadID));
+                    cmdAddRow.Parameters.Add(new SqlParameter("@artikelNummer", lRad.ArtikelNummer));
+                    cmdAddRow.Parameters.Add(new SqlParameter("@information", lRad.Information));
+                    cmdAddRow.Parameters.Add(new SqlParameter("@kvantitet", decimal.Parse(lRad.Kvantitet.ToString())));
+                    cmdAddRow.Parameters.Add(new SqlParameter("@levArtikelNummer", lRad.LevArtikelNummer));
+                    cmdAddRow.Parameters.Add(new SqlParameter("@totalKostnad", decimal.Parse(lRad.TotalKostnad.ToString())));
+                    cmdAddRow.Parameters.Add(new SqlParameter("@löpNummer", lFaktura.LopNummer.ToString()));
+                    cmdAddRow.Parameters.Add(new SqlParameter("@projektRad", lRad.ProjektRad));
+                    cmdAddRow.Parameters.Add(new SqlParameter("@resultatEnhetID", lRad.ResultatEnhet));
+                }
+                catch (Exception ex)
+                {
+                    logger.ErrorMessage(ex);
+                }
+                
                 try
                 {
                     sqlCon.Open();
@@ -298,14 +320,12 @@ namespace UCSTest
             // Ger Sql-kommandot information om att den ska anropa en stored procedure
             cmdAddCustomer.CommandType = CommandType.StoredProcedure;
             
-
-            cmdAddCustomer.Parameters.Add(new SqlParameter("@kundNummer", int.Parse(ku.KundNummer)));
+            cmdAddCustomer.Parameters.Add(new SqlParameter("@kundNummer", ku.KundNummer));
             cmdAddCustomer.Parameters.Add(new SqlParameter("@kundNamn", ku.KundNamn));
             cmdAddCustomer.Parameters.Add(new SqlParameter("@kundStad", ku.KundStad));
             cmdAddCustomer.Parameters.Add(new SqlParameter("@kundLand", ku.KundLand));
             cmdAddCustomer.Parameters.Add(new SqlParameter("@kundReferens", ku.KundReferens));
-
-
+            
             try
             {
                 sqlCon.Open();
@@ -325,12 +345,10 @@ namespace UCSTest
 
             // Ger Sql-kommandot information om att den ska anropa en stored procedure
             cmdAddSupplier.CommandType = CommandType.StoredProcedure;
-
-
-            cmdAddSupplier.Parameters.Add(new SqlParameter("@levNummer", int.Parse(lev.LevNummer)));
+            
+            cmdAddSupplier.Parameters.Add(new SqlParameter("@levNummer", lev.LevNummer));
             cmdAddSupplier.Parameters.Add(new SqlParameter("@levNamn", lev.LevNamn));
-
-
+            
             try
             {
                 sqlCon.Open();
