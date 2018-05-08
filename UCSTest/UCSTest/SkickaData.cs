@@ -44,13 +44,16 @@ namespace UCSTest
             {
                 sqlCon.Open();
                 cmdAddAgreement.ExecuteNonQuery();
-                sqlCon.Close();
             }
             catch (Exception e)
             {
                 logger.ErrorMessage(e);
             }
-            
+            finally
+            {
+                sqlCon.Close();
+            }
+
             foreach (var rad in a.ListAvtalsRad)
             {
                 // Pekar Sql-connection mot en stored procedure för kundfakturarad
@@ -68,11 +71,14 @@ namespace UCSTest
                 {
                     sqlCon.Open();
                     cmdAddAgreementRow.ExecuteNonQuery();
-                    sqlCon.Close();
                 }
                 catch (Exception e)
                 {
                     logger.ErrorMessage(e);
+                }
+                finally
+                {
+                    sqlCon.Close();
                 }
             }
         }
@@ -92,11 +98,14 @@ namespace UCSTest
             {
                 sqlCon.Open();
                 cmdAddArticleGroup.ExecuteNonQuery();
-                sqlCon.Close();
             }
             catch (Exception e)
             {
                 logger.ErrorMessage(e);
+            }
+            finally
+            {
+                sqlCon.Close();
             }
         }
 
@@ -121,11 +130,14 @@ namespace UCSTest
             {
                 sqlCon.Open();
                 cmdAddArticle.ExecuteNonQuery();
-                sqlCon.Close();
             }
             catch (Exception e)
             {
                 logger.ErrorMessage(e);
+            }
+            finally
+            {
+                sqlCon.Close();
             }
         }
 
@@ -144,11 +156,14 @@ namespace UCSTest
             {
                 sqlCon.Open();
                 cmdAddResultatEnhet.ExecuteNonQuery();
-                sqlCon.Close();
             }
             catch (Exception e)
             {
                 logger.ErrorMessage(e);
+            }
+            finally
+            {
+                sqlCon.Close();
             }
         }
 
@@ -187,11 +202,14 @@ namespace UCSTest
             {
                 sqlCon.Open();
                 cmdAddInvoice.ExecuteNonQuery();
-                sqlCon.Close();
             }
             catch (Exception e)
             {
                 logger.ErrorMessage(e);
+            }
+            finally
+            {
+                sqlCon.Close();
             }
 
             // Snurra som lägger till alla raderna från kundfakturan i databasen
@@ -226,11 +244,14 @@ namespace UCSTest
                 {
                     sqlCon.Open();
                     cmdAddRow.ExecuteNonQuery();
-                    sqlCon.Close();
                 }
                 catch (Exception e)
                 {
                     logger.ErrorMessage(e);
+                }
+                finally
+                {
+                    sqlCon.Close();
                 }
             }
 
@@ -266,11 +287,14 @@ namespace UCSTest
             {
                 sqlCon.Open();
                 cmdAddInvoice.ExecuteNonQuery();
-                sqlCon.Close();
             }
             catch (Exception e)
             {
                 logger.ErrorMessage(e);
+            }
+            finally
+            {
+                sqlCon.Close();
             }
 
             // Snurra som lägger till alla raderna från leverantörsfakturan i databasen
@@ -303,11 +327,14 @@ namespace UCSTest
                 {
                     sqlCon.Open();
                     cmdAddRow.ExecuteNonQuery();
-                    sqlCon.Close();
                 }
                 catch (Exception e)
                 {
                     logger.ErrorMessage(e);
+                }
+                finally
+                {
+                    sqlCon.Close();
                 }
             }
         }
@@ -330,11 +357,14 @@ namespace UCSTest
             {
                 sqlCon.Open();
                 cmdAddCustomer.ExecuteNonQuery();
-                sqlCon.Close();
             }
             catch (Exception e)
             {
                 logger.ErrorMessage(e);
+            }
+            finally
+            {
+                sqlCon.Close();
             }
         }
 
@@ -353,11 +383,14 @@ namespace UCSTest
             {
                 sqlCon.Open();
                 cmdAddSupplier.ExecuteNonQuery();
-                sqlCon.Close();
             }
             catch (Exception e)
             {
                 logger.ErrorMessage(e);
+            }
+            finally
+            {
+                sqlCon.Close();
             }
         }
     }
