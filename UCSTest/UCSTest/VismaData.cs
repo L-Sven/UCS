@@ -55,7 +55,6 @@ namespace UCSTest
 
             try
             {
-                ftg = null;
                 // Öppnar upp ett företag
                 error = Adk.Api.AdkOpen(ref sys, ref ftg);
                 if (error.lRc != Adk.Api.ADKE_OK)
@@ -235,8 +234,8 @@ namespace UCSTest
                             datum = data[1].TrimStart(' ').Substring(0, 10);
                             int uppsägningstid = int.Parse(data[2].TrimStart(' ').Substring(0, 1));
                             int förlängningstid = int.Parse(data[3].TrimStart(' ').Substring(0, 1));
-
-                            if (DateTime.TryParse(datum, out var temp))
+                            DateTime temp = new DateTime();
+                            if (DateTime.TryParse(datum, out temp))
                             {
                                 a.KommenteratSlutDatum = datum;
                             }
