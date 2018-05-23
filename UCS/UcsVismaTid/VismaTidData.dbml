@@ -1,0 +1,404 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="SPCS_Tid_OvnBol2" Class="VismaTidDataDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=LAPTOP-B65T75P1\VISMA;Initial Catalog=SPCS_Tid_OvnBol2;Integrated Security=True" SettingsObjectName="UCSTest.Properties.Settings" SettingsPropertyName="SPCS_Tid_OvnBol2ConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.TimeReport" Member="TimeReports">
+    <Type Name="TimeReport">
+      <Column Name="TimeReportId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="DateOfReport" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="CustomerId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="AccountsYearId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ProjectId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ActivityId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BookResultUnitId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ProgramUserId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="TimeCodeId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="TimeStart" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="TimeEnd" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="HourOfReport" Type="System.Decimal" DbType="Decimal(4,2)" CanBeNull="true" />
+      <Column Name="HourToInvoice" Type="System.Decimal" DbType="Decimal(4,2)" CanBeNull="true" />
+      <Column Name="ExtraInvoiceNote" Type="System.String" DbType="VarChar(2000) NOT NULL" CanBeNull="false" />
+      <Column Name="InternNote" Type="System.String" DbType="VarChar(2000) NOT NULL" CanBeNull="false" />
+      <Column Name="ShowWeekday" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Quantity" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="TmpTimeReport" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="NormalWorkingTimeHours" Type="System.Decimal" DbType="Decimal(4,2)" CanBeNull="true" />
+      <Column Name="ChangedNormalWorkingTime" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="FlexAndNormalWorkingTime" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="FlexTimeHours" Type="System.Decimal" DbType="Decimal(4,2)" CanBeNull="true" />
+      <Column Name="bAdjustment" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Price" Type="System.Decimal" DbType="Decimal(10,2)" CanBeNull="true" />
+      <Column Name="PriceAdjusted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CalcPrice" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="Adjustment" Type="System.Decimal" DbType="Decimal(6,2)" CanBeNull="true" />
+      <Column Name="InvoiceComment" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="InvoiceId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="AdjustComment" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="TimeAdjustment" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="TimeSaldonSalary" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="AdjustedSalaryId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="TmpTimeSaldon" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="AdjustmentTotalPrice" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="LastCheckInOut" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ProjectInvoiceSettingRowId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CustomerInvoiceSettingRowId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="TimeReportGuid" Type="System.String" DbType="VarChar(36) NOT NULL" CanBeNull="false" />
+      <Association Name="TimeCode_TimeReport" Member="TimeCode" ThisKey="TimeCodeId" OtherKey="TimeCodeId" Type="TimeCode" IsForeignKey="true" />
+      <Association Name="Project_TimeReport" Member="Project" ThisKey="ProjectId" OtherKey="ProjectId" Type="Project" IsForeignKey="true" />
+      <Association Name="ProgramUser_TimeReport" Member="ProgramUser" ThisKey="ProgramUserId" OtherKey="ProgramUserId" Type="ProgramUser" IsForeignKey="true" />
+      <Association Name="BookResultUnit_TimeReport" Member="BookResultUnit" ThisKey="BookResultUnitId" OtherKey="BookResultUnitId" Type="BookResultUnit" IsForeignKey="true" />
+      <Association Name="Activity_TimeReport" Member="Activity" ThisKey="ActivityId" OtherKey="ActivityId" Type="Activity" IsForeignKey="true" />
+      <Association Name="Customer_TimeReport" Member="Customer" ThisKey="CustomerId" OtherKey="CustomerId" Type="Customer" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.TimeCode" Member="TimeCodes">
+    <Type Name="TimeCode">
+      <Column Name="TimeCodeId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TimeCodeName" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Code" Type="System.String" DbType="VarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="AbsenceType" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SalaryTypeId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SalaryTypeHourlyWageId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SalaryTypeMonthlyWageId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ConversionFactorTime" Type="System.Decimal" DbType="Decimal(4,2)" CanBeNull="true" />
+      <Column Name="ConversionFactorCalcPrice" Type="System.Decimal" DbType="Decimal(4,2)" CanBeNull="true" />
+      <Column Name="ConversionFactorPrice" Type="System.Decimal" DbType="Decimal(4,2)" CanBeNull="true" />
+      <Column Name="Deletable" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Active" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="FlextimeADay" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="SalaryExportUnitType" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SalaryExportDateType" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="RegularWorkingTime" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="TimeCode_TimeReport" Member="TimeReports" ThisKey="TimeCodeId" OtherKey="TimeCodeId" Type="TimeReport" />
+      <Association Name="TimeCode_Activity" Member="Activities" ThisKey="TimeCodeId" OtherKey="TimeCodeId" Type="Activity" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Schedule" Member="Schedules">
+    <Type Name="Schedule">
+      <Column Name="ScheduleId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ScheduleName" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="StartDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="NoOfWeeks" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="WorkingHoursFullTime" Type="System.Decimal" DbType="Decimal(8,2)" CanBeNull="true" />
+      <Column Name="WorkingProc" Type="System.Decimal" DbType="Decimal(5,2)" CanBeNull="true" />
+      <Column Name="ConsiderNonWorkingDays" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="Schedule_ProgramUserSchedule" Member="ProgramUserSchedules" ThisKey="ScheduleId" OtherKey="ScheduleId" Type="ProgramUserSchedule" />
+      <Association Name="Schedule_ScheduleRow" Member="ScheduleRows" ThisKey="ScheduleId" OtherKey="ScheduleId" Type="ScheduleRow" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Project" Member="Projects">
+    <Type Name="Project">
+      <Column Name="ProjectId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ProjectHdrId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CustomerId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ProgramUserId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DateStart" Type="System.DateTime" DbType="SmallDateTime NOT NULL" CanBeNull="false" />
+      <Column Name="DateEnd" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="ProgramUserSelection" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="TypeOfInvoice" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Active" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="StdPriceListId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ProjectPriceListId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="KindOfPricing" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="HourlyPrice" Type="System.Decimal" DbType="Decimal(10,2)" CanBeNull="true" />
+      <Column Name="Discount" Type="System.Decimal" DbType="Decimal(5,2)" CanBeNull="true" />
+      <Column Name="FixedProjectPrice" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="MaxProjectPrice" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="MaxPrice" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="TimeRegActivity" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Comment" Type="System.String" DbType="VarChar(1000) NOT NULL" CanBeNull="false" />
+      <Column Name="NoOfHours" Type="System.Decimal" DbType="Decimal(10,2)" CanBeNull="true" />
+      <Column Name="CalcPrice" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="UseAverageCalcPrice" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="AverageCalcPrice" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="CustomerOrderNo" Type="System.String" DbType="VarChar(25) NOT NULL" CanBeNull="false" />
+      <Column Name="AConto" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="InvoiceNote" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="UseCalcSellingPrice" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CalcSellingPrice" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="CalcIncome" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="CalcResultat" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="CalcPriceOutlay" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="CalcIncomeOutlay" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="CalcResultatTot" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="Reference" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Transference" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="TypeOfInvoiceing" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MaxAmount" Type="System.Decimal" DbType="Decimal(10,2)" CanBeNull="true" />
+      <Column Name="MaxAmountInclOutlay" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="ProjectCategoryId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="InvoiceRegOutlay" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="Project_TimeReport" Member="TimeReports" ThisKey="ProjectId" OtherKey="ProjectId" Type="TimeReport" />
+      <Association Name="Project_Participant" Member="Participants" ThisKey="ProjectId" OtherKey="ProjectId" Type="Participant" />
+      <Association Name="Project_Activity" Member="Activities" ThisKey="ProjectId" OtherKey="ProjectId" Type="Activity" />
+      <Association Name="ProgramUser_Project" Member="ProgramUser" ThisKey="ProgramUserId" OtherKey="ProgramUserId" Type="ProgramUser" IsForeignKey="true" />
+      <Association Name="PriceList_Project" Member="PriceList" ThisKey="ProjectPriceListId" OtherKey="PriceListId" Type="PriceList" IsForeignKey="true" />
+      <Association Name="PriceList_Project1" Member="PriceList1" ThisKey="StdPriceListId" OtherKey="PriceListId" Type="PriceList" IsForeignKey="true" />
+      <Association Name="Customer_Project" Member="Customer" ThisKey="CustomerId" OtherKey="CustomerId" Type="Customer" IsForeignKey="true" />
+      <Association Name="ProjectCategory_Project" Member="ProjectCategory" ThisKey="ProjectCategoryId" OtherKey="ProjectCategoryId" Type="ProjectCategory" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ProgramUser" Member="ProgramUsers">
+    <Type Name="ProgramUser">
+      <Column Name="Signature" Type="System.String" DbType="VarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="ProgramUserId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="WindowsUserName" Type="System.String" DbType="VarChar(256) NOT NULL" CanBeNull="false" />
+      <Column Name="PersonalNo" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="FirstName" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="EmploymentNo" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="Pwd" Type="System.String" DbType="VarChar(40) NOT NULL" CanBeNull="false" />
+      <Column Name="Telephone" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="MobilePhone" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="EmailAddress" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Comment" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="Active" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="HourlyWage" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="EmplCategory" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="ProgramUserGroupId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="RoleId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SalaryResponsible" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ResUnitId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LastCheckinDate" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="BookAccountDebitId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BookAccountCreditId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CanLogIn" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserGuid" Type="System.String" DbType="VarChar(36) NOT NULL" CanBeNull="false" />
+      <Column Name="WebPwd" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="ModDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="WebActive" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserEndDate" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Association Name="ProgramUser_TimeReport" Member="TimeReports" ThisKey="ProgramUserId" OtherKey="ProgramUserId" Type="TimeReport" />
+      <Association Name="ProgramUser_Project" Member="Projects" ThisKey="ProgramUserId" OtherKey="ProgramUserId" Type="Project" />
+      <Association Name="ProgramUser_ProgramUserCalcPrice" Member="ProgramUserCalcPrices" ThisKey="ProgramUserId" OtherKey="ProgramUserId" Type="ProgramUserCalcPrice" />
+      <Association Name="ProgramUser_ProgramUserSchedule" Member="ProgramUserSchedules" ThisKey="ProgramUserId" OtherKey="ProgramUserId" Type="ProgramUserSchedule" />
+      <Association Name="ProgramUser_Pricing" Member="Pricings" ThisKey="ProgramUserId" OtherKey="ProgramUserId" Type="Pricing" />
+      <Association Name="ProgramUser_Participant" Member="Participants" ThisKey="ProgramUserId" OtherKey="ProgramUserId" Type="Participant" />
+      <Association Name="ProgramUser_Customer" Member="Customers" ThisKey="ProgramUserId" OtherKey="ProgramUserId" Type="Customer" />
+      <Association Name="ProgramUserGroup_ProgramUser" Member="ProgramUserGroup" ThisKey="ProgramUserGroupId" OtherKey="ProgramUserGroupId" Type="ProgramUserGroup" IsForeignKey="true" />
+      <Association Name="BookResultUnit_ProgramUser" Member="BookResultUnit" ThisKey="ResUnitId" OtherKey="BookResultUnitId" Type="BookResultUnit" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ProgramUserCalcPrice" Member="ProgramUserCalcPrices">
+    <Type Name="ProgramUserCalcPrice">
+      <Column Name="ProgramUserCalcPriceId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ProgramUserId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CalcPrice" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="StartDate" Type="System.DateTime" DbType="SmallDateTime NOT NULL" CanBeNull="false" />
+      <Column Name="EndDate" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Association Name="ProgramUser_ProgramUserCalcPrice" Member="ProgramUser" ThisKey="ProgramUserId" OtherKey="ProgramUserId" Type="ProgramUser" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ProgramUserGroup" Member="ProgramUserGroups">
+    <Type Name="ProgramUserGroup">
+      <Column Name="ProgramUserGroupId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ProgramUserGroupName" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Active" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="ProgramUserGroup_ProgramUser" Member="ProgramUsers" ThisKey="ProgramUserGroupId" OtherKey="ProgramUserGroupId" Type="ProgramUser" />
+      <Association Name="ProgramUserGroup_Pricing" Member="Pricings" ThisKey="ProgramUserGroupId" OtherKey="ProgramUserGroupId" Type="Pricing" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ProgramUserSchedule" Member="ProgramUserSchedules">
+    <Type Name="ProgramUserSchedule">
+      <Column Name="ProgramUserScheduleId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ProgramUserId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ScheduleId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Date" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="EndDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="ProgramUser_ProgramUserSchedule" Member="ProgramUser" ThisKey="ProgramUserId" OtherKey="ProgramUserId" Type="ProgramUser" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Schedule_ProgramUserSchedule" Member="Schedule" ThisKey="ScheduleId" OtherKey="ScheduleId" Type="Schedule" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Pricing" Member="Pricings">
+    <Type Name="Pricing">
+      <Column Name="PricingId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="PriceListPeriodId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ActivityId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ProgramUserId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ProgramUserGroupId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ProjectId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Price" Type="System.Decimal" DbType="Decimal(10,2)" CanBeNull="true" />
+      <Association Name="ProgramUserGroup_Pricing" Member="ProgramUserGroup" ThisKey="ProgramUserGroupId" OtherKey="ProgramUserGroupId" Type="ProgramUserGroup" IsForeignKey="true" />
+      <Association Name="ProgramUser_Pricing" Member="ProgramUser" ThisKey="ProgramUserId" OtherKey="ProgramUserId" Type="ProgramUser" IsForeignKey="true" />
+      <Association Name="PriceListPeriod_Pricing" Member="PriceListPeriod" ThisKey="PriceListPeriodId" OtherKey="PriceListPeriodId" Type="PriceListPeriod" IsForeignKey="true" />
+      <Association Name="Activity_Pricing" Member="Activity" ThisKey="ActivityId" OtherKey="ActivityId" Type="Activity" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PriceList" Member="PriceLists">
+    <Type Name="PriceList">
+      <Column Name="PriceListId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="PriceListName" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="StdPriceList" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="PriceList_Project" Member="Projects" ThisKey="PriceListId" OtherKey="ProjectPriceListId" Type="Project" />
+      <Association Name="PriceList_Project1" Member="Projects1" ThisKey="PriceListId" OtherKey="StdPriceListId" Type="Project" />
+      <Association Name="PriceList_PriceListPeriod" Member="PriceListPeriods" ThisKey="PriceListId" OtherKey="PriceListId" Type="PriceListPeriod" />
+      <Association Name="PriceList_Customer" Member="Customers" ThisKey="PriceListId" OtherKey="PriceListId" Type="Customer" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PriceListPeriod" Member="PriceListPeriods">
+    <Type Name="PriceListPeriod">
+      <Column Name="PriceListPeriodId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="PriceListId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DateStart" Type="System.DateTime" DbType="SmallDateTime NOT NULL" CanBeNull="false" />
+      <Column Name="DateEnd" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="PricingPerProgramUser" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PricingPerActivity" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Active" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="PriceForCustomer" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="PriceListPeriod_Pricing" Member="Pricings" ThisKey="PriceListPeriodId" OtherKey="PriceListPeriodId" Type="Pricing" />
+      <Association Name="PriceList_PriceListPeriod" Member="PriceList" ThisKey="PriceListId" OtherKey="PriceListId" Type="PriceList" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Participant" Member="Participants">
+    <Type Name="Participant">
+      <Column Name="ProgramUserId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ProjectId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="ProgramUser_Participant" Member="ProgramUser" ThisKey="ProgramUserId" OtherKey="ProgramUserId" Type="ProgramUser" IsForeignKey="true" />
+      <Association Name="Project_Participant" Member="Project" ThisKey="ProjectId" OtherKey="ProjectId" Type="Project" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.FreeDays" Member="FreeDays">
+    <Type Name="FreeDay">
+      <Column Name="FreeDaysId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Day" Type="System.String" DbType="VarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="Hours" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="Note" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.BookResultUnit" Member="BookResultUnits">
+    <Type Name="BookResultUnit">
+      <Column Name="BookResultUnitId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="BookResultUnit" Member="BookResultUnit1" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Active" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="BookResultUnit_TimeReport" Member="TimeReports" ThisKey="BookResultUnitId" OtherKey="BookResultUnitId" Type="TimeReport" />
+      <Association Name="BookResultUnit_ProgramUser" Member="ProgramUsers" ThisKey="BookResultUnitId" OtherKey="ResUnitId" Type="ProgramUser" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Activity" Member="Activities">
+    <Type Name="Activity">
+      <Column Name="ActivityId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ActivityName" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Code" Type="System.String" DbType="VarChar(16) NOT NULL" CanBeNull="false" />
+      <Column Name="TimeCodeId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Active" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="ItemText" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="ProjectId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="StdActivity" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="ToInvoice" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="Activity_TimeReport" Member="TimeReports" ThisKey="ActivityId" OtherKey="ActivityId" Type="TimeReport" />
+      <Association Name="Activity_Pricing" Member="Pricings" ThisKey="ActivityId" OtherKey="ActivityId" Type="Pricing" />
+      <Association Name="Project_Activity" Member="Project" ThisKey="ProjectId" OtherKey="ProjectId" Type="Project" IsForeignKey="true" />
+      <Association Name="TimeCode_Activity" Member="TimeCode" ThisKey="TimeCodeId" OtherKey="TimeCodeId" Type="TimeCode" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ScheduleRow" Member="ScheduleRows">
+    <Type Name="ScheduleRow">
+      <Column Name="ScheduleRowId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ScheduleId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="PeriodWeekNo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Monday" Type="System.Decimal" DbType="Decimal(8,2)" CanBeNull="true" />
+      <Column Name="Tuesday" Type="System.Decimal" DbType="Decimal(8,2)" CanBeNull="true" />
+      <Column Name="Wednesday" Type="System.Decimal" DbType="Decimal(8,2)" CanBeNull="true" />
+      <Column Name="Thursday" Type="System.Decimal" DbType="Decimal(8,2)" CanBeNull="true" />
+      <Column Name="Friday" Type="System.Decimal" DbType="Decimal(8,2)" CanBeNull="true" />
+      <Column Name="Saturday" Type="System.Decimal" DbType="Decimal(8,2)" CanBeNull="true" />
+      <Column Name="Sunday" Type="System.Decimal" DbType="Decimal(8,2)" CanBeNull="true" />
+      <Association Name="Schedule_ScheduleRow" Member="Schedule" ThisKey="ScheduleId" OtherKey="ScheduleId" Type="Schedule" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CustomerCategory" Member="CustomerCategories">
+    <Type Name="CustomerCategory">
+      <Column Name="CustomerCategoryId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="CustomerCategory" Member="CustomerCategory1" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Active" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="CustomerCategory_Customer" Member="Customers" ThisKey="CustomerCategoryId" OtherKey="CustomerCategoryId" Type="Customer" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Customer" Member="Customers">
+    <Type Name="Customer">
+      <Column Name="CustomerId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ProgramUserId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CustomerNo" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="IndustryId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ExternCustomer" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Reference" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="CustomerName" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="OrganisationNo" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="PriceListId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CalcFee" Type="System.Decimal" DbType="Decimal(10,0)" CanBeNull="true" />
+      <Column Name="PriceList" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="StdInvoice" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DetailLevelAccountsYear" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DetailLevelProject" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DetailLevelActivity" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DetailLevelProgramUser" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DetailLevelDate" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DetailLevelPartSumAccountsYear" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DetailLevelPartSumProject" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DetailLevelPartSumActivity" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DetailLevelPartSumProgramUser" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Comment" Type="System.String" DbType="VarChar(1000) NOT NULL" CanBeNull="false" />
+      <Column Name="Active" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Transference" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Discount" Type="System.Decimal" DbType="Decimal(5,2)" CanBeNull="true" />
+      <Column Name="Company" Type="System.Char" DbType="Char(1) NOT NULL" CanBeNull="false" />
+      <Column Name="HourlyPrice" Type="System.Decimal" DbType="Decimal(10,2)" CanBeNull="true" />
+      <Column Name="InvoiceHeaderText" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="AuthorizedAuditorRequired" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Telephone" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="Telephone2" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="Fax" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="EmailAddress" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Internet" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="InvoiceAddress" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="InvoiceAddress2" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="InvoicePostCode" Type="System.String" DbType="VarChar(12) NOT NULL" CanBeNull="false" />
+      <Column Name="InvoiceCity" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="CountryId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="InvoiceVisitAddress" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="InvoiceEAN" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="DeliveryName" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="DeliveryAddress" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="DeliveryAddress2" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="DeliveryPostCode" Type="System.String" DbType="VarChar(12) NOT NULL" CanBeNull="false" />
+      <Column Name="DeliveryCity" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="DeliveryCountryId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DeliveryVisitAddress" Type="System.String" DbType="VarChar(35) NOT NULL" CanBeNull="false" />
+      <Column Name="DeliveryEAN" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="DeliveryTelephone1" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="DeliveryTelephone2" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="DeliveryFax" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="OtherVATNbr" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="OtherSelectionNotion" Type="System.String" DbType="VarChar(33) NOT NULL" CanBeNull="false" />
+      <Column Name="OtherCredtLimit" Type="System.Decimal" DbType="Decimal(12,0)" CanBeNull="true" />
+      <Column Name="OtherBankAccount" Type="System.String" DbType="VarChar(13) NOT NULL" CanBeNull="false" />
+      <Column Name="OtherPostAccount" Type="System.String" DbType="VarChar(13) NOT NULL" CanBeNull="false" />
+      <Column Name="OtherShortName" Type="System.String" DbType="VarChar(16) NOT NULL" CanBeNull="false" />
+      <Column Name="OtherDistrictCode" Type="System.String" DbType="VarChar(8) NOT NULL" CanBeNull="false" />
+      <Column Name="CustomerCategoryId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="BuildService" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ExportCustomer" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="EUCustomer" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="AcceptsAd" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="MobilePhone" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="CreditCheckType" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreditCheckDate" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="CreditCheckOrgNo" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="CreditCheckCName" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="Customer_TimeReport" Member="TimeReports" ThisKey="CustomerId" OtherKey="CustomerId" Type="TimeReport" />
+      <Association Name="Customer_Project" Member="Projects" ThisKey="CustomerId" OtherKey="CustomerId" Type="Project" />
+      <Association Name="CustomerCategory_Customer" Member="CustomerCategory" ThisKey="CustomerCategoryId" OtherKey="CustomerCategoryId" Type="CustomerCategory" IsForeignKey="true" />
+      <Association Name="PriceList_Customer" Member="PriceList1" ThisKey="PriceListId" OtherKey="PriceListId" Type="PriceList" IsForeignKey="true" />
+      <Association Name="ProgramUser_Customer" Member="ProgramUser" ThisKey="ProgramUserId" OtherKey="ProgramUserId" Type="ProgramUser" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ProjectCategory" Member="ProjectCategories">
+    <Type Name="ProjectCategory">
+      <Column Name="ProjectCategoryId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ProjectCategory" Member="ProjectCategory1" Type="System.String" DbType="VarChar(9) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Active" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="ProjectCategory_Project" Member="Projects" ThisKey="ProjectCategoryId" OtherKey="ProjectCategoryId" Type="Project" />
+    </Type>
+  </Table>
+</Database>

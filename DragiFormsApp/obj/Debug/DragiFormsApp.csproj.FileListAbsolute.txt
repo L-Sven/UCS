@@ -1,0 +1,13 @@
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\DragiFormsApp\obj\Debug\DragiFormsApp.csprojResolveAssemblyReference.cache
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\DragiFormsApp\obj\Debug\DragiFormsApp.Form1.resources
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\DragiFormsApp\obj\Debug\DragiFormsApp.csproj.GenerateResource.cache
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\DragiFormsApp\obj\Debug\DragiFormsApp.exe
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\DragiFormsApp\obj\Debug\DragiFormsApp.pdb
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\DragiFormsApp\obj\Debug\DragiFormsApp.Properties.Resources.resources
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\DragiFormsApp\obj\Debug\DragiFormsApp.csproj.CoreCompileInputs.cache
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\DragiFormsApp\bin\Debug\DragiFormsApp.exe.config
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\DragiFormsApp\bin\Debug\DragiFormsApp.exe
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\DragiFormsApp\bin\Debug\DragiFormsApp.pdb
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\DragiFormsApp\bin\Debug\NLog.dll
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\DragiFormsApp\bin\Debug\NLog.xml
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCSTest\DragiFormsApp\obj\Debug\DragiFormsApp.csproj.CopyComplete
