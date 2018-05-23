@@ -72,25 +72,25 @@ namespace UcsAdm
                 return;
             }
 
-            //// Anropar metd som hämtar data om alla resultatenheter
-            //GetResultatEnhet();
-            //Console.WriteLine("Resultatenhet klar!");
+            // Anropar metd som hämtar data om alla resultatenheter
+            GetResultatEnhet();
+            Console.WriteLine("Resultatenhet klar!");
 
-            //// Anropar metod som hämtar data om alla artikelgrupper
-            //GetArtikelGrupper();
-            //Console.WriteLine("Artikelgrupper klar!");
+            // Anropar metod som hämtar data om alla artikelgrupper
+            GetArtikelGrupper();
+            Console.WriteLine("Artikelgrupper klar!");
 
-            //// Anropar metod som hämtar data om alla artiklar 
-            //GetArtikelData();
-            //Console.WriteLine("Artikeldata klar!");
+            // Anropar metod som hämtar data om alla artiklar 
+            GetArtikelData();
+            Console.WriteLine("Artikeldata klar!");
 
-            //// Anropar metod som hämtar data om alla kundfakturor   
-            //GetKundFakturaHuvudData();
-            //Console.WriteLine("Kundfakturadata klar!");
+            // Anropar metod som hämtar data om alla kundfakturor   
+            GetKundFakturaHuvudData();
+            Console.WriteLine("Kundfakturadata klar!");
 
-            ////Anropar metod som hämtar data om alla leverantörsfakturor
-            //GetLevFakturaHuvudData();
-            //Console.WriteLine("Leverantörsfakturadata klar!");
+            //Anropar metod som hämtar data om alla leverantörsfakturor
+            GetLevFakturaHuvudData();
+            Console.WriteLine("Leverantörsfakturadata klar!");
 
             // Anropar metod som hämtar data om alla avtal
             GetAvtal();
@@ -103,7 +103,7 @@ namespace UcsAdm
             Console.ReadKey();
 
             //Stänger företaget
-            AdkNetWrapper.Api.AdkClose();
+            Adk.Api.AdkClose();
         }
         
 
@@ -113,10 +113,10 @@ namespace UcsAdm
             {
                 int pData;
                 // Gör pData till en referens av typen Artikelgrupp
-                pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_CODE_OF_PROFIT_CENTRE);
+                pData = Adk.Api.AdkCreateData(Adk.Api.ADK_DB_CODE_OF_PROFIT_CENTRE);
 
                 // Pekar pData mot den första raden i Artikelgrupper
-                error = AdkNetWrapper.Api.AdkFirst(pData);
+                error = Adk.Api.AdkFirst(pData);
                 logger.ErrorMessage(error);
 
                 while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns artikelgrupper
@@ -126,10 +126,10 @@ namespace UcsAdm
                     String resultatEnhetID = new String(' ', 6);
                     String resultatEnhetNamn = new String(' ', 20);
 
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_PROFIT_CENTRE_CODE,
+                    error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_CODE_OF_PROFIT_CENTRE_CODE,
                         ref resultatEnhetID, 6);
                     logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_PROFIT_CENTRE_NAME,
+                    error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_CODE_OF_PROFIT_CENTRE_NAME,
                         ref resultatEnhetNamn, 20);
                     logger.ErrorMessage(error);
 
@@ -140,7 +140,7 @@ namespace UcsAdm
                     sendData.ResultatenhetTillDatabas(r);
 
                     // Sätter vidare pekaren till nästa artikelgrupp
-                    error = AdkNetWrapper.Api.AdkNext(pData);
+                    error = Adk.Api.AdkNext(pData);
                 }
             }
             catch (Exception ex)
@@ -155,10 +155,10 @@ namespace UcsAdm
             {
                 int pData;
                 // Gör pData till en referens av typen Artikelgrupp
-                pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_AGREEMENT_HEAD);
+                pData = Adk.Api.AdkCreateData(Adk.Api.ADK_DB_AGREEMENT_HEAD);
 
                 // Pekar pData mot den första raden i Artikelgrupper
-                error = AdkNetWrapper.Api.AdkFirst(pData);
+                error = Adk.Api.AdkFirst(pData);
                 logger.ErrorMessage(error);
 
                 while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns artikelgrupper
@@ -187,10 +187,10 @@ namespace UcsAdm
                     bool slutDatumFinns = false;
                     bool kommenteratSlutDatumFinns = false;
 
-                    error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DOCUMENT_DATE1,
+                    error = Adk.Api.AdkGetDate(pData, Adk.Api.ADK_AGREEMENT_HEAD_DOCUMENT_DATE1,
                         ref date);
                     logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkLongToDate(date, ref avtalsDatum, 16);
+                    error = Adk.Api.AdkLongToDate(date, ref avtalsDatum, 16);
                     logger.ErrorMessage(error);
                     error = Adk.Api.AdkGetBool(pData, Adk.Api.ADK_AGREEMENT_HEAD_DOCUMENT_CANCELLED, ref makulerat);
                     logger.ErrorMessage(error);
@@ -200,67 +200,74 @@ namespace UcsAdm
                         // Kontroll för att enbart hämta data efter det startdatum som hämtats från App.config
                         if (!hasDate || DateTime.Parse(avtalsDatum) >= DateTime.Parse(_appStartDatum))
                         {
-                            error = AdkNetWrapper.Api.AdkGetDouble(pData,
-                                AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DOCUMENT_NUMBER,
+                            error = Adk.Api.AdkGetDouble(pData,
+                                Adk.Api.ADK_AGREEMENT_HEAD_DOCUMENT_NUMBER,
                                 ref dokumentNummer);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetStr(pData,
-                                AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_CUSTOMER_NUMBER,
+                            error = Adk.Api.AdkGetStr(pData,
+                                Adk.Api.ADK_AGREEMENT_HEAD_CUSTOMER_NUMBER,
                                 ref kundNummer, 16);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_START,
+                            error = Adk.Api.AdkGetDate(pData, 
+                                Adk.Api.ADK_AGREEMENT_HEAD_DATE_START,
                                 ref date);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkLongToDate(date,
+                            error = Adk.Api.AdkLongToDate(date,
                                 ref startDatum, 16);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_END,
+                            error = Adk.Api.AdkGetDate(pData, 
+                                Adk.Api.ADK_AGREEMENT_HEAD_DATE_END,
                                 ref endDate);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetStr(pData,
-                                AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_LOCAL_REMARK,
+                            error = Adk.Api.AdkGetStr(pData,
+                                Adk.Api.ADK_AGREEMENT_HEAD_LOCAL_REMARK,
                                 ref kommentarsFält, 120);
                             logger.ErrorMessage(error);
 
-                            error = AdkNetWrapper.Api.AdkGetDate(pData,
-                                AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_PERIOD_START,
+                            error = Adk.Api.AdkGetDate(pData,
+                                Adk.Api.ADK_AGREEMENT_HEAD_PERIOD_START,
                                 ref periodTemp);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkLongToDate(periodTemp,
+                            error = Adk.Api.AdkLongToDate(periodTemp,
                                 ref periodStart, 16);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_PERIOD_END,
+                            error = Adk.Api.AdkGetDate(pData, 
+                                Adk.Api.ADK_AGREEMENT_HEAD_PERIOD_END,
                                 ref periodTemp);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkLongToDate(periodTemp,
+                            error = Adk.Api.AdkLongToDate(periodTemp,
                                 ref periodEnd, 16);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_INTERVAL,
+                            error = Adk.Api.AdkGetDouble(pData, 
+                                Adk.Api.ADK_AGREEMENT_HEAD_INTERVAL,
                                 ref intervall);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_DATE_END,
+                            error = Adk.Api.AdkGetDate(pData, 
+                                Adk.Api.ADK_AGREEMENT_HEAD_DATE_END,
                                 ref date);
                             logger.ErrorMessage(error);
 
-                            error = AdkNetWrapper.Api.AdkGetStr(pData,
-                                AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_CUSTOMER_NAME,
+                            error = Adk.Api.AdkGetStr(pData,
+                                Adk.Api.ADK_AGREEMENT_HEAD_CUSTOMER_NAME,
                                 ref kundNamn, 50);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_COUNTRY,
+                            error = Adk.Api.AdkGetStr(pData, 
+                                Adk.Api.ADK_AGREEMENT_HEAD_COUNTRY,
                                 ref kundLand, 24);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_CITY,
+                            error = Adk.Api.AdkGetStr(pData, 
+                                Adk.Api.ADK_AGREEMENT_HEAD_CITY,
                                 ref kundStad, 24);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetStr(pData,
-                                AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_CUSTOMER_REFERENCE_NAME,
+                            error = Adk.Api.AdkGetStr(pData,
+                                Adk.Api.ADK_AGREEMENT_HEAD_CUSTOMER_REFERENCE_NAME,
                                 ref kundReferens, 50);
                             logger.ErrorMessage(error);
 
                             // Kontroll om det finns ett angivet slutdatum på avtalet
                             if (date != 0)
                             {
-                                error = AdkNetWrapper.Api.AdkLongToDate(date,
+                                error = Adk.Api.AdkLongToDate(date,
                                     ref avtalsDatumSlut, 16);
                                 logger.ErrorMessage(error);
                                 slutDatumFinns = true;
@@ -425,7 +432,7 @@ namespace UcsAdm
                         }
                     }
                     // Sätter vidare pekaren till nästa artikelgrupp
-                    error = AdkNetWrapper.Api.AdkNext(pData);
+                    error = Adk.Api.AdkNext(pData);
                 }
             }
             catch (Exception ex)
@@ -438,7 +445,7 @@ namespace UcsAdm
         {
             Double NROWS = new Double();
 
-            error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_NROWS, ref NROWS);
+            error = Adk.Api.AdkGetDouble(pData, Adk.Api.ADK_AGREEMENT_HEAD_NROWS, ref NROWS);
             logger.ErrorMessage(error);
             int radReferens = new int();
 
@@ -446,21 +453,21 @@ namespace UcsAdm
             {
                 AvtalsRad enAvtalsRad = new AvtalsRad();
 
-                error = AdkNetWrapper.Api.AdkGetData(pData, AdkNetWrapper.Api.ADK_AGREEMENT_HEAD_ROWS, r, ref radReferens);
+                error = Adk.Api.AdkGetData(pData, Adk.Api.ADK_AGREEMENT_HEAD_ROWS, r, ref radReferens);
                 logger.ErrorMessage(error);
                 avtalsRadID++;
 
-                if (error.lRc == AdkNetWrapper.Api.ADKE_OK)
+                if (error.lRc == Adk.Api.ADKE_OK)
                 {
                     String artikelNummer = new String(' ', 16);
                     Double totalKostnad = new Double();
                     String benämning = new String(' ', 60);
 
-                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER, ref artikelNummer, 16);
+                    error = Adk.Api.AdkGetStr(radReferens, Adk.Api.ADK_OOI_ROW_ARTICLE_NUMBER, ref artikelNummer, 16);
                     logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
+                    error = Adk.Api.AdkGetDouble(radReferens, Adk.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
                     logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_TEXT, ref benämning, 60);
+                    error = Adk.Api.AdkGetStr(radReferens, Adk.Api.ADK_OOI_ROW_TEXT, ref benämning, 60);
                     logger.ErrorMessage(error);
 
                     enAvtalsRad.Benämning = benämning;
@@ -483,10 +490,10 @@ namespace UcsAdm
             {
                 int pData;
                 // Gör pData till en referens av typen Artikelgrupp
-                pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_CODE_OF_ARTICLE_GROUP);
+                pData = Adk.Api.AdkCreateData(Adk.Api.ADK_DB_CODE_OF_ARTICLE_GROUP);
 
                 // Pekar pData mot den första raden i Artikelgrupper
-                error = AdkNetWrapper.Api.AdkFirst(pData);
+                error = Adk.Api.AdkFirst(pData);
                 logger.ErrorMessage(error);
 
                 while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns artikelgrupper
@@ -496,10 +503,10 @@ namespace UcsAdm
                     String aGruppKod = new String(' ', 6);
                     String aGruppBenämning = new String(' ', 25);
 
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_ARTICLE_GROUP_CODE,
+                    error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_CODE_OF_ARTICLE_GROUP_CODE,
                         ref aGruppKod, 6);
                     logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CODE_OF_ARTICLE_GROUP_TEXT,
+                    error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_CODE_OF_ARTICLE_GROUP_TEXT,
                         ref aGruppBenämning, 25);
                     logger.ErrorMessage(error);
 
@@ -509,7 +516,7 @@ namespace UcsAdm
                     sendData.ArtikelGruppTillDatabas(aGrupp);
 
                     // Sätter vidare pekaren till nästa artikelgrupp
-                    error = AdkNetWrapper.Api.AdkNext(pData);
+                    error = Adk.Api.AdkNext(pData);
                 }
             }
             catch (Exception ex)
@@ -525,10 +532,10 @@ namespace UcsAdm
             {
                 int pData;
                 // Gör pData till en referens av typen Artikel
-                pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_ARTICLE);
+                pData = Adk.Api.AdkCreateData(Adk.Api.ADK_DB_ARTICLE);
 
                 // Pekar pData mot den första raden i Artiklar
-                error = AdkNetWrapper.Api.AdkFirst(pData);
+                error = Adk.Api.AdkFirst(pData);
                 logger.ErrorMessage(error);
 
                 while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns artiklar
@@ -544,24 +551,24 @@ namespace UcsAdm
                     Double ovrigKostnad = new Double();
 
                     // Hämtar data från databasen och lagrar i de lokala variablerna
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_NUMBER, ref artikelNummer,
+                    error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_ARTICLE_NUMBER, ref artikelNummer,
                         16);
                     logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_NAME, ref benämning, 30);
+                    error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_ARTICLE_NAME, ref benämning, 30);
                     logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_GROUP, ref artikelGrupp,
+                    error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_ARTICLE_GROUP, ref artikelGrupp,
                         6);
                     logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_ARTICLE_UNIT_CODE, ref enhetsKod,
+                    error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_ARTICLE_UNIT_CODE, ref enhetsKod,
                         4);
                     logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetDouble(pData,
-                        AdkNetWrapper.Api.ADK_ARTICLE_ESTIMATED_PURCHASE_PRICE, ref inköpsPris);
+                    error = Adk.Api.AdkGetDouble(pData,
+                        Adk.Api.ADK_ARTICLE_ESTIMATED_PURCHASE_PRICE, ref inköpsPris);
                     logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_ARTICLE_ESTIMATED_CARGO_FEE,
+                    error = Adk.Api.AdkGetDouble(pData, Adk.Api.ADK_ARTICLE_ESTIMATED_CARGO_FEE,
                         ref frakt);
                     logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_ARTICLE_ESTIMATED_OTHER,
+                    error = Adk.Api.AdkGetDouble(pData, Adk.Api.ADK_ARTICLE_ESTIMATED_OTHER,
                         ref ovrigKostnad);
                     logger.ErrorMessage(error);
 
@@ -578,7 +585,7 @@ namespace UcsAdm
                     sendData.ArtikelTillDatabas(artikel);
 
                     // Sätter vidare pekaren till nästa artikel
-                    error = AdkNetWrapper.Api.AdkNext(pData);
+                    error = Adk.Api.AdkNext(pData);
                 }
             }
             catch (Exception ex)
@@ -594,10 +601,10 @@ namespace UcsAdm
             {
                 int pData;
                 // Gör pData till en referens av typen leverantörsfaktura
-                pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_SUPPLIER_INVOICE_HEAD);
+                pData = Adk.Api.AdkCreateData(Adk.Api.ADK_DB_SUPPLIER_INVOICE_HEAD);
 
                 // Pekar pData mot den första raden i leverantörsfakturahuvud
-                error = AdkNetWrapper.Api.AdkFirst(pData);
+                error = Adk.Api.AdkFirst(pData);
                 logger.ErrorMessage(error);
 
                 while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns fakturor
@@ -605,7 +612,7 @@ namespace UcsAdm
                     // Kontroll om fakturan är makulerad
                     int makulerad = new int();
 
-                    error = AdkNetWrapper.Api.AdkGetBool(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CANCELLED,
+                    error = Adk.Api.AdkGetBool(pData, Adk.Api.ADK_SUP_INV_HEAD_CANCELLED,
                         ref makulerad);
                     logger.ErrorMessage(error);
 
@@ -630,23 +637,23 @@ namespace UcsAdm
 
                         String levNamn = new String(' ', 50);
 
-                        error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_INVOICE_DATE,
+                        error = Adk.Api.AdkGetDate(pData, Adk.Api.ADK_SUP_INV_HEAD_INVOICE_DATE,
                             ref tmpDatum);
                         logger.ErrorMessage(error);
-                        error = AdkNetWrapper.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
+                        error = Adk.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
                         logger.ErrorMessage(error);
 
                         // Kontrollerar om fakturan är inom korrekt datum
                         if (!hasDate || DateTime.Parse(fakturaDatum) >= DateTime.Parse(_appStartDatum))
                         {
-                            error = AdkNetWrapper.Api.AdkGetDouble(pData,
-                                AdkNetWrapper.Api.ADK_SUP_INV_HEAD_GIVEN_NUMBER, ref lopNummer);
+                            error = Adk.Api.AdkGetDouble(pData,
+                                Adk.Api.ADK_SUP_INV_HEAD_GIVEN_NUMBER, ref lopNummer);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetStr(pData,
-                                AdkNetWrapper.Api.ADK_SUP_INV_HEAD_SUPPLIER_NUMBER, ref levNummer, 16);
+                            error = Adk.Api.AdkGetStr(pData,
+                                Adk.Api.ADK_SUP_INV_HEAD_SUPPLIER_NUMBER, ref levNummer, 16);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetStr(pData,
-                                AdkNetWrapper.Api.ADK_SUP_INV_HEAD_INVOICE_NUMBER, ref fakturaNummer, 16);
+                            error = Adk.Api.AdkGetStr(pData,
+                                Adk.Api.ADK_SUP_INV_HEAD_INVOICE_NUMBER, ref fakturaNummer, 16);
                             logger.ErrorMessage(error);
 
                             // Ger fakturor utan nummer ett eget fakturanummer
@@ -657,22 +664,22 @@ namespace UcsAdm
                             }
 
                             // Hämtar data ur databas och lagrar i de lokala variablerna
-                            error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_CODE,
+                            error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_SUP_INV_HEAD_CURRENCY_CODE,
                                 ref valutaKod, 4);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetDouble(pData,
-                                AdkNetWrapper.Api.ADK_SUP_INV_HEAD_CURRENCY_RATE, ref valutaKurs);
+                            error = Adk.Api.AdkGetDouble(pData,
+                                Adk.Api.ADK_SUP_INV_HEAD_CURRENCY_RATE, ref valutaKurs);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetStr(pData,
-                                AdkNetWrapper.Api.ADK_SUP_INV_HEAD_TYPE_OF_INVOICE, ref fakturaTyp, 12);
+                            error = Adk.Api.AdkGetStr(pData,
+                                Adk.Api.ADK_SUP_INV_HEAD_TYPE_OF_INVOICE, ref fakturaTyp, 12);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_PROJECT,
+                            error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_SUP_INV_HEAD_PROJECT,
                                 ref projektHuvud, 10);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_VAT_AMOUNT,
+                            error = Adk.Api.AdkGetDouble(pData, Adk.Api.ADK_SUP_INV_HEAD_VAT_AMOUNT,
                                 ref moms);
                             logger.ErrorMessage(error);
-                            error = Adk.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_SUPPLIER_NAME,
+                            error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_SUP_INV_HEAD_SUPPLIER_NAME,
                                 ref levNamn, 50);
                             logger.ErrorMessage(error);
 
@@ -714,7 +721,7 @@ namespace UcsAdm
                         }
                     }
                     // Sätter vidare pekaren på nästa instans
-                    error = AdkNetWrapper.Api.AdkNext(pData);
+                    error = Adk.Api.AdkNext(pData);
                 }
 
             sendData.LevFakturaTillDatabas(levList);
@@ -731,7 +738,7 @@ namespace UcsAdm
             Double NROWS = new Double();
 
             // Hämtar antalet rader som finns på leverantörsfakturan
-            error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_NROWS, ref NROWS);
+            error = Adk.Api.AdkGetDouble(pData, Adk.Api.ADK_SUP_INV_HEAD_NROWS, ref NROWS);
             logger.ErrorMessage(error);
 
             int radReferens = new int(); // Pekar på rader i fakturaraderna likt pData pekar på ett specifikt fakturahuvud
@@ -743,14 +750,14 @@ namespace UcsAdm
                 LevFakturaRad enFakturaRad = new LevFakturaRad();
 
                 // Sätter radreferensen mot aktuell fakturarad
-                error = AdkNetWrapper.Api.AdkGetData(pData, AdkNetWrapper.Api.ADK_SUP_INV_HEAD_ROWS, r, ref radReferens);
+                error = Adk.Api.AdkGetData(pData, Adk.Api.ADK_SUP_INV_HEAD_ROWS, r, ref radReferens);
                 logger.ErrorMessage(error);
 
                 // Autoinkrementad primärnyckel för leverantörsfakturaraden i databasen
                 levRadID++;
                 enFakturaRad.LevRadID = levRadID;
 
-                if (error.lRc == AdkNetWrapper.Api.ADKE_OK)
+                if (error.lRc == Adk.Api.ADKE_OK)
                 {
                     String information = new String(' ', 60);
                     Double kvantitet = new Double();
@@ -760,7 +767,7 @@ namespace UcsAdm
                     Double totalKostnad = new Double();
                     String resultatEnhet = new string(' ', 6);
 
-                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_TEXT, ref information, 60);
+                    error = Adk.Api.AdkGetStr(radReferens, Adk.Api.ADK_OOI_ROW_TEXT, ref information, 60);
                     logger.ErrorMessage(error);
 
                     // om raden presenterar en totalkostnad sparas inte raden utan vi använder värdet för att 
@@ -776,17 +783,17 @@ namespace UcsAdm
                     else
                     {
                         // Hämtar data ur databas och lagrar i de lokala variablerna
-                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_QUANTITY1, ref kvantitet);
+                        error = Adk.Api.AdkGetDouble(radReferens, Adk.Api.ADK_OOI_ROW_QUANTITY1, ref kvantitet);
                         logger.ErrorMessage(error);
-                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_SUPPLIER_ARTICLE_NUMBER, ref levArtikelNummer, 16);
+                        error = Adk.Api.AdkGetStr(radReferens, Adk.Api.ADK_OOI_ROW_SUPPLIER_ARTICLE_NUMBER, ref levArtikelNummer, 16);
                         logger.ErrorMessage(error);
-                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER, ref artikelNummer, 16);
+                        error = Adk.Api.AdkGetStr(radReferens, Adk.Api.ADK_OOI_ROW_ARTICLE_NUMBER, ref artikelNummer, 16);
                         logger.ErrorMessage(error);
-                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROJECT, ref projektRad, 10);
+                        error = Adk.Api.AdkGetStr(radReferens, Adk.Api.ADK_OOI_ROW_PROJECT, ref projektRad, 10);
                         logger.ErrorMessage(error);
-                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
+                        error = Adk.Api.AdkGetDouble(radReferens, Adk.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
                         logger.ErrorMessage(error);
-                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROFIT_CENTRE, ref resultatEnhet, 6);
+                        error = Adk.Api.AdkGetStr(radReferens, Adk.Api.ADK_OOI_ROW_PROFIT_CENTRE, ref resultatEnhet, 6);
                         logger.ErrorMessage(error);
 
                         // Lägger till data i fakturaradinstansen
@@ -819,10 +826,10 @@ namespace UcsAdm
             logger.ErrorMessage(error);
 
             // gör pData till en kund-referens
-            pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_CUSTOMER);
+            pData = Adk.Api.AdkCreateData(Adk.Api.ADK_DB_CUSTOMER);
 
             // Pekar pData mot första raden i kundtabellen
-            error = AdkNetWrapper.Api.AdkFirst(pData);
+            error = Adk.Api.AdkFirst(pData);
             logger.ErrorMessage(error);
 
             while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns kunder            
@@ -834,15 +841,15 @@ namespace UcsAdm
                 String kundStad = new String(' ', 24);
                 String kundReferens = new String(' ', 50);
 
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CUSTOMER_NUMBER, ref kundNr, 16);
+                error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_CUSTOMER_NUMBER, ref kundNr, 16);
                 logger.ErrorMessage(error);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CUSTOMER_NAME, ref kundNamn, 50);
+                error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_CUSTOMER_NAME, ref kundNamn, 50);
                 logger.ErrorMessage(error);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CUSTOMER_COUNTRY, ref kundLand, 24);
+                error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_CUSTOMER_COUNTRY, ref kundLand, 24);
                 logger.ErrorMessage(error);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CUSTOMER_CITY, ref kundStad, 24);
+                error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_CUSTOMER_CITY, ref kundStad, 24);
                 logger.ErrorMessage(error);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_CUSTOMER_REFERENCE, ref kundReferens, 50);
+                error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_CUSTOMER_REFERENCE, ref kundReferens, 50);
                 logger.ErrorMessage(error);
 
                 nyKund.KundNummer = kundNr;
@@ -854,12 +861,12 @@ namespace UcsAdm
                 //sendData.KundTillDatabas(nyKund);
 
                 // Sätter vidare pekaren på nästa instans
-                error = AdkNetWrapper.Api.AdkNext(pData);
+                error = Adk.Api.AdkNext(pData);
                 
             }
 
             // Stänger företaget
-            AdkNetWrapper.Api.AdkClose();
+            Adk.Api.AdkClose();
         }
         */
 
@@ -873,10 +880,10 @@ namespace UcsAdm
             logger.ErrorMessage(error);
 
             // gör pData till en kund-referens
-            pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_SUPPLIER);
+            pData = Adk.Api.AdkCreateData(Adk.Api.ADK_DB_SUPPLIER);
 
             // Pekar pData mot första raden i kundtabellen
-            error = AdkNetWrapper.Api.AdkFirst(pData);
+            error = Adk.Api.AdkFirst(pData);
             logger.ErrorMessage(error);
 
             while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns kunder            
@@ -888,15 +895,15 @@ namespace UcsAdm
                 String levStad = new String(' ', 24);
                 String levReferens = new String(' ', 50);
 
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUPPLIER_NUMBER, ref levNr, 16);
+                error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_SUPPLIER_NUMBER, ref levNr, 16);
                 logger.ErrorMessage(error);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUPPLIER_NAME, ref levNamn, 50);
+                error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_SUPPLIER_NAME, ref levNamn, 50);
                 logger.ErrorMessage(error);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUPPLIER_COUNTRY, ref levLand, 24);
+                error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_SUPPLIER_COUNTRY, ref levLand, 24);
                 logger.ErrorMessage(error);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUPPLIER_CITY, ref levStad, 24);
+                error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_SUPPLIER_CITY, ref levStad, 24);
                 logger.ErrorMessage(error);
-                error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_SUPPLIER_REFERENCE, ref levReferens, 50);
+                error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_SUPPLIER_REFERENCE, ref levReferens, 50);
                 logger.ErrorMessage(error);
 
                 nyLev.LevNummer = levNr;
@@ -908,12 +915,12 @@ namespace UcsAdm
                 //sendData.LeverantörTillDatabas(nyLev);
 
                 // Sätter vidare pekaren på nästa instans
-                error = AdkNetWrapper.Api.AdkNext(pData);
+                error = Adk.Api.AdkNext(pData);
                 
             }
 
             // Stänger företaget
-            AdkNetWrapper.Api.AdkClose();
+            Adk.Api.AdkClose();
         }
         */
 
@@ -924,10 +931,10 @@ namespace UcsAdm
             {
                 int pData;
                 // gör pData till en kundfakturahuvud-referens
-                pData = AdkNetWrapper.Api.AdkCreateData(AdkNetWrapper.Api.ADK_DB_INVOICE_HEAD);
+                pData = Adk.Api.AdkCreateData(Adk.Api.ADK_DB_INVOICE_HEAD);
 
                 // Pekar pData mot första raden i kundafaktura-tabellen
-                error = AdkNetWrapper.Api.AdkFirst(pData);
+                error = Adk.Api.AdkFirst(pData);
                 logger.ErrorMessage(error);
 
                 while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns fakturor            
@@ -936,10 +943,10 @@ namespace UcsAdm
                     int validFaktura = new int();
                     int makulerad = new int();
 
-                    error = AdkNetWrapper.Api.AdkGetBool(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NOT_DONE,
+                    error = Adk.Api.AdkGetBool(pData, Adk.Api.ADK_OOI_HEAD_DOCUMENT_NOT_DONE,
                         ref validFaktura);
                     logger.ErrorMessage(error);
-                    error = AdkNetWrapper.Api.AdkGetBool(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NOT_DONE,
+                    error = Adk.Api.AdkGetBool(pData, Adk.Api.ADK_OOI_HEAD_DOCUMENT_NOT_DONE,
                         ref makulerad);
                     logger.ErrorMessage(error);
 
@@ -973,57 +980,57 @@ namespace UcsAdm
                         String kundReferens = new String(' ', 50);
 
                         // Hämtar data ur databas och lagrar i de lokala variablerna
-                        error = AdkNetWrapper.Api.AdkGetDate(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_DATE1,
+                        error = Adk.Api.AdkGetDate(pData, Adk.Api.ADK_OOI_HEAD_DOCUMENT_DATE1,
                             ref tmpDatum);
                         logger.ErrorMessage(error);
-                        error = AdkNetWrapper.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
+                        error = Adk.Api.AdkLongToDate(tmpDatum, ref fakturaDatum, 11);
                         logger.ErrorMessage(error);
 
                         // Kontroll om fakturna är inom korrekt datum från vad som angivits i App.config
                         if (!hasDate || DateTime.Parse(fakturaDatum) >= DateTime.Parse(_appStartDatum))
                         {
-                            error = AdkNetWrapper.Api.AdkGetDouble(pData,
-                                AdkNetWrapper.Api.ADK_OOI_HEAD_DOCUMENT_NUMBER, ref fakturaNr);
+                            error = Adk.Api.AdkGetDouble(pData,
+                                Adk.Api.ADK_OOI_HEAD_DOCUMENT_NUMBER, ref fakturaNr);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_NUMBER,
+                            error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_OOI_HEAD_CUSTOMER_NUMBER,
                                 ref kundNr, 16);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_TYPE_OF_INVOICE,
+                            error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_OOI_HEAD_TYPE_OF_INVOICE,
                                 ref fakturaTyp, 20);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetStr(pData,
-                                AdkNetWrapper.Api.ADK_OOI_HEAD_OUR_REFERENCE_NAME, ref säljare, 24);
+                            error = Adk.Api.AdkGetStr(pData,
+                                Adk.Api.ADK_OOI_HEAD_OUR_REFERENCE_NAME, ref säljare, 24);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CURRENCY_CODE,
+                            error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_OOI_HEAD_CURRENCY_CODE,
                                 ref valutaKod, 4);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CARGO_AMOUNT,
+                            error = Adk.Api.AdkGetDouble(pData, Adk.Api.ADK_OOI_HEAD_CARGO_AMOUNT,
                                 ref cargoAmount);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_DISPATCH_FEE,
+                            error = Adk.Api.AdkGetDouble(pData, Adk.Api.ADK_OOI_HEAD_DISPATCH_FEE,
                                 ref dispatchFee);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_VAT_AMOUNT,
+                            error = Adk.Api.AdkGetDouble(pData, Adk.Api.ADK_OOI_HEAD_VAT_AMOUNT,
                                 ref moms);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_TOTAL_AMOUNT,
+                            error = Adk.Api.AdkGetDouble(pData, Adk.Api.ADK_OOI_HEAD_TOTAL_AMOUNT,
                                 ref totalKostnad);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetStr(pData,
-                                AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kommentarsFält, 120);
+                            error = Adk.Api.AdkGetStr(pData,
+                                Adk.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kommentarsFält, 120);
                             logger.ErrorMessage(error);
 
-                            error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_NAME,
+                            error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_OOI_HEAD_CUSTOMER_NAME,
                                 ref kundNamn, 50);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_COUNTRY,
+                            error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_OOI_HEAD_COUNTRY,
                                 ref kundLand, 24);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetStr(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_CITY,
+                            error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_OOI_HEAD_CITY,
                                 ref kundStad, 24);
                             logger.ErrorMessage(error);
-                            error = AdkNetWrapper.Api.AdkGetStr(pData,
-                                AdkNetWrapper.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kundReferens, 50);
+                            error = Adk.Api.AdkGetStr(pData,
+                                Adk.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kundReferens, 50);
                             logger.ErrorMessage(error);
 
                             kFaktura.TotalKostnad = totalKostnad;
@@ -1075,7 +1082,7 @@ namespace UcsAdm
                     }
 
                     // Sätter vidare pekaren på nästa instans
-                    error = AdkNetWrapper.Api.AdkNext(pData);
+                    error = Adk.Api.AdkNext(pData);
                 }
 
                 sendData.KundFakturaTillDatabas(kundList);
@@ -1091,7 +1098,7 @@ namespace UcsAdm
         {
             Double NROWS = new Double();
             // Hämtar antalet rader på fakturan
-            error = AdkNetWrapper.Api.AdkGetDouble(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_NROWS, ref NROWS);
+            error = Adk.Api.AdkGetDouble(pData, Adk.Api.ADK_OOI_HEAD_NROWS, ref NROWS);
             logger.ErrorMessage(error);
 
             int radReferens = new int(); // Pekar på rader i fakturaraderna likt pData pekar på ett specifikt fakturahuvud
@@ -1101,13 +1108,13 @@ namespace UcsAdm
             {
                 KundFakturaRad enFakturaRad = new KundFakturaRad();
                 // Gör så att radreferens pekar mot aktuell fakturarad
-                error = AdkNetWrapper.Api.AdkGetData(pData, AdkNetWrapper.Api.ADK_OOI_HEAD_ROWS, r, ref radReferens);
+                error = Adk.Api.AdkGetData(pData, Adk.Api.ADK_OOI_HEAD_ROWS, r, ref radReferens);
                 logger.ErrorMessage(error);
 
-                if (error.lRc == AdkNetWrapper.Api.ADKE_OK)
+                if (error.lRc == Adk.Api.ADKE_OK)
                 {
                     String artikelNummer = new String(' ', 16);
-                    error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_ARTICLE_NUMBER, ref artikelNummer, 16);
+                    error = Adk.Api.AdkGetStr(radReferens, Adk.Api.ADK_OOI_ROW_ARTICLE_NUMBER, ref artikelNummer, 16);
                     logger.ErrorMessage(error);
 
                     enFakturaRad.ArtikelNummer = artikelNummer;
@@ -1127,31 +1134,31 @@ namespace UcsAdm
                         Double täckningsBidrag = new double();
                         String resultatEnhet = new String(' ', 6);
 
-                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_QUANTITY1, ref kvantitet);
+                        error = Adk.Api.AdkGetDouble(radReferens, Adk.Api.ADK_OOI_ROW_QUANTITY1, ref kvantitet);
                         logger.ErrorMessage(error);
                         enFakturaRad.LevAntal = kvantitet;
 
-                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
+                        error = Adk.Api.AdkGetDouble(radReferens, Adk.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
                         logger.ErrorMessage(error);
                         enFakturaRad.TotalKostnad = totalKostnad;
 
-                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROJECT, ref projekt, 6);
+                        error = Adk.Api.AdkGetStr(radReferens, Adk.Api.ADK_OOI_ROW_PROJECT, ref projekt, 6);
                         logger.ErrorMessage(error);
                         enFakturaRad.Projekt = projekt;
 
-                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_TEXT, ref benämning, 60);
+                        error = Adk.Api.AdkGetStr(radReferens, Adk.Api.ADK_OOI_ROW_TEXT, ref benämning, 60);
                         logger.ErrorMessage(error);
                         enFakturaRad.Benämning = benämning;
 
-                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_CONTRIBUTION_DEGREE, ref täckningsgrad);
+                        error = Adk.Api.AdkGetDouble(radReferens, Adk.Api.ADK_OOI_ROW_CONTRIBUTION_DEGREE, ref täckningsgrad);
                         logger.ErrorMessage(error);
                         enFakturaRad.TäckningsGrad = täckningsgrad;
 
-                        error = AdkNetWrapper.Api.AdkGetDouble(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_CONTRIBUTION_MARGIN, ref täckningsBidrag);
+                        error = Adk.Api.AdkGetDouble(radReferens, Adk.Api.ADK_OOI_ROW_CONTRIBUTION_MARGIN, ref täckningsBidrag);
                         logger.ErrorMessage(error);
                         enFakturaRad.TäckningsBidrag = täckningsBidrag;
 
-                        error = AdkNetWrapper.Api.AdkGetStr(radReferens, AdkNetWrapper.Api.ADK_OOI_ROW_PROFIT_CENTRE, ref resultatEnhet, 6);
+                        error = Adk.Api.AdkGetStr(radReferens, Adk.Api.ADK_OOI_ROW_PROFIT_CENTRE, ref resultatEnhet, 6);
                         logger.ErrorMessage(error);
                         enFakturaRad.ResultatEnhet = resultatEnhet;
 
