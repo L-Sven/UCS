@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2005
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UCSTestTask", "UCSTest Task\UCSTestTask.csproj", "{88A557ED-BF69-4D15-9EC9-D4DA28456D45}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UcsAdm", "UCSTest Task\UcsAdm.csproj", "{88A557ED-BF69-4D15-9EC9-D4DA28456D45}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UcsVismaTid", "UcsVismaTid\UcsVismaTid.csproj", "{F6FD718A-28B4-43DE-9CDD-D3002FEFDAA1}"
 EndProject

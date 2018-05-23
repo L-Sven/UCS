@@ -229,6 +229,7 @@ namespace UcsAdm
                         {
                             logger.ErrorMessage(ex);
                         }
+
                         try
                         {
                             sqlCon2.Open();
@@ -271,7 +272,6 @@ namespace UcsAdm
                                 logger.ErrorMessage(ex.ToString() + " | Fakturanummer: " + kList[i].FakturaNummer +
                                                     " | Rad:" + fRad.KundRadID);
                             }
-
 
                             try
                             {
