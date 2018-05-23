@@ -77,7 +77,6 @@ namespace UcsVismaTid
             {
                 logger.ErrorMessage(ex);
             }
-            
         }
 
         private void GetProgramUsers()
@@ -158,7 +157,6 @@ namespace UcsVismaTid
             {
                 logger.ErrorMessage(ex);
             }
-            
         }
 
         private void GetTimeCode()
@@ -212,7 +210,6 @@ namespace UcsVismaTid
             {
                 logger.ErrorMessage(ex);
             }
-            
         }
 
         private void GetPriceList()
@@ -237,7 +234,6 @@ namespace UcsVismaTid
             {
                 logger.ErrorMessage(ex);
             }
-            
         }
 
         private void GetPriceListPeriod()
@@ -313,7 +309,6 @@ namespace UcsVismaTid
             {
                 logger.ErrorMessage(ex);
             }
-            
         }
 
         public void GetFreeDay()
@@ -339,7 +334,6 @@ namespace UcsVismaTid
             {
                 logger.ErrorMessage(ex);   
             }
-            
         }
 
         public void GetCustomerCategory()
@@ -364,7 +358,6 @@ namespace UcsVismaTid
             {
                 logger.ErrorMessage(ex);
             }
-            
         }
 
         public void GetCustomer()
@@ -391,7 +384,6 @@ namespace UcsVismaTid
             {
                 logger.ErrorMessage(ex);
             }
-            
         }
 
         public void GetActivity()
@@ -417,7 +409,6 @@ namespace UcsVismaTid
             {
                 logger.ErrorMessage(ex);
             }
-            
         }
 
         public void GetProjectCategory()
@@ -443,7 +434,6 @@ namespace UcsVismaTid
             {
                 logger.ErrorMessage(ex);
             }
-            
         }
 
         public void GetResultUnit()
@@ -468,7 +458,6 @@ namespace UcsVismaTid
             {
                 logger.ErrorMessage(ex);
             }
-            
         }
     }
 }

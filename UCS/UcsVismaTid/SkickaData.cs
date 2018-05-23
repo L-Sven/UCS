@@ -15,8 +15,7 @@ namespace UcsVismaTid
     {
 
         //Skapar en sql-connection mot databasen
-        public SqlConnection sqlConAdm = new SqlConnection(@ConfigurationManager.AppSettings["dbPath"]);
-        public SqlConnection sqlConTid = new SqlConnection(@ConfigurationManager.AppSettings["dbPath2"]);
+        public SqlConnection sqlConTid = new SqlConnection(@ConfigurationManager.AppSettings["dbPath"]);
 
         ErrorLogger logger = new ErrorLogger();
         
