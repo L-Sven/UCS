@@ -21,9 +21,6 @@ C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsVismaTid\bin\Debug\App.co
 C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsVismaTid\bin\Debug\UcsVismaTid.exe.config
 C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsVismaTid\bin\Debug\UcsVismaTid.exe
 C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsVismaTid\bin\Debug\UcsVismaTid.pdb
-C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsVismaTid\bin\Debug\EntityFramework.dll
-C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsVismaTid\bin\Debug\EntityFramework.SqlServer.dll
-C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsVismaTid\bin\Debug\NLog.dll
 C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsVismaTid\bin\Debug\EntityFramework.xml
 C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsVismaTid\bin\Debug\EntityFramework.SqlServer.xml
 C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsVismaTid\bin\Debug\NLog.xml
