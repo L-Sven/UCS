@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xml>
+  <status>OK</status>
+  <meddelande />
+  <fran>2019-04-01</fran>
+  <till>2019-04-30</till>
+  <antal_dagar>30</antal_dagar>
+  <antal_vardagar>22</antal_vardagar>
+  <antal_arbetsdagar>20</antal_arbetsdagar>
+  <antal_helgdagar>2</antal_helgdagar>
+  <helgdagar>
+    <item>
+      <datum>2019-04-19</datum>
+      <helgdag>Fre 2019-04-19: Långfredag</helgdag>
+    </item>
+    <item>
+      <datum>2019-04-22</datum>
+      <helgdag>Mån 2019-04-22: Annandag påsk</helgdag>
+    </item>
+  </helgdagar>
+  <id>1234</id>
+</xml>

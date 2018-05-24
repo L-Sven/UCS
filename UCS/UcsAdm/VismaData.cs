@@ -182,6 +182,7 @@ namespace UcsAdm
                     String kundLand = new String(' ', 24);
                     String kundStad = new String(' ', 24);
                     String kundReferens = new String(' ', 50);
+                    String resultatEnhet = new String(' ', 6);
                     int makulerat = new int();
 
                     bool slutDatumFinns = false;
@@ -262,6 +263,9 @@ namespace UcsAdm
                             error = Adk.Api.AdkGetStr(pData,
                                 Adk.Api.ADK_AGREEMENT_HEAD_CUSTOMER_REFERENCE_NAME,
                                 ref kundReferens, 50);
+                            logger.ErrorMessage(error);
+                            error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_AGREEMENT_HEAD_PROFIT_CENTRE,
+                                ref resultatEnhet, 6);
                             logger.ErrorMessage(error);
 
                             // Kontroll om det finns ett angivet slutdatum på avtalet
@@ -360,6 +364,7 @@ namespace UcsAdm
                                 a.AvtalsDatumSlut = avtalsDatumSlut;
                                 a.StartDatum = startDatum;
                                 a.KundNummer = kundNummer;
+                                a.ResultatEnhet = resultatEnhet;
 
                                 a.FakturaIntervall = intervall;
                                 a.PeriodStart = periodStart;
@@ -419,7 +424,7 @@ namespace UcsAdm
 
                                 foreach (var element in a.ListAvtalsRad)
                                 {
-                                    a.TotalKostnad += (double) element.TotalKostnad;
+                                    a.BeloppExklMoms += (double) element.BeloppExklMoms;
                                 }
 
                                 // Skickar avtalet till databasen
@@ -470,7 +475,7 @@ namespace UcsAdm
                     enAvtalsRad.Benämning = benämning;
                     enAvtalsRad.ArtikelNummer = artikelNummer;
                     enAvtalsRad.RadId = avtalsRadID;
-                    enAvtalsRad.TotalKostnad = totalKostnad;
+                    enAvtalsRad.BeloppExklMoms = totalKostnad;
 
                     if ((artikelNummer != string.Empty || artikelNummer != "") && totalKostnad != 0.00)
                     {
@@ -1013,9 +1018,6 @@ namespace UcsAdm
                             error = Adk.Api.AdkGetDouble(pData, Adk.Api.ADK_OOI_HEAD_VAT_AMOUNT,
                                 ref moms);
                             logger.ErrorMessage(error);
-                            error = Adk.Api.AdkGetDouble(pData, Adk.Api.ADK_OOI_HEAD_TOTAL_AMOUNT,
-                                ref totalKostnad);
-                            logger.ErrorMessage(error);
                             error = Adk.Api.AdkGetStr(pData,
                                 Adk.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kommentarsFält, 120);
                             logger.ErrorMessage(error);
@@ -1033,7 +1035,7 @@ namespace UcsAdm
                                 Adk.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kundReferens, 50);
                             logger.ErrorMessage(error);
 
-                            kFaktura.TotalKostnad = totalKostnad;
+                            kFaktura.BeloppExklMoms = totalKostnad;
                             kFaktura.FakturaDatum = fakturaDatum;
 
                             // Ger alla kundfakturor prefixet "KF-" för att de inte ska kunna ha samma nummer som leverantörsfakturorna
@@ -1058,22 +1060,21 @@ namespace UcsAdm
                             GetKundFakturaRad(kFaktura, pData);
 
                             // Om valutan inte är svenska kronor, så beräknas totalkostnaden utefter fakturaraderna
-                            if (valutaKod != "SEK")
-                            {
-                                totalKostnad = 0;
-                                foreach (var rad in kFaktura.fakturaRader)
-                                {
-                                    totalKostnad += rad.TotalKostnad;
-                                }
 
-                                kFaktura.TotalKostnad = totalKostnad;
+                            totalKostnad = 0;
+                            foreach (var rad in kFaktura.fakturaRader)
+                            {
+                                totalKostnad += rad.BeloppExklMoms;
                             }
+
+                            kFaktura.BeloppExklMoms = totalKostnad;
+
 
                             // Om det är en krediterad faktura görs värdena negativa
                             if (fakturaTyp.ToUpper() == "K")
                             {
                                 kFaktura.Moms *= -1;
-                                kFaktura.TotalKostnad *= -1;
+                                kFaktura.BeloppExklMoms *= -1;
                             }
 
                             // Skickar kundfakturan till sendData som i sin tur lägger itll den i databasen
@@ -1140,7 +1141,7 @@ namespace UcsAdm
 
                         error = Adk.Api.AdkGetDouble(radReferens, Adk.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
                         logger.ErrorMessage(error);
-                        enFakturaRad.TotalKostnad = totalKostnad;
+                        enFakturaRad.BeloppExklMoms = totalKostnad;
 
                         error = Adk.Api.AdkGetStr(radReferens, Adk.Api.ADK_OOI_ROW_PROJECT, ref projekt, 6);
                         logger.ErrorMessage(error);
@@ -1166,7 +1167,7 @@ namespace UcsAdm
                         if (kFaktura.FakturaTyp.ToUpper() == "K")
                         {
                             enFakturaRad.LevAntal = kvantitet * -1;
-                            enFakturaRad.TotalKostnad *= -1;
+                            enFakturaRad.BeloppExklMoms *= -1;
                             enFakturaRad.TäckningsBidrag *= -1;
                         }
                         

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace UcsVismaTid
 {
@@ -20,34 +21,69 @@ namespace UcsVismaTid
 
         public VismaTidData()
         {
-            GetTimeReport();
-            Console.WriteLine("Tidsrapport klar!");
-            GetProgramUsers();
-            Console.WriteLine("Anställda klar!");
-            GetProgramUsersGroup();
-            Console.WriteLine("Anställdagrupper klar!");
-            GetProject();
-            Console.WriteLine("Projekt klar!");
-            GetTimeCode();
-            Console.WriteLine("Tidskoder klar!");
-            GetPricing();
-            Console.WriteLine("Priser klar!");
-            GetPriceList();
-            Console.WriteLine("Prislistor klar!");
-            GetPriceListPeriod();
-            Console.WriteLine("Prislistaperioder klar!");
-            GetParticipants();
-            Console.WriteLine("Deltagare klar!");
-            GetProgramUserCalcPrice();
-            Console.WriteLine("AnställdaKalkpris klar!");
-            GetCustomer();
-            Console.WriteLine("Kunder klar");
-            GetCustomerCategory();
-            Console.WriteLine("Kundkategori klar!");
-            GetProjectCategory();
-            Console.WriteLine("Projektkategori klar!");
-            GetResultUnit();
-            Console.WriteLine("Resultatenhet klar!");
+            GetHolidaysWholeYear();
+
+            //GetTimeReport();
+            //Console.WriteLine("Tidsrapport klar!");
+            //GetProgramUsers();
+            //Console.WriteLine("Anställda klar!");
+            //GetProgramUsersGroup();
+            //Console.WriteLine("Anställdagrupper klar!");
+            //GetProject();
+            //Console.WriteLine("Projekt klar!");
+            //GetTimeCode();
+            //Console.WriteLine("Tidskoder klar!");
+            //GetPricing();
+            //Console.WriteLine("Priser klar!");
+            //GetPriceList();
+            //Console.WriteLine("Prislistor klar!");
+            //GetPriceListPeriod();
+            //Console.WriteLine("Prislistaperioder klar!");
+            //GetParticipants();
+            //Console.WriteLine("Deltagare klar!");
+            //GetProgramUserCalcPrice();
+            //Console.WriteLine("AnställdaKalkpris klar!");
+            //GetCustomer();
+            //Console.WriteLine("Kunder klar");
+            //GetCustomerCategory();
+            //Console.WriteLine("Kundkategori klar!");
+            //GetProjectCategory();
+            //Console.WriteLine("Projektkategori klar!");
+            //GetResultUnit();
+            //Console.WriteLine("Resultatenhet klar!");
+        }
+
+        private void GetHolidaysWholeYear()
+        {
+            //Vi tömmer tablen för alltid i förhand!
+            sendData.EmptyRowsInWorkdays();
+
+            List<Arbetsdagar> arbetsdagarList = new List<Arbetsdagar>();
+
+            string idag = DateTime.Today.ToShortDateString().Substring(0, 8) + "01";
+            int antalDagarMånad = DateTime.DaysInMonth(DateTime.Parse(idag).Year,DateTime.Parse(idag).Month);
+            string idagOmEnMånad = idag.Substring(0, 8) + antalDagarMånad;
+            int arbetsDagar;
+
+            for (int i = 0; i < 12; i++)
+            {
+                Arbetsdagar hD = new Arbetsdagar();
+                
+                //Vi anropar www.arbetsdag.se/api genom xmlConString. Uppstår det problem med API se den hemsidan!
+                var xmlConString = "http://api.arbetsdag.se/v1/dagar.xml?fran=" + idag + "&till=" + idagOmEnMånad + "&key=7edead340d36f038593fc88686b454ac6a2d7683&id=1234";
+                XElement rödaDagar = XElement.Load(xmlConString);
+                arbetsDagar = int.Parse(rödaDagar.Element("antal_arbetsdagar").Value);
+                var datum = idag.Substring(0, 7);    //Vi "skär" bort dagarna från datumet.
+                hD.ArbetsDagar = arbetsDagar;
+                hD.Datum = datum;
+                arbetsdagarList.Add(hD);
+
+                idag = DateTime.Parse(idag).AddMonths(1).ToShortDateString();
+                antalDagarMånad = DateTime.DaysInMonth(DateTime.Parse(idag).Year, DateTime.Parse(idag).Month);
+                idagOmEnMånad = idag.Substring(0, 8) + antalDagarMånad;
+            }
+
+            sendData.HoliDaysTillDatabas(arbetsdagarList);
         }
 
         private void GetTimeReport()

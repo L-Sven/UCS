@@ -63,6 +63,7 @@
     <Compile Include="Customers.cs" />
     <Compile Include="ErrorLogger.cs" />
     <Compile Include="FreeDays.cs" />
+    <Compile Include="Holiday.cs" />
     <Compile Include="Participants.cs" />
     <Compile Include="PriceListPeriods.cs" />
     <Compile Include="PriceLists.cs" />

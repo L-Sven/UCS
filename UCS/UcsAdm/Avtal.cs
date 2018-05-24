@@ -18,7 +18,7 @@ namespace UcsAdm
         public string PeriodStart { get; set; }
         public string PeriodEnd { get; set; }
         public double FakturaIntervall { get; set; }
-        public double TotalKostnad { get; internal set; }
+        public double BeloppExklMoms { get; internal set; }
         public int Uppsägningstid { get; internal set; }
         public int Förlängningstid { get; internal set; }
         public string AvtalsDatumSlut { get; internal set; }
@@ -26,5 +26,6 @@ namespace UcsAdm
         public string KundStad { get; set; }
         public string KundLand { get; set; }
         public string KundReferens { get; set; }
+        public string ResultatEnhet { get; set; }
     }
 }

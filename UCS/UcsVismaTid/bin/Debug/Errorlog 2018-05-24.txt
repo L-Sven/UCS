@@ -1,0 +1,18 @@
+         -------------- Error (2018-05-24 14:10:09.4399) --------------
+         
+         Call Site: UcsVismaTid.ErrorLogger.ErrorMessage
+         Exception Type: System.Data.SqlClient.SqlException
+         Exception Message: Violation of PRIMARY KEY constraint 'PK__tmp_ms_x__BA940B4C6C21A343'. Cannot insert duplicate key in object 'dbo.ArbetsDagar'. The duplicate key value is (2018-05).
+The statement has been terminated.
+         Stack Trace:    vid System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   vid System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   vid System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   vid System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   vid System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption)
+   vid System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   vid System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry)
+   vid System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry)
+   vid System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   vid UcsVismaTid.SkickaData.HoliDaysTillDatabas(List`1 arbetsDagar) i C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsVismaTid\SkickaData.cs:rad 37
+         Additional Info: Exception discovered
+

@@ -16,7 +16,7 @@ namespace UcsAdm
         public string KundNummer { get; set; } = "";
         public string Säljare { get; set; } = "";   
         public string FakturaDatum { get; set; } = "";
-        public double TotalKostnad { get; set; }
+        public double BeloppExklMoms { get; set; }
         public double Cargo_amount { get; set; }
         public double Dispatch_fee { get; set; }
         public double Moms { get; set; }

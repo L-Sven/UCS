@@ -10,7 +10,7 @@ namespace UcsAdm
     {
         public int RadId { get; set; }
         public string ArtikelNummer { get; set; }
-        public object TotalKostnad { get; internal set; }
+        public object BeloppExklMoms { get; internal set; }
         public string Benämning { get; set; }
     }
 }

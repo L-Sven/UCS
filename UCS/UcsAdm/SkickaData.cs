@@ -39,10 +39,12 @@ namespace UcsAdm
                 decimal.Parse(a.FakturaIntervall.ToString())));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@periodStart", a.PeriodStart));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@periodEnd", a.PeriodEnd));
-            cmdAddAgreement.Parameters.Add(new SqlParameter("@totalKostnad", decimal.Parse(a.TotalKostnad.ToString())));
+            cmdAddAgreement.Parameters.Add(new SqlParameter("@beloppExklMoms", decimal.Parse(a.BeloppExklMoms.ToString())));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@uppsägningstid", a.Uppsägningstid));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@förlängningstid", a.Förlängningstid));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@avtalsDatumSlut", a.AvtalsDatumSlut));
+            cmdAddAgreement.Parameters.Add(
+                a.ResultatEnhet == null ? new SqlParameter("@resultatEnhet", DBNull.Value) : new SqlParameter("@resultatEnhet", a.ResultatEnhet));
 
             try
             {
@@ -93,7 +95,7 @@ namespace UcsAdm
                 cmdAddAgreementRow.Parameters.Add(new SqlParameter("@dokumentNummer", a.DokumentNummer));
                 cmdAddAgreementRow.Parameters.Add(new SqlParameter("@radID", rad.RadId));
                 cmdAddAgreementRow.Parameters.Add(new SqlParameter("@artikelNummer", rad.ArtikelNummer));
-                cmdAddAgreementRow.Parameters.Add(new SqlParameter("@totalKostnad", rad.TotalKostnad));
+                cmdAddAgreementRow.Parameters.Add(new SqlParameter("@beloppExklMoms", rad.BeloppExklMoms));
                 cmdAddAgreementRow.Parameters.Add(new SqlParameter("@benämning", rad.Benämning));
 
                 try
@@ -216,8 +218,8 @@ namespace UcsAdm
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@kundNummer", kList[i].KundNummer));
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@säljare", kList[i].Säljare));
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaDatum", kList[i].FakturaDatum));
-                            cmdAddInvoice.Parameters.Add(new SqlParameter("@totalKostnad",
-                                decimal.Parse(kList[i].TotalKostnad.ToString())));
+                            cmdAddInvoice.Parameters.Add(new SqlParameter("@beloppExklMoms",
+                                decimal.Parse(kList[i].BeloppExklMoms.ToString())));
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@förfalloDatum", ""));
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@slutDatum", ""));
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@fraktAvgift", kList[i].Cargo_amount));
@@ -257,7 +259,7 @@ namespace UcsAdm
                                 cmdAddRow.Parameters.Add(new SqlParameter("@radID", fRad.KundRadID));
                                 cmdAddRow.Parameters.Add(new SqlParameter("@artikelNummer", fRad.ArtikelNummer));
                                 cmdAddRow.Parameters.Add(new SqlParameter("@levAntal", fRad.LevAntal));
-                                cmdAddRow.Parameters.Add(new SqlParameter("@totalKostnad", fRad.TotalKostnad));
+                                cmdAddRow.Parameters.Add(new SqlParameter("@beloppExklMoms", fRad.BeloppExklMoms));
                                 cmdAddRow.Parameters.Add(new SqlParameter("@fakturaNummer", kList[i].FakturaNummer));
                                 cmdAddRow.Parameters.Add(new SqlParameter("@projekt", fRad.Projekt));
                                 cmdAddRow.Parameters.Add(new SqlParameter("@täckningsGrad",

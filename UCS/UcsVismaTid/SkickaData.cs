@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using NLog;
 
 namespace UcsVismaTid
@@ -18,6 +19,56 @@ namespace UcsVismaTid
         public SqlConnection sqlConTid = new SqlConnection(@ConfigurationManager.AppSettings["dbPath"]);
 
         ErrorLogger logger = new ErrorLogger();
+
+        public void EmptyRowsInWorkdays()
+        {
+            var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
+            try
+            {
+                string sqlTrunc = "TRUNCATE TABLE ArbetsDagar";
+                SqlCommand cmdEmptyRowsInWorkdays = new SqlCommand(sqlTrunc, sqlCon2);
+                sqlCon2.Open();
+                cmdEmptyRowsInWorkdays.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorMessage(ex);
+            }
+            finally
+            {
+                sqlCon2.Close();
+            }
+            
+        }
+
+        public void HoliDaysTillDatabas(List<Arbetsdagar> arbetsDagar)
+        {
+            var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
+            SqlCommand cmdAddHoliday = new SqlCommand("sp_add_workdays", sqlCon2);
+
+            try
+            {
+                sqlCon2.Open();
+                ;
+                cmdAddHoliday.CommandType = CommandType.StoredProcedure;
+                foreach (var aD in arbetsDagar)
+                {
+                    cmdAddHoliday.Parameters.Add(new SqlParameter("@arbetsDagar", aD.ArbetsDagar));
+                    cmdAddHoliday.Parameters.Add(new SqlParameter("@datum", aD.Datum));
+                    cmdAddHoliday.ExecuteNonQuery();
+                    cmdAddHoliday.Parameters.Clear();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorMessage(ex);
+            }
+            finally
+            {
+                sqlCon2.Close();
+            }
+        }
         
         public void TimeReportTillDatabas(TimeReports t)
         {
@@ -30,22 +81,16 @@ namespace UcsVismaTid
 
                 cmdAddTimeReport.Parameters.Add(
                     t.TimeCodeId == null ? new SqlParameter("@TidskodID", DBNull.Value) : new SqlParameter("@TidskodID", t.TimeCodeId));
-                
                 cmdAddTimeReport.Parameters.Add(
                     t.ProjectId == null ? new SqlParameter("@ProjektID", DBNull.Value) : new SqlParameter("@ProjektID", t.ProjectId));
-
                 cmdAddTimeReport.Parameters.Add(
                     t.HourToInvoice == null ? new SqlParameter("@FaktureradeTimmar", DBNull.Value) : new SqlParameter("@FaktureradeTimmar", t.HourToInvoice));
-
                 cmdAddTimeReport.Parameters.Add(
                     t.HourOfReport == null ? new SqlParameter("@AntalArbetadeTimmar", DBNull.Value) : new SqlParameter("@AntalArbetadeTimmar", t.HourOfReport));
-
                 cmdAddTimeReport.Parameters.Add(
                     t.ProgramUserId == null ? new SqlParameter("@AnställdID", DBNull.Value) : new SqlParameter("@AnställdID", t.ProgramUserId));
-
                 cmdAddTimeReport.Parameters.Add(
                     t.DateOfReport == null ? new SqlParameter("@DatumFörRapport", DBNull.Value) : new SqlParameter("@DatumFörRapport", t.DateOfReport));
-
                 cmdAddTimeReport.Parameters.Add(new SqlParameter("@TidsRapportID", t.TimeReportId));
 
                 sqlCon2.Open();
@@ -73,7 +118,6 @@ namespace UcsVismaTid
 
                 cmdAddProgramUsers.Parameters.Add(new SqlParameter("@AnställdID", pU.ProgramUserId));
                 cmdAddProgramUsers.Parameters.Add(new SqlParameter("@Personalnummer", pU.PersonalNo));
-                
                 cmdAddProgramUsers.Parameters.Add(
                     pU.ProgramUserFirstName == null ? new SqlParameter("@Förnamn", DBNull.Value) : new SqlParameter("@Förnamn", pU.ProgramUserFirstName));
                 cmdAddProgramUsers.Parameters.Add(
