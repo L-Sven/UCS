@@ -384,21 +384,18 @@ namespace UcsAdm
                                         avtalPrognosList.Add(periodStart);
                                     }
 
-                                    periodStart = DateTime.Parse(periodStart).AddMonths((int) intervall)
-                                        .ToShortDateString();
+                                    periodStart = DateTime.Parse(periodStart).AddMonths((int) intervall).ToShortDateString();
 
                                     // Kontroll som inte lägger till prognosperiod efter slutdatum för avtalet
                                     if (slutDatumFinns || kommenteratSlutDatumFinns)
                                     {
                                         // Kollar om nästa period ligger efter avtalsslutet
-                                        if (slutDatumFinns && DateTime.Parse(periodStart) >
-                                            DateTime.Parse(avtalsDatumSlut))
+                                        if (slutDatumFinns && DateTime.Parse(periodStart) > DateTime.Parse(avtalsDatumSlut))
                                         {
                                             break;
                                         }
                                         // Kollar om nästa period ligger efter det avtalsslutet i kommentarsfältet
-                                        else if (kommenteratSlutDatumFinns && DateTime.Parse(periodStart) >
-                                                 DateTime.Parse(a.KommenteratSlutDatum))
+                                        else if (kommenteratSlutDatumFinns && DateTime.Parse(periodStart) > DateTime.Parse(a.KommenteratSlutDatum))
                                         {
                                             break;
                                         }
@@ -815,6 +812,7 @@ namespace UcsAdm
             }
         }
 
+        #region ====== INAKTIV KOD ======
 
         // Används inte just nu eftersom vi hämtar kunder direkt från fakturorna istället för kunddatabasen.
         // Detta för att det kan finnas kunder utan fakturor, nu kommer enbart kunder med som har fakturor i databasen.
@@ -923,6 +921,8 @@ namespace UcsAdm
             Adk.Api.AdkClose();
         }
         */
+
+        #endregion
 
         // Metod som hämtar data från kundfakturahuvuden i visma
         private void GetKundFakturaHuvudData()
