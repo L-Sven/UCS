@@ -1,0 +1,25 @@
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UCSTest Task\bin\Debug\App.config
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UCSTest Task\bin\Debug\NLog.xsd
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UCSTest Task\bin\Debug\NLog.config
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UCSTest Task\bin\Debug\UcsAdm.exe.config
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UCSTest Task\bin\Debug\UcsAdm.exe
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UCSTest Task\bin\Debug\UcsAdm.pdb
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UCSTest Task\bin\Debug\NLog.dll
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UCSTest Task\bin\Debug\NLog.xml
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UCSTest Task\obj\Debug\UcsAdm.csproj.CoreCompileInputs.cache
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UCSTest Task\obj\Debug\UcsAdm.csproj.CopyComplete
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UCSTest Task\obj\Debug\UcsAdm.exe
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UCSTest Task\obj\Debug\UcsAdm.pdb
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsAdm\bin\Debug\App.config
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsAdm\bin\Debug\NLog.xsd
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsAdm\bin\Debug\NLog.config
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsAdm\bin\Debug\UcsAdm.exe.config
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsAdm\bin\Debug\UcsAdm.exe
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsAdm\bin\Debug\UcsAdm.pdb
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsAdm\bin\Debug\NLog.dll
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsAdm\bin\Debug\NLog.xml
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsAdm\obj\Debug\UcsAdm.csprojResolveAssemblyReference.cache
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsAdm\obj\Debug\UcsAdm.csproj.CoreCompileInputs.cache
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsAdm\obj\Debug\UcsAdm.csproj.CopyComplete
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsAdm\obj\Debug\UcsAdm.exe
+C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsAdm\obj\Debug\UcsAdm.pdb
