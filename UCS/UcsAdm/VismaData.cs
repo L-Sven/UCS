@@ -1094,7 +1094,7 @@ namespace UcsAdm
         }
 
         // Metod som hämtar information om raderna i fakturorna 
-        private void GetKundFakturaRad(KundFakturaHuvud Faktura, int pData)
+        private void GetKundFakturaRad(KundFakturaHuvud kFaktura, int pData)
         {
             Double NROWS = new Double();
             // Hämtar antalet rader på fakturan
@@ -1163,14 +1163,14 @@ namespace UcsAdm
                         enFakturaRad.ResultatEnhet = resultatEnhet;
 
                         // Om krediterade faktura
-                        if (Faktura.FakturaTyp.ToUpper() == "K")
+                        if (kFaktura.FakturaTyp.ToUpper() == "K")
                         {
                             enFakturaRad.LevAntal = kvantitet * -1;
                             enFakturaRad.TotalKostnad *= -1;
                             enFakturaRad.TäckningsBidrag *= -1;
                         }
                         
-                        Faktura.fakturaRader.Add(enFakturaRad);
+                        kFaktura.fakturaRader.Add(enFakturaRad);
                     }
                 } 
             }
