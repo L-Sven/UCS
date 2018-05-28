@@ -27,5 +27,6 @@ namespace UcsAdm
         public string KundLand { get; set; }
         public string KundReferens { get; set; }
         public string ResultatEnhet { get; set; }
+        public string Kommentarsfält { get; set; }
     }
 }

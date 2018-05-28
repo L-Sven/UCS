@@ -60,6 +60,27 @@ namespace UcsAdm
                 sqlCon2.Close();
             }
 
+            SqlCommand cmdAddKommentarsfält = new SqlCommand("sp_add_commentfield", sqlCon2);
+            cmdAddKommentarsfält.CommandType = CommandType.StoredProcedure;
+
+            try
+            {
+                sqlCon2.Open();
+                cmdAddKommentarsfält.Parameters.Add(new SqlParameter("@dokumentNummer", a.DokumentNummer));
+                cmdAddKommentarsfält.Parameters.Add(
+                    a.Kommentarsfält == null || a.Kommentarsfält.Length < 2 ? new SqlParameter("@kommentarsfält", DBNull.Value) : new SqlParameter("@kommentarsfält", a.Kommentarsfält));
+                cmdAddKommentarsfält.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorMessage(ex);
+            }
+            finally
+            {
+                sqlCon2.Close();
+                
+            }
+
             SqlCommand cmdAddAvtalPrognos = new SqlCommand("sp_add_agreementprediction", sqlCon2);
             cmdAddAvtalPrognos.CommandType = CommandType.StoredProcedure;
 
