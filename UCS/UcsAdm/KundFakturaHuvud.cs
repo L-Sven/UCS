@@ -26,6 +26,7 @@ namespace UcsAdm
         public string KundReferens { get; set; } = "";
         public string KundStad { get; set; } = "";
         public string KundLand { get; set; } = "";
+        public string AvtalsNummer { get; set; } = "";
 
         // public string FörfalloDatum { get; set; } = "";
         // public string SlutDatum { get; set; } = "";

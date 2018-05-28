@@ -226,6 +226,8 @@ namespace UcsAdm
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@administrationsAvgift",
                                 kList[i].Dispatch_fee));
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@moms", kList[i].Moms));
+                            cmdAddInvoice.Parameters.Add(
+                                kList[i] == null ? new SqlParameter("@avtalsNummer", DBNull.Value) : new SqlParameter("@avtalsNummer", kList[i].AvtalsNummer));
                         }
                         catch (Exception ex)
                         {
