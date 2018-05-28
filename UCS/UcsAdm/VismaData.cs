@@ -95,7 +95,7 @@ namespace UcsAdm
             // Anropar metod som hämtar data om alla avtal
             GetAvtal();
             Console.WriteLine("Avtal klar!");
-            
+
             Console.WriteLine("All information är hämtad!");
             Console.WriteLine("Så här många errors har loggats: " + logger.counter);
             Console.WriteLine("Tryck en tangent för att avsluta!");
@@ -978,6 +978,7 @@ namespace UcsAdm
                         Double dispatchFee = new Double();
                         Double moms = new Double();
                         String kommentarsFält = new String(' ', 120);
+                        String avtalsNummer = new String(' ', 15);
 
                         String kundNamn = new String(' ', 50);
                         String kundLand = new String(' ', 24);
@@ -1034,6 +1035,9 @@ namespace UcsAdm
                             error = Adk.Api.AdkGetStr(pData,
                                 Adk.Api.ADK_OOI_HEAD_CUSTOMER_REFERENCE_NAME, ref kundReferens, 50);
                             logger.ErrorMessage(error);
+                            error = Adk.Api.AdkGetStr(pData,
+                                Adk.Api.ADK_OOI_HEAD_CONTRACTNR, ref avtalsNummer, 15);
+                            logger.ErrorMessage(error);
 
                             kFaktura.BeloppExklMoms = totalKostnad;
                             kFaktura.FakturaDatum = fakturaDatum;
@@ -1055,6 +1059,7 @@ namespace UcsAdm
                             kFaktura.KundLand = kundLand;
                             kFaktura.KundStad = kundStad;
                             kFaktura.KundReferens = kundReferens;
+                            kFaktura.AvtalsNummer = avtalsNummer;
 
                             // Hämtar alla fakturarader på kundfakturan
                             GetKundFakturaRad(kFaktura, pData);
