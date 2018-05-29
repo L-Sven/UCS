@@ -76,25 +76,25 @@ namespace UcsAdm
             GetResultatEnhet();
             Console.WriteLine("Resultatenhet klar!");
 
-            // Anropar metod som hämtar data om alla artikelgrupper
-            GetArtikelGrupper();
-            Console.WriteLine("Artikelgrupper klar!");
+            //// Anropar metod som hämtar data om alla artikelgrupper
+            //GetArtikelGrupper();
+            //Console.WriteLine("Artikelgrupper klar!");
 
-            // Anropar metod som hämtar data om alla artiklar 
-            GetArtikelData();
-            Console.WriteLine("Artikeldata klar!");
+            //// Anropar metod som hämtar data om alla artiklar 
+            //GetArtikelData();
+            //Console.WriteLine("Artikeldata klar!");
 
             // Anropar metod som hämtar data om alla kundfakturor   
             GetKundFakturaHuvudData();
             Console.WriteLine("Kundfakturadata klar!");
 
-            //Anropar metod som hämtar data om alla leverantörsfakturor
-            GetLevFakturaHuvudData();
-            Console.WriteLine("Leverantörsfakturadata klar!");
+            ////Anropar metod som hämtar data om alla leverantörsfakturor
+            //GetLevFakturaHuvudData();
+            //Console.WriteLine("Leverantörsfakturadata klar!");
 
-            // Anropar metod som hämtar data om alla avtal
-            GetAvtal();
-            Console.WriteLine("Avtal klar!");
+            //// Anropar metod som hämtar data om alla avtal
+            //GetAvtal();
+            //Console.WriteLine("Avtal klar!");
 
             Console.WriteLine("All information är hämtad!");
             Console.WriteLine("Så här många errors har loggats: " + logger.counter);
@@ -293,6 +293,7 @@ namespace UcsAdm
                                     // Hantering av kommentarsfältet på avtalet
                                     if (kommentarsFält != "" /*|| avtalsDatumSlut == ""*/)
                                     {
+                                        Console.WriteLine(kommentarsFält.Length);
                                         string[] data = kommentarsFält.Split('#');
 
                                         //Vi tar arrayens första element, trimmar bort mellanslaget i början samt tar de första tio tecken.
@@ -365,6 +366,7 @@ namespace UcsAdm
                                 a.StartDatum = startDatum;
                                 a.KundNummer = kundNummer;
                                 a.ResultatEnhet = resultatEnhet;
+                                a.Kommentarsfält = kommentarsFält;
 
                                 a.FakturaIntervall = intervall;
                                 a.PeriodStart = periodStart;
@@ -945,19 +947,25 @@ namespace UcsAdm
                 while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns fakturor            
                 {
                     // Kontroll om fakturan inte är färdig eller makulerad
-                    int validFaktura = new int();
+                    int InvalidFaktura = new int();
                     int makulerad = new int();
+                    int utskriven = new int();
+
 
                     error = Adk.Api.AdkGetBool(pData, Adk.Api.ADK_OOI_HEAD_DOCUMENT_NOT_DONE,
-                        ref validFaktura);
+                        ref InvalidFaktura);
                     logger.ErrorMessage(error);
-                    error = Adk.Api.AdkGetBool(pData, Adk.Api.ADK_OOI_HEAD_DOCUMENT_NOT_DONE,
+                    error = Adk.Api.AdkGetBool(pData, Adk.Api.ADK_OOI_HEAD_DOCUMENT_CANCELLED,
                         ref makulerad);
+                    logger.ErrorMessage(error);
+                    error = Adk.Api.AdkGetBool(pData, Adk.Api.ADK_OOI_HEAD_DOCUMENT_PRINTED,
+                        ref utskriven);
                     logger.ErrorMessage(error);
 
                     // Om det är en ofärdig eller makulerad faktura tar vi inte med den!
-                    if (validFaktura == 1 || makulerad == 1)
+                    if (utskriven == 0 || InvalidFaktura == 1 || makulerad == 1)
                     {
+                        
                         // Do nothing
                     }
 
