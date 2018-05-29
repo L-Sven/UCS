@@ -1053,10 +1053,11 @@ namespace UcsAdm
 
                             kFaktura.BeloppExklMoms = totalKostnad;
                             kFaktura.FakturaDatum = fakturaDatum;
-
+                            
                             // Ger alla kundfakturor prefixet "KF-" för att de inte ska kunna ha samma nummer som leverantörsfakturorna
                             String fakturaNummer = new String(' ', 20);
                             fakturaNummer = fakturaNr.ToString();
+
                             fakturaNummer = "KF-" + fakturaNummer;
                             kFaktura.FakturaNummer = fakturaNummer;
 
@@ -1077,15 +1078,13 @@ namespace UcsAdm
                             GetKundFakturaRad(kFaktura, pData);
 
                             // Om valutan inte är svenska kronor, så beräknas totalkostnaden utefter fakturaraderna
-
                             totalKostnad = 0;
                             foreach (var rad in kFaktura.fakturaRader)
                             {
                                 totalKostnad += rad.BeloppExklMoms;
                             }
 
-                            kFaktura.BeloppExklMoms = totalKostnad;
-
+                            kFaktura.BeloppExklMoms = Math.Round(totalKostnad,2);
 
                             // Om det är en krediterad faktura görs värdena negativa
                             if (fakturaTyp.ToUpper() == "K")
@@ -1093,6 +1092,8 @@ namespace UcsAdm
                                 kFaktura.Moms *= -1;
                                 kFaktura.BeloppExklMoms *= -1;
                             }
+
+                            
 
                             // Skickar kundfakturan till sendData som i sin tur lägger itll den i databasen
                             kundList.Add(kFaktura);

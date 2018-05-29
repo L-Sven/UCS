@@ -240,7 +240,7 @@ namespace UcsAdm
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@kundNummer", kList[i].KundNummer));
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@säljare", kList[i].Säljare));
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaDatum", kList[i].FakturaDatum));
-                            cmdAddInvoice.Parameters.Add(new SqlParameter("@beloppExklMoms", /*Convert.ToDecimal*/(kList[i].BeloppExklMoms)));
+                            cmdAddInvoice.Parameters.Add(new SqlParameter("@beloppExklMoms", kList[i].BeloppExklMoms));
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@förfalloDatum", ""));
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@slutDatum", ""));
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@fraktAvgift", kList[i].Cargo_amount));
@@ -504,9 +504,9 @@ namespace UcsAdm
             try
             {
                 string sqlTrunc = "TRUNCATE TABLE Errorlog";
-                SqlCommand cmdEmptyRowsInWorkdays = new SqlCommand(sqlTrunc, sqlCon2);
+                SqlCommand cmdEmptyRowsInErrorlog = new SqlCommand(sqlTrunc, sqlCon2);
                 sqlCon2.Open();
-                cmdEmptyRowsInWorkdays.ExecuteNonQuery();
+                cmdEmptyRowsInErrorlog.ExecuteNonQuery();
             }
             catch (Exception ex)
             {
