@@ -72,6 +72,9 @@ namespace UcsAdm
                 return;
             }
 
+            //Tömmer errorloggen.
+            sendData.EmptyRowsInErrorlog();
+
             //// Anropar metd som hämtar data om alla resultatenheter
             //GetResultatEnhet();
             //Console.WriteLine("Resultatenhet klar!");
@@ -965,7 +968,6 @@ namespace UcsAdm
                     // Om det är en ofärdig eller makulerad faktura tar vi inte med den!
                     if (utskriven == 0 || InvalidFaktura == 1 || makulerad == 1)
                     {
-                        Console.WriteLine("hej");
                         // Do nothing
                     }
 

@@ -234,13 +234,13 @@ namespace UcsAdm
 
                         try
                         {
+                            cmdAddInvoice.Parameters.Clear();
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaNummer", kList[i].FakturaNummer));
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaTyp", kList[i].FakturaTyp));
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@kundNummer", kList[i].KundNummer));
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@säljare", kList[i].Säljare));
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@fakturaDatum", kList[i].FakturaDatum));
-                            cmdAddInvoice.Parameters.Add(new SqlParameter("@beloppExklMoms",
-                                decimal.Parse(kList[i].BeloppExklMoms.ToString())));
+                            cmdAddInvoice.Parameters.Add(new SqlParameter("@beloppExklMoms", /*Convert.ToDecimal*/(kList[i].BeloppExklMoms)));
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@förfalloDatum", ""));
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@slutDatum", ""));
                             cmdAddInvoice.Parameters.Add(new SqlParameter("@fraktAvgift", kList[i].Cargo_amount));
@@ -253,6 +253,7 @@ namespace UcsAdm
                         catch (Exception ex)
                         {
                             logger.ErrorMessage(ex);
+                            logger.ErrorMessage("Faktura: " + kList[i].FakturaNummer + " Belopp: " + kList[i].BeloppExklMoms);
                         }
 
                         try
@@ -495,6 +496,27 @@ namespace UcsAdm
             {
                 sqlCon2.Close();
             }
+        }
+
+        public void EmptyRowsInErrorlog()
+        {
+            var sqlCon2 = new SqlConnection(sqlConAdm.ConnectionString);
+            try
+            {
+                string sqlTrunc = "TRUNCATE TABLE Errorlog";
+                SqlCommand cmdEmptyRowsInWorkdays = new SqlCommand(sqlTrunc, sqlCon2);
+                sqlCon2.Open();
+                cmdEmptyRowsInWorkdays.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorMessage(ex);
+            }
+            finally
+            {
+                sqlCon2.Close();
+            }
+
         }
     }
 }
