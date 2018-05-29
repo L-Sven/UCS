@@ -72,9 +72,14 @@ namespace UcsAdm
                 return;
             }
 
+
             // Anropar metd som hämtar data om alla resultatenheter
             GetResultatEnhet();
             Console.WriteLine("Resultatenhet klar!");
+
+            //Tömmer errorloggen.
+            sendData.EmptyRowsInErrorlog();
+
 
             //// Anropar metod som hämtar data om alla artikelgrupper
             //GetArtikelGrupper();
@@ -965,7 +970,6 @@ namespace UcsAdm
                     // Om det är en ofärdig eller makulerad faktura tar vi inte med den!
                     if (utskriven == 0 || InvalidFaktura == 1 || makulerad == 1)
                     {
-                        
                         // Do nothing
                     }
 
