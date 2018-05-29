@@ -56,3 +56,7 @@ UCS/packages/NLog.4.5.5/lib/monoandroid44/NLog.xml
 UCS/packages/NLog.4.5.5/lib/xamarinios10/NLog.xml
 UCS/packages/NLog.4.5.5/lib/net35/NLog.xml
 UCS/packages/NLog.4.5.5/lib/wp8/NLog.xml
+UCS/UcsAdm.zip
+UCS/.vs/UCSTest/v15/Server/sqlite3/storage.ide-wal
+UCS/.vs/UCSTest/v15/Server/sqlite3/storage.ide-shm
+UCS/.vs/UCSTest/v15/Server/sqlite3/storage.ide
