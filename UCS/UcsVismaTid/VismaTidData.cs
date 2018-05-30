@@ -16,12 +16,13 @@ namespace UcsVismaTid
         private ErrorLogger logger = new ErrorLogger();
         private SkickaData sendData = new SkickaData();
         private SqlConnection _sqlCon = new SqlConnection(@ConfigurationManager.AppSettings["vismaTidPath"]);
-        
+
+        List<Arbetsdagar> arbetsdagarList = new List<Arbetsdagar>();
         VismaTidDataDataContext db = new VismaTidDataDataContext();
 
         public VismaTidData()
         {
-            GetHolidaysWholeYear();
+            GetWorkdaysWholeYear();
             Console.WriteLine("Röda dagar klar!");
             GetTimeReport();
             Console.WriteLine("Tidsrapport klar!");
@@ -53,13 +54,27 @@ namespace UcsVismaTid
             Console.WriteLine("Resultatenhet klar!");
         }
 
-        private void GetHolidaysWholeYear()
+        private void CalculateNextMonthWorkinghours(ProgramUser user)
+        {
+            //Räkna ut användarens arbetstimmar, dvs jobbar hen 100% eller 50%?
+            var workTimeSchedule = user.ProgramUserSchedules
+                .Where(x => x.ProgramUserId == user.ProgramUserId && (x.EndDate.ToString() == "" || x.EndDate == null) ).Select(y => y.Schedule)
+                .Select(t => t.WorkingProc).Single();
+
+            foreach (var month in arbetsdagarList)
+            {
+                //Antal arbetstimmar i månaden räknas ut enligt dagar *8 timmar om dagen* arbetstid i decimal(ex: 0, 80 för 80 %).
+                var workingHours = month.ArbetsDagar * 8 * workTimeSchedule;
+
+                sendData.MonthlyWorkHourForecastTillDatabas(month, workingHours, user.ProgramUserId);
+            }
+        }
+
+        private void GetWorkdaysWholeYear()
         {
             //Vi tömmer tablen för alltid i förhand!
             sendData.EmptyRowsInWorkdays();
-
-            List<Arbetsdagar> arbetsdagarList = new List<Arbetsdagar>();
-
+            
             //Dagens datum är inte alltid den första så vi ta bort dagarna och lägger värdet 01 som dag
             string idag = DateTime.Today.ToShortDateString().Substring(0, 8) + "01";
             int antalDagarMånad = DateTime.DaysInMonth(DateTime.Parse(idag).Year,DateTime.Parse(idag).Month);
@@ -89,7 +104,7 @@ namespace UcsVismaTid
                 idagOmEnMånad = idag.Substring(0, 8) + antalDagarMånad;
             }
 
-            sendData.HoliDaysTillDatabas(arbetsdagarList);
+            //sendData.HoliDaysTillDatabas(arbetsdagarList);
         }
 
         private void GetTimeReport()
@@ -98,6 +113,7 @@ namespace UcsVismaTid
 
             try
             {
+                //Vi använder LINQ TO SQL för detta ändamål. Bör dock uppdateras till Entity Framework do LINQ TO SQL inte underhålls längre!
                 var timeReport = from report in db.TimeReports
                     select report;
 
@@ -130,17 +146,19 @@ namespace UcsVismaTid
                 var programUser = from user in db.ProgramUsers
                     select user;
 
-                foreach (var element in programUser)
+                foreach (var user in programUser)
                 {
-                    programUsers.ProgramUserId = element.ProgramUserId;
+                    programUsers.ProgramUserId = user.ProgramUserId;
                     
-                    programUsers.ProgramUserFirstName = element.FirstName;
-                    programUsers.ProgramUserGroupId = element.ProgramUserGroupId;
-                    programUsers.ResultUnitId = element.ResUnitId;
-                    programUsers.ProgramUserLastName = element.Name;
-                    programUsers.PersonalNo = element.PersonalNo;
+                    programUsers.ProgramUserFirstName = user.FirstName;
+                    programUsers.ProgramUserGroupId = user.ProgramUserGroupId;
+                    programUsers.ResultUnitId = user.ResUnitId;
+                    programUsers.ProgramUserLastName = user.Name;
+                    programUsers.PersonalNo = user.PersonalNo;
 
-                    sendData.ProgramUsersTillDatabas(programUsers);
+                    //sendData.ProgramUsersTillDatabas(programUsers);
+
+                    CalculateNextMonthWorkinghours(user);
                 }
             }
             catch (Exception ex)

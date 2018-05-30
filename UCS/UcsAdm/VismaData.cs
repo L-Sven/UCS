@@ -40,6 +40,9 @@ namespace UcsAdm
             this.sys = sys;
             try
             {
+                //Tömmer errorloggen.
+                sendData.EmptyRowsInErrorlog();
+
                 DateTime temp;
                 // Kontroll för om det finns ett korrekt startdatum för när data ska hämtas från
                 if (DateTime.TryParse(startDatum, out temp))
@@ -72,32 +75,31 @@ namespace UcsAdm
                 return;
             }
 
-            //Tömmer errorloggen.
-            sendData.EmptyRowsInErrorlog();
 
-            //// Anropar metd som hämtar data om alla resultatenheter
-            //GetResultatEnhet();
-            //Console.WriteLine("Resultatenhet klar!");
 
-            //// Anropar metod som hämtar data om alla artikelgrupper
-            //GetArtikelGrupper();
-            //Console.WriteLine("Artikelgrupper klar!");
+            // Anropar metd som hämtar data om alla resultatenheter
+            GetResultatEnhet();
+            Console.WriteLine("Resultatenhet klar!");
 
-            //// Anropar metod som hämtar data om alla artiklar 
-            //GetArtikelData();
-            //Console.WriteLine("Artikeldata klar!");
+            // Anropar metod som hämtar data om alla artikelgrupper
+            GetArtikelGrupper();
+            Console.WriteLine("Artikelgrupper klar!");
+
+            // Anropar metod som hämtar data om alla artiklar 
+            GetArtikelData();
+            Console.WriteLine("Artikeldata klar!");
 
             // Anropar metod som hämtar data om alla kundfakturor   
             GetKundFakturaHuvudData();
             Console.WriteLine("Kundfakturadata klar!");
 
-            ////Anropar metod som hämtar data om alla leverantörsfakturor
-            //GetLevFakturaHuvudData();
-            //Console.WriteLine("Leverantörsfakturadata klar!");
+            //Anropar metod som hämtar data om alla leverantörsfakturor
+            GetLevFakturaHuvudData();
+            Console.WriteLine("Leverantörsfakturadata klar!");
 
-            //// Anropar metod som hämtar data om alla avtal
-            //GetAvtal();
-            //Console.WriteLine("Avtal klar!");
+            // Anropar metod som hämtar data om alla avtal
+            GetAvtal();
+            Console.WriteLine("Avtal klar!");
 
             Console.WriteLine("All information är hämtad!");
             Console.WriteLine("Så här många errors har loggats: " + logger.counter);
@@ -950,13 +952,13 @@ namespace UcsAdm
                 while (error.lRc == Adk.Api.ADKE_OK) // Snurra som fortgår så länge det finns fakturor            
                 {
                     // Kontroll om fakturan inte är färdig eller makulerad
-                    int InvalidFaktura = new int();
+                    int invalidFaktura = new int();
                     int makulerad = new int();
                     int utskriven = new int();
 
 
                     error = Adk.Api.AdkGetBool(pData, Adk.Api.ADK_OOI_HEAD_DOCUMENT_NOT_DONE,
-                        ref InvalidFaktura);
+                        ref invalidFaktura);
                     logger.ErrorMessage(error);
                     error = Adk.Api.AdkGetBool(pData, Adk.Api.ADK_OOI_HEAD_DOCUMENT_CANCELLED,
                         ref makulerad);
@@ -966,7 +968,7 @@ namespace UcsAdm
                     logger.ErrorMessage(error);
 
                     // Om det är en ofärdig eller makulerad faktura tar vi inte med den!
-                    if (utskriven == 0 || InvalidFaktura == 1 || makulerad == 1)
+                    if (utskriven == 0 || invalidFaktura == 1 || makulerad == 1)
                     {
                         // Do nothing
                     }
@@ -1057,8 +1059,8 @@ namespace UcsAdm
                             fakturaNummer = fakturaNr.ToString();
 
                             fakturaNummer = "KF-" + fakturaNummer;
-                            kFaktura.FakturaNummer = fakturaNummer;
 
+                            kFaktura.FakturaNummer = fakturaNummer;
                             kFaktura.KundNummer = kundNr;
                             kFaktura.FakturaTyp = fakturaTyp;
                             kFaktura.Säljare = säljare;

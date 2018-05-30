@@ -14,7 +14,6 @@ namespace UcsVismaTid
 {
     class SkickaData
     {
-
         //Skapar en sql-connection mot databasen
         public SqlConnection sqlConTid = new SqlConnection(@ConfigurationManager.AppSettings["dbPath"]);
 
@@ -44,7 +43,7 @@ namespace UcsVismaTid
         public void HoliDaysTillDatabas(List<Arbetsdagar> arbetsDagar)
         {
             var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
-            SqlCommand cmdAddHoliday = new SqlCommand("sp_add_workdays", sqlCon2);
+            SqlCommand cmdAddHoliday = new SqlCommand("sp_VismaTid_add_workdays", sqlCon2);
 
             try
             {
@@ -73,7 +72,7 @@ namespace UcsVismaTid
         public void TimeReportTillDatabas(TimeReports t)
         {
             var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
-            SqlCommand cmdAddTimeReport = new SqlCommand("sp_add_tidsrapportering", sqlCon2);
+            SqlCommand cmdAddTimeReport = new SqlCommand("sp_VismaTid_add_tidsrapportering", sqlCon2);
 
             try
             {
@@ -110,7 +109,7 @@ namespace UcsVismaTid
         public void ProgramUsersTillDatabas(ProgramUsers pU)
         {
             var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
-            SqlCommand cmdAddProgramUsers = new SqlCommand("sp_add_anställd", sqlCon2);
+            SqlCommand cmdAddProgramUsers = new SqlCommand("sp_VismaTid_add_anställd", sqlCon2);
 
             try
             {
@@ -143,7 +142,7 @@ namespace UcsVismaTid
         public void ProjectTillDatabas(Projects p)
         {
             var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
-            SqlCommand cmdAddProject = new SqlCommand("sp_add_projekt", sqlCon2);
+            SqlCommand cmdAddProject = new SqlCommand("sp_VismaTid_add_projekt", sqlCon2);
 
             try
             {
@@ -179,7 +178,7 @@ namespace UcsVismaTid
         public void TimeCodeTillDatabas(TimeCodes tC)
         {
             var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
-            SqlCommand cmdAddTimeCode = new SqlCommand("sp_add_tidskod", sqlCon2);
+            SqlCommand cmdAddTimeCode = new SqlCommand("sp_VismaTid_add_tidskod", sqlCon2);
 
             try
             {
@@ -207,7 +206,7 @@ namespace UcsVismaTid
         public void PricingTillDatabas(Pricings p)
         {
             var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
-            SqlCommand cmdAddPricing = new SqlCommand("sp_add_pris", sqlCon2);
+            SqlCommand cmdAddPricing = new SqlCommand("sp_VismaTid_add_pris", sqlCon2);
 
             try
             {
@@ -243,7 +242,7 @@ namespace UcsVismaTid
         public void PriceListTillDatabas(PriceLists pL)
         {
             var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
-            SqlCommand cmdAttPriceList = new SqlCommand("sp_add_prislista", sqlCon2);
+            SqlCommand cmdAttPriceList = new SqlCommand("sp_VismaTid_add_prislista", sqlCon2);
 
             try
             {
@@ -269,7 +268,7 @@ namespace UcsVismaTid
         public void PriceListPeriodsTillDatabas(PriceListPeriods plp)
         {
             var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
-            SqlCommand cmdAttPriceListPeriods = new SqlCommand("sp_add_prislistaperiod", sqlCon2);
+            SqlCommand cmdAttPriceListPeriods = new SqlCommand("sp_VismaTid_add_prislistaperiod", sqlCon2);
 
             try
             {
@@ -297,7 +296,7 @@ namespace UcsVismaTid
         public void ParticipantsTillDatabas(Participants p)
         {
             var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
-            SqlCommand cmdAddParticipants = new SqlCommand("sp_add_deltagare", sqlCon2);
+            SqlCommand cmdAddParticipants = new SqlCommand("sp_VismaTid_add_deltagare", sqlCon2);
 
             try
             {
@@ -322,7 +321,7 @@ namespace UcsVismaTid
         public void CustomerTillDatabas(Customers c)
         {
             var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
-            SqlCommand cmdAddCustomer = new SqlCommand("sp_add_kund", sqlCon2);
+            SqlCommand cmdAddCustomer = new SqlCommand("sp_VismaTid_add_kund", sqlCon2);
 
             try
             {
@@ -351,7 +350,7 @@ namespace UcsVismaTid
         public void CustomerCategoryTillDatabas(CustomerCategories cG)
         {
             var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
-            SqlCommand cmdAddCustomerCategory = new SqlCommand("sp_add_kundkategori", sqlCon2);
+            SqlCommand cmdAddCustomerCategory = new SqlCommand("sp_VismaTid_add_kundkategori", sqlCon2);
 
             try
             {
@@ -377,7 +376,7 @@ namespace UcsVismaTid
         public void FreeDayTillDatabas(FreeDays fD)
         {
             var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
-            SqlCommand cmdAddFreeDay = new SqlCommand("sp_add_fridag", sqlCon2);
+            SqlCommand cmdAddFreeDay = new SqlCommand("sp_VismaTid_add_fridag", sqlCon2);
 
             try
             {
@@ -406,7 +405,7 @@ namespace UcsVismaTid
         public void ActivityTillDatabas(Activities a)
         {
             var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
-            SqlCommand cmdAddActivity = new SqlCommand("sp_add_aktivitet", sqlCon2);
+            SqlCommand cmdAddActivity = new SqlCommand("sp_VismaTid_add_aktivitet", sqlCon2);
 
             try
             {
@@ -434,7 +433,7 @@ namespace UcsVismaTid
         public void ProgramUserGroupTillDatabas(ProgramUserGroups pug)
         {
             var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
-            SqlCommand cmdAddProgramUserGroup = new SqlCommand("sp_add_användargrupp", sqlCon2);
+            SqlCommand cmdAddProgramUserGroup = new SqlCommand("sp_VismaTid_add_användargrupp", sqlCon2);
 
             try
             {
@@ -459,7 +458,7 @@ namespace UcsVismaTid
         public void ProgramUserCalcPriceTillDatabas(ProgramUserCalcPrices pucp)
         {
             var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
-            SqlCommand cmdAddProgramUserCalcPrice = new SqlCommand("sp_add_anställdkalkpris", sqlCon2);
+            SqlCommand cmdAddProgramUserCalcPrice = new SqlCommand("sp_VismaTid_add_anställdkalkpris", sqlCon2);
 
             try
             {
@@ -489,7 +488,7 @@ namespace UcsVismaTid
         public void ProjectCategoryTillDatabas(ProjectCategories pC)
         {
             var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
-            SqlCommand cmdAddProjectCategory = new SqlCommand("sp_add_projektkategori", sqlCon2);
+            SqlCommand cmdAddProjectCategory = new SqlCommand("sp_VismaTid_add_projektkategori", sqlCon2);
 
             try
             {
@@ -516,7 +515,7 @@ namespace UcsVismaTid
         public void ResultUnitTillDatabas(ResultUnit r)
         {
             var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
-            SqlCommand cmdAddResultatenhet = new SqlCommand("sp_add_resultatenheter", sqlCon2);
+            SqlCommand cmdAddResultatenhet = new SqlCommand("sp_VismaTid_add_resultatenheter", sqlCon2);
 
             try
             {
@@ -528,6 +527,34 @@ namespace UcsVismaTid
 
                 sqlCon2.Open();
                 cmdAddResultatenhet.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorMessage(ex);
+            }
+            finally
+            {
+                sqlCon2.Close();
+            }
+        }
+
+        public void MonthlyWorkHourForecastTillDatabas(Arbetsdagar month, decimal? workingHours, int ProgramUserId)
+        {
+            var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
+            SqlCommand cmdAddWorkHourForecast = new SqlCommand("sp_VismaTid_add_workhourforecast", sqlCon2);
+
+            try
+            {
+                cmdAddWorkHourForecast.CommandType = CommandType.StoredProcedure;
+                cmdAddWorkHourForecast.Parameters.Add(new SqlParameter("@datum", month.Datum));
+                cmdAddWorkHourForecast.Parameters.Add(new SqlParameter("@användarID", ProgramUserId));
+                cmdAddWorkHourForecast.Parameters.Add(
+                    workingHours == null
+                        ? new SqlParameter("@arbetsTimmar", DBNull.Value)
+                        : new SqlParameter("@arbetsTimmar", workingHours));
+
+                sqlCon2.Open();
+                cmdAddWorkHourForecast.ExecuteNonQuery();
             }
             catch (Exception ex)
             {
