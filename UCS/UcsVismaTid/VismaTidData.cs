@@ -56,18 +56,27 @@ namespace UcsVismaTid
 
         private void CalculateNextMonthWorkinghours(ProgramUser user)
         {
-            //Räkna ut användarens arbetstimmar, dvs jobbar hen 100% eller 50%?
-            var workTimeSchedule = user.ProgramUserSchedules
-                .Where(x => x.ProgramUserId == user.ProgramUserId && (x.EndDate.ToString() == "" || x.EndDate == null) ).Select(y => y.Schedule)
-                .Select(t => t.WorkingProc).Single();
-
-            foreach (var month in arbetsdagarList)
+            try
             {
-                //Antal arbetstimmar i månaden räknas ut enligt dagar *8 timmar om dagen* arbetstid i decimal(ex: 0, 80 för 80 %).
-                var workingHours = month.ArbetsDagar * 8 * workTimeSchedule;
+                //Räkna ut användarens arbetstimmar, dvs jobbar hen 100% eller 50%?
+                var workTimeSchedule = user.ProgramUserSchedules
+                    .Where(x => x.ProgramUserId == user.ProgramUserId &&
+                                (x.EndDate.ToString() == "" || x.EndDate == null)).Select(y => y.Schedule)
+                    .Select(t => t.WorkingProc).Single();
 
-                sendData.MonthlyWorkHourForecastTillDatabas(month, workingHours, user.ProgramUserId);
+                foreach (var month in arbetsdagarList)
+                {
+                    //Antal arbetstimmar i månaden räknas ut enligt dagar *8 timmar om dagen* arbetstid i decimal(ex: 0, 80 för 80 %).
+                    var workingHours = month.ArbetsDagar * 8 * workTimeSchedule;
+
+                    sendData.MonthlyWorkHourForecastTillDatabas(month, workingHours, user.ProgramUserId);
+                }
             }
+            catch (Exception ex)
+            {
+                logger.ErrorMessage(ex + "User: " + user.ProgramUserId);
+            }
+            
         }
 
         private void GetWorkdaysWholeYear()
@@ -104,7 +113,7 @@ namespace UcsVismaTid
                 idagOmEnMånad = idag.Substring(0, 8) + antalDagarMånad;
             }
 
-            //sendData.HoliDaysTillDatabas(arbetsdagarList);
+            sendData.RedDaysTillDatabas(arbetsdagarList);
         }
 
         private void GetTimeReport()
@@ -156,7 +165,7 @@ namespace UcsVismaTid
                     programUsers.ProgramUserLastName = user.Name;
                     programUsers.PersonalNo = user.PersonalNo;
 
-                    //sendData.ProgramUsersTillDatabas(programUsers);
+                    sendData.ProgramUsersTillDatabas(programUsers);
 
                     CalculateNextMonthWorkinghours(user);
                 }

@@ -24,7 +24,7 @@ namespace UcsVismaTid
             var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
             try
             {
-                string sqlTrunc = "TRUNCATE TABLE ArbetsDagar";
+                string sqlTrunc = "TRUNCATE TABLE VismaTid_RedDay";
                 SqlCommand cmdEmptyRowsInWorkdays = new SqlCommand(sqlTrunc, sqlCon2);
                 sqlCon2.Open();
                 cmdEmptyRowsInWorkdays.ExecuteNonQuery();
@@ -40,10 +40,10 @@ namespace UcsVismaTid
             
         }
 
-        public void HoliDaysTillDatabas(List<Arbetsdagar> arbetsDagar)
+        public void RedDaysTillDatabas(List<Arbetsdagar> arbetsDagar)
         {
             var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
-            SqlCommand cmdAddHoliday = new SqlCommand("sp_VismaTid_add_workdays", sqlCon2);
+            SqlCommand cmdAddHoliday = new SqlCommand("sp_VismaTid_add_redday", sqlCon2);
 
             try
             {

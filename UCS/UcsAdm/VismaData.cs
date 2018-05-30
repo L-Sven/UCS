@@ -1085,16 +1085,7 @@ namespace UcsAdm
                             }
 
                             kFaktura.BeloppExklMoms = Math.Round(totalKostnad,2);
-
-                            // Om det är en krediterad faktura görs värdena negativa
-                            if (fakturaTyp.ToUpper() == "K")
-                            {
-                                kFaktura.Moms *= -1;
-                                kFaktura.BeloppExklMoms *= -1;
-                            }
-
                             
-
                             // Skickar kundfakturan till sendData som i sin tur lägger itll den i databasen
                             kundList.Add(kFaktura);
                         }
