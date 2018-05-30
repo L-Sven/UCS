@@ -21,10 +21,9 @@ namespace UcsAdm
         public void AvtalTillDatabas(Avtal a, List<string> avtalPrognosList)
         {
             KundTillDatabas(a);
-
-            var sqlCon2 = new SqlConnection(sqlConAdm.ConnectionString);
+            
             // Pekar Sql-connection mot en stored procedure för artiklar
-            SqlCommand cmdAddAgreement = new SqlCommand("sp_add_agreement", sqlCon2);
+            SqlCommand cmdAddAgreement = new SqlCommand("sp_add_agreement", sqlConAdm);
 
             // Ger Sql-kommandot information om att den ska anropa en stored procedure
             cmdAddAgreement.CommandType = CommandType.StoredProcedure;
@@ -48,7 +47,7 @@ namespace UcsAdm
 
             try
             {
-                sqlCon2.Open();
+                sqlConAdm.Open();
                 cmdAddAgreement.ExecuteNonQuery();
             }
             catch (Exception e)
@@ -57,31 +56,31 @@ namespace UcsAdm
             }
             finally
             {
-                sqlCon2.Close();
+                sqlConAdm.Close();
             }
 
-            SqlCommand cmdAddKommentarsfält = new SqlCommand("sp_add_commentfield", sqlCon2);
-            cmdAddKommentarsfält.CommandType = CommandType.StoredProcedure;
+            //SqlCommand cmdAddKommentarsfält = new SqlCommand("sp_add_commentfield", sqlConAdm);
+            //cmdAddKommentarsfält.CommandType = CommandType.StoredProcedure;
 
-            try
-            {
-                sqlCon2.Open();
-                cmdAddKommentarsfält.Parameters.Add(new SqlParameter("@dokumentNummer", a.DokumentNummer));
-                cmdAddKommentarsfält.Parameters.Add(
-                    a.Kommentarsfält == null || a.Kommentarsfält.Length < 2 ? new SqlParameter("@kommentarsfält", DBNull.Value) : new SqlParameter("@kommentarsfält", a.Kommentarsfält));
-                cmdAddKommentarsfält.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                logger.ErrorMessage(ex);
-            }
-            finally
-            {
-                sqlCon2.Close();
+            //try
+            //{
+            //    sqlConAdm.Open();
+            //    cmdAddKommentarsfält.Parameters.Add(new SqlParameter("@dokumentNummer", a.DokumentNummer));
+            //    cmdAddKommentarsfält.Parameters.Add(
+            //        a.Kommentarsfält == null || a.Kommentarsfält.Length < 2 ? new SqlParameter("@kommentarsfält", DBNull.Value) : new SqlParameter("@kommentarsfält", a.Kommentarsfält));
+            //    cmdAddKommentarsfält.ExecuteNonQuery();
+            //}
+            //catch (Exception ex)
+            //{
+            //    logger.ErrorMessage(ex);
+            //}
+            //finally
+            //{
+            //    sqlConAdm.Close();
                 
-            }
+            //}
 
-            SqlCommand cmdAddAvtalPrognos = new SqlCommand("sp_add_agreementprediction", sqlCon2);
+            SqlCommand cmdAddAvtalPrognos = new SqlCommand("sp_add_agreementprediction", sqlConAdm);
             cmdAddAvtalPrognos.CommandType = CommandType.StoredProcedure;
 
 
@@ -89,7 +88,7 @@ namespace UcsAdm
             {
                 try
                 {
-                    sqlCon2.Open();
+                    sqlConAdm.Open();
                     cmdAddAvtalPrognos.Parameters.Add(new SqlParameter("@avtalID", a.DokumentNummer));
                     cmdAddAvtalPrognos.Parameters.Add(new SqlParameter("@avtalPrognosDatum", avtalPrognosList[i]));
                     cmdAddAvtalPrognos.ExecuteNonQuery();
@@ -101,14 +100,14 @@ namespace UcsAdm
                 }
                 finally
                 {
-                    sqlCon2.Close();
+                    sqlConAdm.Close();
                 }
             }
 
             foreach (var rad in a.ListAvtalsRad)
             {
                 // Pekar Sql-connection mot en stored procedure för kundfakturarad
-                SqlCommand cmdAddAgreementRow = new SqlCommand("sp_add_agreementrow", sqlCon2);
+                SqlCommand cmdAddAgreementRow = new SqlCommand("sp_add_agreementrow", sqlConAdm);
 
                 // Ger Sql-kommandot information om att den ska anropa en stored procedure
                 cmdAddAgreementRow.CommandType = CommandType.StoredProcedure;
@@ -121,7 +120,7 @@ namespace UcsAdm
 
                 try
                 {
-                    sqlCon2.Open();
+                    sqlConAdm.Open();
                     cmdAddAgreementRow.ExecuteNonQuery();
                 }
                 catch (Exception e)
@@ -130,7 +129,7 @@ namespace UcsAdm
                 }
                 finally
                 {
-                    sqlCon2.Close();
+                    sqlConAdm.Close();
                 }
             }
         }
@@ -195,10 +194,9 @@ namespace UcsAdm
 
         public void ResultatenhetTillDatabas(Resultatenhet r)
         {
-            sqlConAdm.Open();
-
-            using (SqlCommand cmdAddResultatEnhet = new SqlCommand("sp_add_resultunit", sqlConAdm))
+            using (SqlCommand cmdAddResultatEnhet = new SqlCommand("sp_add_resultatenhet", sqlConAdm))
             {
+                sqlConAdm.Open();
                 // Ger Sql-kommandot information om att den ska anropa en stored procedure
                 cmdAddResultatEnhet.CommandType = CommandType.StoredProcedure;
                 cmdAddResultatEnhet.Parameters.Add(new SqlParameter("@resultatEnhetID", r.resultatEnhetID));
@@ -500,12 +498,11 @@ namespace UcsAdm
 
         public void EmptyRowsInErrorlog()
         {
-            var sqlCon2 = new SqlConnection(sqlConAdm.ConnectionString);
             try
             {
                 string sqlTrunc = "TRUNCATE TABLE Errorlog";
-                SqlCommand cmdEmptyRowsInErrorlog = new SqlCommand(sqlTrunc, sqlCon2);
-                sqlCon2.Open();
+                SqlCommand cmdEmptyRowsInErrorlog = new SqlCommand(sqlTrunc, sqlConAdm);
+                sqlConAdm.Open();
                 cmdEmptyRowsInErrorlog.ExecuteNonQuery();
             }
             catch (Exception ex)
@@ -514,7 +511,7 @@ namespace UcsAdm
             }
             finally
             {
-                sqlCon2.Close();
+                sqlConAdm.Close();
             }
 
         }
