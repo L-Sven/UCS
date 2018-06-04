@@ -87,6 +87,9 @@ namespace UcsVismaTid
     partial void InsertProjectCategory(ProjectCategory instance);
     partial void UpdateProjectCategory(ProjectCategory instance);
     partial void DeleteProjectCategory(ProjectCategory instance);
+    partial void InsertProjectHdr(ProjectHdr instance);
+    partial void UpdateProjectHdr(ProjectHdr instance);
+    partial void DeleteProjectHdr(ProjectHdr instance);
     #endregion
 		
 		public VismaTidDataDataContext() : 
@@ -268,6 +271,14 @@ namespace UcsVismaTid
 			get
 			{
 				return this.GetTable<ProjectCategory>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ProjectHdr> ProjectHdrs
+		{
+			get
+			{
+				return this.GetTable<ProjectHdr>();
 			}
 		}
 	}
@@ -2334,6 +2345,8 @@ namespace UcsVismaTid
 		
 		private EntityRef<ProjectCategory> _ProjectCategory;
 		
+		private EntityRef<ProjectHdr> _ProjectHdr;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -2430,6 +2443,7 @@ namespace UcsVismaTid
 			this._PriceList1 = default(EntityRef<PriceList>);
 			this._Customer = default(EntityRef<Customer>);
 			this._ProjectCategory = default(EntityRef<ProjectCategory>);
+			this._ProjectHdr = default(EntityRef<ProjectHdr>);
 			OnCreated();
 		}
 		
@@ -2464,6 +2478,10 @@ namespace UcsVismaTid
 			{
 				if ((this._ProjectHdrId != value))
 				{
+					if (this._ProjectHdr.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
 					this.OnProjectHdrIdChanging(value);
 					this.SendPropertyChanging();
 					this._ProjectHdrId = value;
@@ -3458,6 +3476,40 @@ namespace UcsVismaTid
 						this._ProjectCategoryId = default(Nullable<int>);
 					}
 					this.SendPropertyChanged("ProjectCategory");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ProjectHdr_Project", Storage="_ProjectHdr", ThisKey="ProjectHdrId", OtherKey="ProjectHdrId", IsForeignKey=true)]
+		public ProjectHdr ProjectHdr
+		{
+			get
+			{
+				return this._ProjectHdr.Entity;
+			}
+			set
+			{
+				ProjectHdr previousValue = this._ProjectHdr.Entity;
+				if (((previousValue != value) 
+							|| (this._ProjectHdr.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ProjectHdr.Entity = null;
+						previousValue.Projects.Remove(this);
+					}
+					this._ProjectHdr.Entity = value;
+					if ((value != null))
+					{
+						value.Projects.Add(this);
+						this._ProjectHdrId = value.ProjectHdrId;
+					}
+					else
+					{
+						this._ProjectHdrId = default(int);
+					}
+					this.SendPropertyChanged("ProjectHdr");
 				}
 			}
 		}
@@ -9400,6 +9452,264 @@ namespace UcsVismaTid
 		{
 			this.SendPropertyChanging();
 			entity.ProjectCategory = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ProjectHdr")]
+	public partial class ProjectHdr : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ProjectHdrId;
+		
+		private bool _StdProject;
+		
+		private string _Code;
+		
+		private string _ProjectHdrName;
+		
+		private bool _Active;
+		
+		private bool _ActiveToAllCustomer;
+		
+		private System.Nullable<int> _StdActivitySelection;
+		
+		private string _ItemText;
+		
+		private EntitySet<Project> _Projects;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnProjectHdrIdChanging(int value);
+    partial void OnProjectHdrIdChanged();
+    partial void OnStdProjectChanging(bool value);
+    partial void OnStdProjectChanged();
+    partial void OnCodeChanging(string value);
+    partial void OnCodeChanged();
+    partial void OnProjectHdrNameChanging(string value);
+    partial void OnProjectHdrNameChanged();
+    partial void OnActiveChanging(bool value);
+    partial void OnActiveChanged();
+    partial void OnActiveToAllCustomerChanging(bool value);
+    partial void OnActiveToAllCustomerChanged();
+    partial void OnStdActivitySelectionChanging(System.Nullable<int> value);
+    partial void OnStdActivitySelectionChanged();
+    partial void OnItemTextChanging(string value);
+    partial void OnItemTextChanged();
+    #endregion
+		
+		public ProjectHdr()
+		{
+			this._Projects = new EntitySet<Project>(new Action<Project>(this.attach_Projects), new Action<Project>(this.detach_Projects));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProjectHdrId", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int ProjectHdrId
+		{
+			get
+			{
+				return this._ProjectHdrId;
+			}
+			set
+			{
+				if ((this._ProjectHdrId != value))
+				{
+					this.OnProjectHdrIdChanging(value);
+					this.SendPropertyChanging();
+					this._ProjectHdrId = value;
+					this.SendPropertyChanged("ProjectHdrId");
+					this.OnProjectHdrIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StdProject", DbType="Bit NOT NULL")]
+		public bool StdProject
+		{
+			get
+			{
+				return this._StdProject;
+			}
+			set
+			{
+				if ((this._StdProject != value))
+				{
+					this.OnStdProjectChanging(value);
+					this.SendPropertyChanging();
+					this._StdProject = value;
+					this.SendPropertyChanged("StdProject");
+					this.OnStdProjectChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Code", DbType="VarChar(10) NOT NULL", CanBeNull=false)]
+		public string Code
+		{
+			get
+			{
+				return this._Code;
+			}
+			set
+			{
+				if ((this._Code != value))
+				{
+					this.OnCodeChanging(value);
+					this.SendPropertyChanging();
+					this._Code = value;
+					this.SendPropertyChanged("Code");
+					this.OnCodeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProjectHdrName", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string ProjectHdrName
+		{
+			get
+			{
+				return this._ProjectHdrName;
+			}
+			set
+			{
+				if ((this._ProjectHdrName != value))
+				{
+					this.OnProjectHdrNameChanging(value);
+					this.SendPropertyChanging();
+					this._ProjectHdrName = value;
+					this.SendPropertyChanged("ProjectHdrName");
+					this.OnProjectHdrNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Active", DbType="Bit NOT NULL")]
+		public bool Active
+		{
+			get
+			{
+				return this._Active;
+			}
+			set
+			{
+				if ((this._Active != value))
+				{
+					this.OnActiveChanging(value);
+					this.SendPropertyChanging();
+					this._Active = value;
+					this.SendPropertyChanged("Active");
+					this.OnActiveChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActiveToAllCustomer", DbType="Bit NOT NULL")]
+		public bool ActiveToAllCustomer
+		{
+			get
+			{
+				return this._ActiveToAllCustomer;
+			}
+			set
+			{
+				if ((this._ActiveToAllCustomer != value))
+				{
+					this.OnActiveToAllCustomerChanging(value);
+					this.SendPropertyChanging();
+					this._ActiveToAllCustomer = value;
+					this.SendPropertyChanged("ActiveToAllCustomer");
+					this.OnActiveToAllCustomerChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StdActivitySelection", DbType="Int")]
+		public System.Nullable<int> StdActivitySelection
+		{
+			get
+			{
+				return this._StdActivitySelection;
+			}
+			set
+			{
+				if ((this._StdActivitySelection != value))
+				{
+					this.OnStdActivitySelectionChanging(value);
+					this.SendPropertyChanging();
+					this._StdActivitySelection = value;
+					this.SendPropertyChanged("StdActivitySelection");
+					this.OnStdActivitySelectionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ItemText", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string ItemText
+		{
+			get
+			{
+				return this._ItemText;
+			}
+			set
+			{
+				if ((this._ItemText != value))
+				{
+					this.OnItemTextChanging(value);
+					this.SendPropertyChanging();
+					this._ItemText = value;
+					this.SendPropertyChanged("ItemText");
+					this.OnItemTextChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ProjectHdr_Project", Storage="_Projects", ThisKey="ProjectHdrId", OtherKey="ProjectHdrId")]
+		public EntitySet<Project> Projects
+		{
+			get
+			{
+				return this._Projects;
+			}
+			set
+			{
+				this._Projects.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_Projects(Project entity)
+		{
+			this.SendPropertyChanging();
+			entity.ProjectHdr = this;
+		}
+		
+		private void detach_Projects(Project entity)
+		{
+			this.SendPropertyChanging();
+			entity.ProjectHdr = null;
 		}
 	}
 }

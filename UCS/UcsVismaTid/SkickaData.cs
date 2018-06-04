@@ -565,5 +565,31 @@ namespace UcsVismaTid
                 sqlCon2.Close();
             }
         }
+
+        public void consultForecastTillDatabas(int projectId, decimal? price, int userId)
+        {
+            var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
+
+            using (SqlCommand cmdAddForecastConsult = new SqlCommand("sp_VismaTid_add_forecastCOnsultPrice", sqlCon2))
+            {
+                try
+                {
+                    cmdAddForecastConsult.CommandType = CommandType.StoredProcedure;
+                    cmdAddForecastConsult.Parameters.Add(new SqlParameter("användarId", userId));
+                    cmdAddForecastConsult.Parameters.Add(new SqlParameter("projectId", projectId));
+                    cmdAddForecastConsult.Parameters.Add(new SqlParameter("timpris", price));
+                    sqlCon2.Open();
+                    cmdAddForecastConsult.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    logger.ErrorMessage(ex);
+                }
+                finally
+                {
+                    sqlCon2.Close();;
+                }
+            }
+        }
     }
 }

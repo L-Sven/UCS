@@ -28,28 +28,28 @@ namespace UcsVismaTid
             Console.WriteLine("Tidsrapport klar!");
             GetProgramUsers();
             Console.WriteLine("Anställda klar!");
-            GetProgramUsersGroup();
-            Console.WriteLine("Anställdagrupper klar!");
+            //GetProgramUsersGroup();
+            //Console.WriteLine("Anställdagrupper klar!");
             GetProject();
             Console.WriteLine("Projekt klar!");
             GetTimeCode();
             Console.WriteLine("Tidskoder klar!");
             GetPricing();
             Console.WriteLine("Priser klar!");
-            GetPriceList();
-            Console.WriteLine("Prislistor klar!");
-            GetPriceListPeriod();
-            Console.WriteLine("Prislistaperioder klar!");
+            //GetPriceList();
+            //Console.WriteLine("Prislistor klar!");
+            //GetPriceListPeriod();
+            //Console.WriteLine("Prislistaperioder klar!");
             GetParticipants();
             Console.WriteLine("Deltagare klar!");
             GetProgramUserCalcPrice();
             Console.WriteLine("AnställdaKalkpris klar!");
             GetCustomer();
             Console.WriteLine("Kunder klar");
-            GetCustomerCategory();
-            Console.WriteLine("Kundkategori klar!");
-            GetProjectCategory();
-            Console.WriteLine("Projektkategori klar!");
+            //GetCustomerCategory();
+            //Console.WriteLine("Kundkategori klar!");
+            //GetProjectCategory();
+            //Console.WriteLine("Projektkategori klar!");
             GetResultUnit();
             Console.WriteLine("Resultatenhet klar!");
         }
@@ -67,7 +67,7 @@ namespace UcsVismaTid
                 foreach (var month in arbetsdagarList)
                 {
                     //Antal arbetstimmar i månaden räknas ut enligt dagar *8 timmar om dagen* arbetstid i decimal(ex: 0, 80 för 80 %).
-                    var workingHours = month.ArbetsDagar * 8 * workTimeSchedule;
+                    var workingHours = month.ArbetsDagar * 8 * (workTimeSchedule / 100);
 
                     sendData.MonthlyWorkHourForecastTillDatabas(month, workingHours, user.ProgramUserId);
                 }
@@ -102,12 +102,13 @@ namespace UcsVismaTid
                 XElement rödaDagar = XElement.Load(xmlConString);
 
                 arbetsDagar = int.Parse(rödaDagar.Element("antal_arbetsdagar").Value);
-                var datum = idag.Substring(0, 7);    //Vi "skär" bort dagarna från datumet.
+                var datum = idag.Substring(0, 10);    //Sparar datum i format yyyymmdd
 
                 aD.ArbetsDagar = arbetsDagar;
                 aD.Datum = datum;
                 arbetsdagarList.Add(aD);
 
+                //Inkrementerar med 1 månad.
                 idag = DateTime.Parse(idag).AddMonths(1).ToShortDateString();
                 antalDagarMånad = DateTime.DaysInMonth(DateTime.Parse(idag).Year, DateTime.Parse(idag).Month);
                 idagOmEnMånad = idag.Substring(0, 8) + antalDagarMånad;
@@ -168,6 +169,7 @@ namespace UcsVismaTid
                     sendData.ProgramUsersTillDatabas(programUsers);
 
                     CalculateNextMonthWorkinghours(user);
+                    CalculateForecastForConsult(user);
                 }
             }
             catch (Exception ex)
@@ -280,7 +282,7 @@ namespace UcsVismaTid
                 logger.ErrorMessage(ex);
             }
         }
-
+        
         private void GetPriceList()
         {
             PriceLists priceLists = new PriceLists();
@@ -527,6 +529,37 @@ namespace UcsVismaTid
             {
                 logger.ErrorMessage(ex);
             }
+        }
+
+        public void CalculateForecastForConsult(ProgramUser user)
+        {
+            //Gets all projects where this consult is active on.
+            var projects = from proj in db.Projects
+                where proj.ProgramUserId == user.ProgramUserId
+                select proj;
+
+            foreach (var project in projects)
+            {
+                if (project.ProjectId > 2 && project.Active && project.CustomerId > 2)
+                {
+                    var programUserGroup = project.ProgramUser.ProgramUserGroup;
+                    var customer = project.Customer;
+
+                    var priceToCustomer = from price in db.Pricings
+                        where price.PriceListPeriod.PriceListId == customer.PriceListId &&
+                              !price.PriceListPeriod.DateEnd.HasValue &&
+                              price.ProgramUserGroup == programUserGroup
+                        select price.Price;
+                    Console.WriteLine(project.ProjectId);
+                    var test = db.Pricings.Where(x => x.PriceListPeriod.PriceListId == customer.PriceListId
+                                                      && !x.PriceListPeriod.DateEnd.HasValue &&
+                                                      x.ProgramUserGroup == programUserGroup)
+                                                      .Select(x => x.Price).Single();
+
+                    sendData.consultForecastTillDatabas(project.ProjectId, test, user.ProgramUserId);
+                }
+            }
+
         }
     }
 }

@@ -194,11 +194,8 @@ namespace UcsAdm
 
         public void ResultatenhetTillDatabas(Resultatenhet r)
         {
-<<<<<<< HEAD
-            sqlConAdm.Open();
+            
 
-=======
->>>>>>> f28b0ced0884f9c4d13e358352bac8843c39611b
             using (SqlCommand cmdAddResultatEnhet = new SqlCommand("sp_add_resultatenhet", sqlConAdm))
             {
                 sqlConAdm.Open();
