@@ -1,6 +1,9 @@
 ﻿using NLog;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
@@ -30,6 +33,7 @@ namespace UcsVismaTid
         {
             logger.Error(ex, "Exception discovered");
             counter++;
+            ErrorlogTillDatabas(ex.ToString());
         }
 
         // Loggar meddelanden för strängar (exempelvis vid felaktiga kommentarer på avtal)
@@ -38,6 +42,7 @@ namespace UcsVismaTid
 
             logger.Error("Error discovered" + msg);
             counter++;
+            ErrorlogTillDatabas(msg);
         }
 
         public void ErrorMessage(string msg, string msg2)
@@ -45,6 +50,30 @@ namespace UcsVismaTid
 
             logger.Error(msg + msg2);
             counter++;
+            ErrorlogTillDatabas(msg+msg2);
+        }
+
+        public void ErrorlogTillDatabas(string error)
+        {
+            var sqlCon2 = new SqlConnection(@ConfigurationManager.AppSettings["dbPath"]);
+            SqlCommand cmdAddErrorlog = new SqlCommand("sp_add_errorlog", sqlCon2);
+
+            cmdAddErrorlog.CommandType = CommandType.StoredProcedure;
+
+            try
+            {
+                sqlCon2.Open();
+                cmdAddErrorlog.Parameters.Add(new SqlParameter("@errortext", error));
+                cmdAddErrorlog.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                this.ErrorMessage(ex);
+            }
+            finally
+            {
+                sqlCon2.Close();
+            }
         }
     }
 }
