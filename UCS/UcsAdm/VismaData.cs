@@ -57,34 +57,12 @@ namespace UcsAdm
                 }
 
                 logger = new ErrorLogger();
-
-                // Öppnar upp ett företag
-                error = Adk.Api.AdkOpen(ref sys, ref ftg);
-                if (error.lRc != Adk.Api.ADKE_OK)
-                {
-                    string errortext = new string(' ', 200);
-                    int errtype = (int)Adk.Api.ADK_ERROR_TEXT_TYPE.elRc;
-                    Adk.Api.AdkGetErrorText(ref error, errtype, ref errortext, 200);
-                    logger.ErrorMessage(errortext);
-                    return;
-                }
             }
             catch (Exception ex)
             {
                 logger.ErrorMessage(ex + ". Ftg eller Sys sökväg får ej vara null!");
                 return;
             }
-
-<<<<<<< HEAD
-
-            // Anropar metd som hämtar data om alla resultatenheter
-            GetResultatEnhet();
-            Console.WriteLine("Resultatenhet klar!");
-
-            //Tömmer errorloggen.
-            sendData.EmptyRowsInErrorlog();
-=======
->>>>>>> 90520b800cdb885172341fae8df1321b7cf5bb31
 
 
             // Anropar metd som hämtar data om alla resultatenheter
@@ -116,7 +94,16 @@ namespace UcsAdm
             Console.WriteLine("Tryck en tangent för att avsluta!");
 
             Console.ReadKey();
+        }
 
+        private void AdkOpen()
+        {
+            error = Adk.Api.AdkOpen(ref sys, ref ftg);
+            logger.ErrorMessage(error);
+        }
+
+        private void AdkClose()
+        {
             //Stänger företaget
             Adk.Api.AdkClose();
         }
@@ -126,6 +113,8 @@ namespace UcsAdm
         {
             try
             {
+                AdkOpen();
+
                 int pData;
                 // Gör pData till en referens av typen Artikelgrupp
                 pData = Adk.Api.AdkCreateData(Adk.Api.ADK_DB_CODE_OF_PROFIT_CENTRE);
@@ -162,12 +151,17 @@ namespace UcsAdm
             {
                 logger.ErrorMessage(ex.ToString() + " | Fel i resultatenhetshanteringen!");
             }
+            finally
+            {
+                AdkClose();
+            }
         }
         
         private void GetAvtal()
         {
             try
             {
+                AdkOpen();
                 int pData;
                 // Gör pData till en referens av typen Artikelgrupp
                 pData = Adk.Api.AdkCreateData(Adk.Api.ADK_DB_AGREEMENT_HEAD);
@@ -224,14 +218,14 @@ namespace UcsAdm
                                 Adk.Api.ADK_AGREEMENT_HEAD_CUSTOMER_NUMBER,
                                 ref kundNummer, 16);
                             logger.ErrorMessage(error);
-                            error = Adk.Api.AdkGetDate(pData, 
+                            error = Adk.Api.AdkGetDate(pData,
                                 Adk.Api.ADK_AGREEMENT_HEAD_DATE_START,
                                 ref date);
                             logger.ErrorMessage(error);
                             error = Adk.Api.AdkLongToDate(date,
                                 ref startDatum, 16);
                             logger.ErrorMessage(error);
-                            error = Adk.Api.AdkGetDate(pData, 
+                            error = Adk.Api.AdkGetDate(pData,
                                 Adk.Api.ADK_AGREEMENT_HEAD_DATE_END,
                                 ref endDate);
                             logger.ErrorMessage(error);
@@ -247,18 +241,18 @@ namespace UcsAdm
                             error = Adk.Api.AdkLongToDate(periodTemp,
                                 ref periodStart, 16);
                             logger.ErrorMessage(error);
-                            error = Adk.Api.AdkGetDate(pData, 
+                            error = Adk.Api.AdkGetDate(pData,
                                 Adk.Api.ADK_AGREEMENT_HEAD_PERIOD_END,
                                 ref periodTemp);
                             logger.ErrorMessage(error);
                             error = Adk.Api.AdkLongToDate(periodTemp,
                                 ref periodEnd, 16);
                             logger.ErrorMessage(error);
-                            error = Adk.Api.AdkGetDouble(pData, 
+                            error = Adk.Api.AdkGetDouble(pData,
                                 Adk.Api.ADK_AGREEMENT_HEAD_INTERVAL,
                                 ref intervall);
                             logger.ErrorMessage(error);
-                            error = Adk.Api.AdkGetDate(pData, 
+                            error = Adk.Api.AdkGetDate(pData,
                                 Adk.Api.ADK_AGREEMENT_HEAD_DATE_END,
                                 ref date);
                             logger.ErrorMessage(error);
@@ -267,11 +261,11 @@ namespace UcsAdm
                                 Adk.Api.ADK_AGREEMENT_HEAD_CUSTOMER_NAME,
                                 ref kundNamn, 50);
                             logger.ErrorMessage(error);
-                            error = Adk.Api.AdkGetStr(pData, 
+                            error = Adk.Api.AdkGetStr(pData,
                                 Adk.Api.ADK_AGREEMENT_HEAD_COUNTRY,
                                 ref kundLand, 24);
                             logger.ErrorMessage(error);
-                            error = Adk.Api.AdkGetStr(pData, 
+                            error = Adk.Api.AdkGetStr(pData,
                                 Adk.Api.ADK_AGREEMENT_HEAD_CITY,
                                 ref kundStad, 24);
                             logger.ErrorMessage(error);
@@ -406,18 +400,21 @@ namespace UcsAdm
                                         avtalPrognosList.Add(periodStart);
                                     }
 
-                                    periodStart = DateTime.Parse(periodStart).AddMonths((int) intervall).ToShortDateString();
+                                    periodStart = DateTime.Parse(periodStart).AddMonths((int) intervall)
+                                        .ToShortDateString();
 
                                     // Kontroll som inte lägger till prognosperiod efter slutdatum för avtalet
                                     if (slutDatumFinns || kommenteratSlutDatumFinns)
                                     {
                                         // Kollar om nästa period ligger efter avtalsslutet
-                                        if (slutDatumFinns && DateTime.Parse(periodStart) > DateTime.Parse(avtalsDatumSlut))
+                                        if (slutDatumFinns && DateTime.Parse(periodStart) >
+                                            DateTime.Parse(avtalsDatumSlut))
                                         {
                                             break;
                                         }
                                         // Kollar om nästa period ligger efter det avtalsslutet i kommentarsfältet
-                                        else if (kommenteratSlutDatumFinns && DateTime.Parse(periodStart) > DateTime.Parse(a.KommenteratSlutDatum))
+                                        else if (kommenteratSlutDatumFinns && DateTime.Parse(periodStart) >
+                                                 DateTime.Parse(a.KommenteratSlutDatum))
                                         {
                                             break;
                                         }
@@ -457,6 +454,10 @@ namespace UcsAdm
             catch (Exception ex)
             {
                 logger.ErrorMessage(ex + " | Fel i Avtalhanterng!");
+            }
+            finally
+            {
+                AdkClose();
             }
         }
 
@@ -507,6 +508,8 @@ namespace UcsAdm
         {
             try
             {
+                AdkOpen();
+
                 int pData;
                 // Gör pData till en referens av typen Artikelgrupp
                 pData = Adk.Api.AdkCreateData(Adk.Api.ADK_DB_CODE_OF_ARTICLE_GROUP);
@@ -542,6 +545,10 @@ namespace UcsAdm
             {
                 logger.ErrorMessage(ex.ToString() + " | Fel i GetArtikelgrupper!");
             }
+            finally
+            {
+                AdkClose();
+            }
         }
 
         // Metod som hämtar artikeldata
@@ -549,6 +556,8 @@ namespace UcsAdm
         {
             try
             {
+                AdkOpen();
+
                 int pData;
                 // Gör pData till en referens av typen Artikel
                 pData = Adk.Api.AdkCreateData(Adk.Api.ADK_DB_ARTICLE);
@@ -611,6 +620,10 @@ namespace UcsAdm
             {
                 logger.ErrorMessage(ex.ToString() + " | Fel i Artikel hanteringen");
             }
+            finally
+            {
+                AdkClose();
+            }
         }
 
         // Metod som hämtar data om ett leverantörsfakturahuvud
@@ -618,6 +631,8 @@ namespace UcsAdm
         {
             try
             {
+                AdkOpen();
+
                 int pData;
                 // Gör pData till en referens av typen leverantörsfaktura
                 pData = Adk.Api.AdkCreateData(Adk.Api.ADK_DB_SUPPLIER_INVOICE_HEAD);
@@ -743,11 +758,15 @@ namespace UcsAdm
                     error = Adk.Api.AdkNext(pData);
                 }
 
-            sendData.LevFakturaTillDatabas(levList);
+                sendData.LevFakturaTillDatabas(levList);
             }
             catch (Exception ex)
             {
                 logger.ErrorMessage(ex + " | Fel i Leverantörsfakturahanteringen!");
+            }
+            finally
+            {
+                AdkClose();
             }
         }
 
@@ -951,6 +970,8 @@ namespace UcsAdm
         {
             try
             {
+                AdkOpen();
+
                 int pData;
                 // gör pData till en kundfakturahuvud-referens
                 pData = Adk.Api.AdkCreateData(Adk.Api.ADK_DB_INVOICE_HEAD);
@@ -1063,7 +1084,7 @@ namespace UcsAdm
 
                             kFaktura.BeloppExklMoms = totalKostnad;
                             kFaktura.FakturaDatum = fakturaDatum;
-                            
+
                             // Ger alla kundfakturor prefixet "KF-" för att de inte ska kunna ha samma nummer som leverantörsfakturorna
                             String fakturaNummer = new String(' ', 20);
                             fakturaNummer = fakturaNr.ToString();
@@ -1094,8 +1115,8 @@ namespace UcsAdm
                                 totalKostnad += rad.BeloppExklMoms;
                             }
 
-                            kFaktura.BeloppExklMoms = Math.Round(totalKostnad,2);
-                            
+                            kFaktura.BeloppExklMoms = Math.Round(totalKostnad, 2);
+
                             // Skickar kundfakturan till sendData som i sin tur lägger itll den i databasen
                             kundList.Add(kFaktura);
                         }
@@ -1110,6 +1131,10 @@ namespace UcsAdm
             catch (Exception ex)
             {
                 logger.ErrorMessage(ex + " | Fel i Kundfakturahanteringen!");
+            }
+            finally
+            {
+                AdkClose();
             }
         }
 
