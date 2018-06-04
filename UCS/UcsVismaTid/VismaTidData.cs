@@ -23,33 +23,33 @@ namespace UcsVismaTid
         public VismaTidData()
         {
             GetWorkdaysWholeYear();
-            Console.WriteLine("Röda dagar klar!");
+            Console.WriteLine("Arbetsdagar klar!");
             GetTimeReport();
             Console.WriteLine("Tidsrapport klar!");
             GetProgramUsers();
             Console.WriteLine("Anställda klar!");
-            //GetProgramUsersGroup();
-            //Console.WriteLine("Anställdagrupper klar!");
+            GetProgramUsersGroup();
+            Console.WriteLine("Anställdagrupper klar!");
             GetProject();
             Console.WriteLine("Projekt klar!");
             GetTimeCode();
             Console.WriteLine("Tidskoder klar!");
             GetPricing();
             Console.WriteLine("Priser klar!");
-            //GetPriceList();
-            //Console.WriteLine("Prislistor klar!");
-            //GetPriceListPeriod();
-            //Console.WriteLine("Prislistaperioder klar!");
+            GetPriceList();
+            Console.WriteLine("Prislistor klar!");
+            GetPriceListPeriod();
+            Console.WriteLine("Prislistaperioder klar!");
             GetParticipants();
             Console.WriteLine("Deltagare klar!");
             GetProgramUserCalcPrice();
             Console.WriteLine("AnställdaKalkpris klar!");
             GetCustomer();
             Console.WriteLine("Kunder klar");
-            //GetCustomerCategory();
-            //Console.WriteLine("Kundkategori klar!");
-            //GetProjectCategory();
-            //Console.WriteLine("Projektkategori klar!");
+            GetCustomerCategory();
+            Console.WriteLine("Kundkategori klar!");
+            GetProjectCategory();
+            Console.WriteLine("Projektkategori klar!");
             GetResultUnit();
             Console.WriteLine("Resultatenhet klar!");
         }
@@ -550,7 +550,7 @@ namespace UcsVismaTid
                               !price.PriceListPeriod.DateEnd.HasValue &&
                               price.ProgramUserGroup == programUserGroup
                         select price.Price;
-                    Console.WriteLine(project.ProjectId);
+
                     var test = db.Pricings.Where(x => x.PriceListPeriod.PriceListId == customer.PriceListId
                                                       && !x.PriceListPeriod.DateEnd.HasValue &&
                                                       x.ProgramUserGroup == programUserGroup)
