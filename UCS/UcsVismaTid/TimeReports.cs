@@ -12,5 +12,6 @@ namespace UcsVismaTid
         public int? TimeCodeId { get; set; }
         public DateTime? DateOfReport { get; set; }
         public int? ResultUnitId { get; set; }
+        public decimal? CalcPrice { get; set; }
     }
 }

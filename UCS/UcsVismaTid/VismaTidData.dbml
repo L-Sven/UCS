@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="SPCS_Tid_OvnBol2" Class="VismaTidDataDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="AppSettings" ConnectionString="Data Source=LAPTOP-B65T75P1\VISMA;Initial Catalog=SPCS_Tid_OvnBol2;Integrated Security=True" SettingsObjectName="UCSTest.Properties.Settings" SettingsPropertyName="SPCS_Tid_OvnBol2ConnectionString" Provider="System.Data.SqlClient" />
+  <Connection Mode="AppSettings" ConnectionString="Data Source=LAPTOP-B65T75P1\VISMA;Initial Catalog=SPCS_Tid_OvnBol2;Integrated Security=True" SettingsObjectName="UcsVismaTid.Properties.Settings" SettingsPropertyName="SPCS_Tid_OvnBol2ConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.TimeReport" Member="TimeReports">
     <Type Name="TimeReport">
       <Column Name="TimeReportId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
@@ -134,6 +134,7 @@
       <Association Name="PriceList_Project1" Member="PriceList1" ThisKey="StdPriceListId" OtherKey="PriceListId" Type="PriceList" IsForeignKey="true" />
       <Association Name="Customer_Project" Member="Customer" ThisKey="CustomerId" OtherKey="CustomerId" Type="Customer" IsForeignKey="true" />
       <Association Name="ProjectCategory_Project" Member="ProjectCategory" ThisKey="ProjectCategoryId" OtherKey="ProjectCategoryId" Type="ProjectCategory" IsForeignKey="true" />
+      <Association Name="ProjectHdr_Project" Member="ProjectHdr" ThisKey="ProjectHdrId" OtherKey="ProjectHdrId" Type="ProjectHdr" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.ProgramUser" Member="ProgramUsers">
@@ -399,6 +400,19 @@
       <Column Name="Description" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="Active" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Association Name="ProjectCategory_Project" Member="Projects" ThisKey="ProjectCategoryId" OtherKey="ProjectCategoryId" Type="Project" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ProjectHdr" Member="ProjectHdrs">
+    <Type Name="ProjectHdr">
+      <Column Name="ProjectHdrId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="StdProject" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Code" Type="System.String" DbType="VarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="ProjectHdrName" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Active" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="ActiveToAllCustomer" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="StdActivitySelection" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ItemText" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="ProjectHdr_Project" Member="Projects" ThisKey="ProjectHdrId" OtherKey="ProjectHdrId" Type="Project" />
     </Type>
   </Table>
 </Database>
