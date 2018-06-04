@@ -40,8 +40,8 @@ namespace UcsVismaTid
             //Console.WriteLine("Prislistor klar!");
             //GetPriceListPeriod();
             //Console.WriteLine("Prislistaperioder klar!");
-            //GetParticipants();
-            //Console.WriteLine("Deltagare klar!");
+            GetParticipants();
+            Console.WriteLine("Deltagare klar!");
             GetProgramUserCalcPrice();
             Console.WriteLine("AnställdaKalkpris klar!");
             GetCustomer();
@@ -102,7 +102,7 @@ namespace UcsVismaTid
                 XElement rödaDagar = XElement.Load(xmlConString);
 
                 arbetsDagar = int.Parse(rödaDagar.Element("antal_arbetsdagar").Value);
-                var datum = idag.Substring(0, 10);    //Vi "skär" bort dagarna från datumet.
+                var datum = idag.Substring(0, 10);    //Sparar datum i format yyyymmdd
 
                 aD.ArbetsDagar = arbetsDagar;
                 aD.Datum = datum;
