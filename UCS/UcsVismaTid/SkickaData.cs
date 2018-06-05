@@ -91,6 +91,7 @@ namespace UcsVismaTid
                 cmdAddTimeReport.Parameters.Add(
                     t.DateOfReport == null ? new SqlParameter("@DatumFörRapport", DBNull.Value) : new SqlParameter("@DatumFörRapport", t.DateOfReport));
                 cmdAddTimeReport.Parameters.Add(new SqlParameter("@TidsRapportID", t.TimeReportId));
+                cmdAddTimeReport.Parameters.Add(t.ActivityId == null ? new SqlParameter("@AktivitetsID", DBNull.Value) : new SqlParameter("@AktivitetsID", t.ActivityId));
 
                 sqlCon2.Open();
                 cmdAddTimeReport.ExecuteNonQuery();
@@ -416,6 +417,7 @@ namespace UcsVismaTid
                 cmdAddActivity.Parameters.Add(new SqlParameter("@AktivitetsKod", a.Code));
                 cmdAddActivity.Parameters.Add(
                     a.TimeCodeId == null ? new SqlParameter("@TidsKodID", DBNull.Value) : new SqlParameter("@TidsKodID", a.TimeCodeId));
+                cmdAddActivity.Parameters.Add(a.ProjectId == null ? new SqlParameter("@ProjektID", DBNull.Value) : new SqlParameter("@ProjektID", a.ProjectId));
 
                 sqlCon2.Open();
                 cmdAddActivity.ExecuteNonQuery();
