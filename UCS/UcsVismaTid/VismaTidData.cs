@@ -163,24 +163,43 @@ namespace UcsVismaTid
             //Vi räknar ut priset för tidsrapporten direkt här.
             decimal? price = 0.00M;
 
-            foreach (var el in db.Pricings)
+            if (element.Project.HourlyPrice != null)
             {
-                //Här avgörs det hur vi ska ta reda på price. I första hand genom activityID, i andra hand genom projectID
-
-                if (el.ActivityId == element.ActivityId && el.ProjectId == element.ProjectId && el.ProgramUserId == element.ProgramUserId)
-                {
-                    price = el.Price;
-                    break;
-                }
-                if (el.ActivityId == element.ActivityId && el.ProjectId == element.ProjectId)
-                {
-                    price = el.Price;
-                    break;
-                }
+                price = element.Project.HourlyPrice.Value;
+            }
+            else if (element.Project.Customer.HourlyPrice != null)
+            {
+                price = element.Project.Customer.HourlyPrice.Value;
+            }
+            else if(element.Customer.PriceListId != null)
+            {
+                var pricelistID = element.Customer.PriceListId;
+                price = db.Pricings.Where(x => x.PriceListPeriod.PriceListId == pricelistID).Select(x => x.Price).Single();
             }
 
             if (element.HourToInvoice != null)
                 price = price * element.HourToInvoice;
+
+
+
+
+            //foreach (var el in db.Pricings)
+            //{
+            //    //Här avgörs det hur vi ska ta reda på price. I första hand genom activityID, i andra hand genom projectID
+
+            //    if (el.ActivityId == element.ActivityId && el.ProjectId == element.ProjectId && el.ProgramUserId == element.ProgramUserId)
+            //    {
+            //        price = el.Price;
+            //        break;
+            //    }
+            //    if (el.ActivityId == element.ActivityId && el.ProjectId == element.ProjectId)
+            //    {
+            //        price = el.Price;
+            //        break;
+            //    }
+            //}
+
+
 
             return price;
         }
