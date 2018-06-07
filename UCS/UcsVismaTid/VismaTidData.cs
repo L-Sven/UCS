@@ -163,19 +163,26 @@ namespace UcsVismaTid
             //Vi räknar ut priset för tidsrapporten direkt här.
             decimal? price = 0.00M;
 
-            if (element.Project.HourlyPrice != null)
+            if(element.ProjectId != null)
             {
-                price = element.Project.HourlyPrice.Value;
+                if (element.Project.HourlyPrice != null)
+                {
+                    price = element.Project.HourlyPrice.Value;
+                }
+                else if (element.Project.Customer.HourlyPrice != null)
+                {
+                    price = element.Project.Customer.HourlyPrice.Value;
+                }
             }
-            else if (element.Project.Customer.HourlyPrice != null)
+            if(element.CustomerId != null)
             {
-                price = element.Project.Customer.HourlyPrice.Value;
+                if (element.Customer.PriceListId != null)
+                {
+                    var pricelistID = element.Customer.PriceListId;
+                    price = db.Pricings.Where(x => x.PriceListPeriod.PriceListId == pricelistID).Select(x => x.Price).Single();
+                }
             }
-            else if(element.Customer.PriceListId != null)
-            {
-                var pricelistID = element.Customer.PriceListId;
-                price = db.Pricings.Where(x => x.PriceListPeriod.PriceListId == pricelistID).Select(x => x.Price).Single();
-            }
+            
 
             if (element.HourToInvoice != null)
                 price = price * element.HourToInvoice;
