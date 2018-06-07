@@ -144,6 +144,11 @@ namespace UcsVismaTid
                     timeReports.ActivityId = element.ActivityId;
                     timeReports.AmountToInvoice = CalculateAmountToInvoice(element);
 
+                    if (element.TimeReportId == 166457)
+                    {
+                        Console.WriteLine("Hej!");
+                    }
+
                     sendData.TimeReportTillDatabas(timeReports);
                 }
             }
@@ -161,10 +166,17 @@ namespace UcsVismaTid
             foreach (var el in db.Pricings)
             {
                 //Här avgörs det hur vi ska ta reda på price. I första hand genom activityID, i andra hand genom projectID
-                if (el.ActivityId == element.ActivityId)
+
+                if (el.ActivityId == element.ActivityId && el.ProjectId == element.ProjectId && el.ProgramUserId == element.ProgramUserId)
+                {
                     price = el.Price;
-                else if (el.ProjectId == element.ProjectId)
+                    break;
+                }
+                if (el.ActivityId == element.ActivityId && el.ProjectId == element.ProjectId)
+                {
                     price = el.Price;
+                    break;
+                }
             }
 
             if (element.HourToInvoice != null)
