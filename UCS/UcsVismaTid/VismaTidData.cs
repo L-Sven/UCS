@@ -160,22 +160,46 @@ namespace UcsVismaTid
 
         private decimal? CalculateAmountToInvoice(TimeReport element)
         {
+            var test = db.InvoiceSettingRowDetails.Where(x => x.ProjectId == element.ProjectId).Select(x => x.ItemNo);
+
             //Vi räknar ut priset för tidsrapporten direkt här.
             decimal? price = 0.00M;
 
-            if (element.Project.HourlyPrice != null)
+            //Vi kollar efter timpriset i en rangordning: Timpriset i projekt > timpris i kunden > timpris i prislistan.
+            if (element.ProjectId != null)
             {
-                price = element.Project.HourlyPrice.Value;
+                if (element.Project.HourlyPrice != null)
+                {
+                    price = element.Project.HourlyPrice.Value;
+                }
+                else if (element.Project.Customer.HourlyPrice != null)
+                {
+                    price = element.Project.Customer.HourlyPrice.Value;
+                }
             }
-            else if (element.Project.Customer.HourlyPrice != null)
+            else if (element.CustomerId != null)
             {
-                price = element.Project.Customer.HourlyPrice.Value;
+                if (element.Customer.PriceListId != null)
+                {
+                    var pricelistID = element.Customer.PriceListId;
+                    price = db.Pricings.Where(x => x.PriceListPeriod.PriceListId == pricelistID).Select(x => x.Price)
+                        .Single();
+                }
             }
-            else if(element.Customer.PriceListId != null)
+            else
             {
-                var pricelistID = element.Customer.PriceListId;
-                price = db.Pricings.Where(x => x.PriceListPeriod.PriceListId == pricelistID).Select(x => x.Price).Single();
+                var items = db.InvoiceSettingRowDetails.Where(x => x.InvoiceId == element.Invoice.InvoiceId)
+                    .Select(x => x.ItemNo);
+
+                foreach (var item in items)
+                {
+                    price = db.Items.Where(x => x.ItemNo == item).Select(x => x.CalcPriceUnit).Single();
+                    return price = price * element.Quantity;
+                }
+
             }
+
+            
 
             if (element.HourToInvoice != null)
                 price = price * element.HourToInvoice;
