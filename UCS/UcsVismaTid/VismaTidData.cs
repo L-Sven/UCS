@@ -15,43 +15,47 @@ namespace UcsVismaTid
     {
         private ErrorLogger logger = new ErrorLogger();
         private SkickaData sendData = new SkickaData();
-        private SqlConnection _sqlCon = new SqlConnection(@ConfigurationManager.AppSettings["vismaTidPath"]);
+        private static SqlConnection _sqlCon = new SqlConnection(@ConfigurationManager.AppSettings["vismaTidPath"]);
 
         List<Arbetsdagar> arbetsdagarList = new List<Arbetsdagar>();
-        VismaTidDataDataContext db = new VismaTidDataDataContext();
+        VismaTidDataDataContext db = new VismaTidDataDataContext(_sqlCon.ConnectionString);
 
         public VismaTidData()
         {
-            GetWorkdaysWholeYear();
-            Console.WriteLine("Röda dagar klar!");
+            //GetActivity();
+            //Console.WriteLine("Aktiviteter klar!");
+            //GetWorkdaysWholeYear();
+            //Console.WriteLine("Arbetsdagar klar!");
             GetTimeReport();
             Console.WriteLine("Tidsrapport klar!");
-            GetProgramUsers();
-            Console.WriteLine("Anställda klar!");
+            //GetProgramUsers();
+            //Console.WriteLine("Anställda klar!");
             //GetProgramUsersGroup();
             //Console.WriteLine("Anställdagrupper klar!");
-            GetProject();
-            Console.WriteLine("Projekt klar!");
-            GetTimeCode();
-            Console.WriteLine("Tidskoder klar!");
-            GetPricing();
-            Console.WriteLine("Priser klar!");
+            //GetProject();
+            //Console.WriteLine("Projekt klar!");
+            //GetTimeCode();
+            //Console.WriteLine("Tidskoder klar!");
+            //GetPricing();
+            //Console.WriteLine("Priser klar!");
             //GetPriceList();
             //Console.WriteLine("Prislistor klar!");
             //GetPriceListPeriod();
             //Console.WriteLine("Prislistaperioder klar!");
-            GetParticipants();
-            Console.WriteLine("Deltagare klar!");
-            GetProgramUserCalcPrice();
-            Console.WriteLine("AnställdaKalkpris klar!");
-            GetCustomer();
-            Console.WriteLine("Kunder klar");
+            //GetParticipants();
+            //Console.WriteLine("Deltagare klar!");
+            //GetProgramUserCalcPrice();
+            //Console.WriteLine("AnställdaKalkpris klar!");
+            //GetCustomer();
+            //Console.WriteLine("Kunder klar");
             //GetCustomerCategory();
             //Console.WriteLine("Kundkategori klar!");
             //GetProjectCategory();
             //Console.WriteLine("Projektkategori klar!");
-            GetResultUnit();
-            Console.WriteLine("Resultatenhet klar!");
+            //GetResultUnit();
+            //Console.WriteLine("Resultatenhet klar!");
+
+            Console.WriteLine("Programmet har kört färdig!");
         }
 
         private void CalculateNextMonthWorkinghours(ProgramUser user)
@@ -137,6 +141,13 @@ namespace UcsVismaTid
                     timeReports.TimeCodeId = element.TimeCodeId;
                     timeReports.DateOfReport = element.DateOfReport;
                     timeReports.ResultUnitId = element.BookResultUnitId;
+                    timeReports.ActivityId = element.ActivityId;
+                    timeReports.AmountToInvoice = CalculateAmountToInvoice(element);
+
+                    if (element.TimeReportId == 166457)
+                    {
+                        Console.WriteLine("Hej!");
+                    }
 
                     sendData.TimeReportTillDatabas(timeReports);
                 }
@@ -147,58 +158,88 @@ namespace UcsVismaTid
             }
         }
 
-        private void GetProgramUsers()
+        private decimal? CalculateAmountToInvoice(TimeReport element)
         {
-            ProgramUsers programUsers = new ProgramUsers();
+            //Vi räknar ut priset för tidsrapporten direkt här.
+            decimal? price = 0.00M;
 
-            try
+            foreach (var el in db.Pricings)
             {
-                var programUser = from user in db.ProgramUsers
-                    select user;
+                //Här avgörs det hur vi ska ta reda på price. I första hand genom activityID, i andra hand genom projectID
 
-                foreach (var user in programUser)
+                if (el.ActivityId == element.ActivityId && el.ProjectId == element.ProjectId && el.ProgramUserId == element.ProgramUserId)
                 {
-                    programUsers.ProgramUserId = user.ProgramUserId;
-                    
-                    programUsers.ProgramUserFirstName = user.FirstName;
-                    programUsers.ProgramUserGroupId = user.ProgramUserGroupId;
-                    programUsers.ResultUnitId = user.ResUnitId;
-                    programUsers.ProgramUserLastName = user.Name;
-                    programUsers.PersonalNo = user.PersonalNo;
-
-                    sendData.ProgramUsersTillDatabas(programUsers);
-
-                    CalculateNextMonthWorkinghours(user);
-                    CalculateForecastForConsult(user);
+                    price = el.Price;
+                    break;
+                }
+                if (el.ActivityId == element.ActivityId && el.ProjectId == element.ProjectId)
+                {
+                    price = el.Price;
+                    break;
                 }
             }
-            catch (Exception ex)
+
+            if (element.HourToInvoice != null)
+                price = price * element.HourToInvoice;
+
+            return price;
+        }
+        
+        private void GetProgramUsers()
+        {
+            var programUser = from user in db.ProgramUsers
+                              select user;
+
+            foreach (var user in programUser)
             {
-                logger.ErrorMessage(ex);
+                if (user.Active)
+                {
+                    ProgramUsers programUsers = new ProgramUsers();
+                    try
+                    {
+                        programUsers.ProgramUserId = user.ProgramUserId;
+
+                        programUsers.ProgramUserFirstName = user.FirstName;
+                        programUsers.ProgramUserGroupId = user.ProgramUserGroupId;
+                        programUsers.ResultUnitId = user.ResUnitId;
+                        programUsers.ProgramUserLastName = user.Name;
+                        programUsers.PersonalNo = user.PersonalNo;
+
+                        sendData.ProgramUsersTillDatabas(programUsers);
+
+                        CalculateNextMonthWorkinghours(user);
+                        CalculateForecastForConsult(user);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.ErrorMessage(ex);
+                    }
+                }
             }
         }
 
         private void GetProgramUsersGroup()
         {
-            ProgramUserGroups programUserGroup = new ProgramUserGroups();
-
-            try
+            var programUserGroups = from groups in db.ProgramUserGroups
+                                    select groups;
+            
+            foreach (var element in programUserGroups)
             {
-                var programUserGroups = from groups in db.ProgramUserGroups
-                    select groups;
+                ProgramUserGroups programUserGroup = new ProgramUserGroups();
 
-                foreach (var element in programUserGroups)
+                try
                 {
                     programUserGroup.ProgramUserGroupId = element.ProgramUserGroupId;
                     programUserGroup.ProgramUserGroupName = element.ProgramUserGroupName;
 
                     sendData.ProgramUserGroupTillDatabas(programUserGroup);
                 }
+                catch (Exception ex)
+                {
+                    logger.ErrorMessage(ex);
+                }
             }
-            catch (Exception ex)
-            {
-                logger.ErrorMessage(ex);
-            }
+
         }
 
         private void GetProject()
@@ -459,26 +500,26 @@ namespace UcsVismaTid
 
         public void GetActivity()
         {
-            Activities activity = new Activities();
+            var activities = from a in db.Activities
+                             select a;
 
-            try
+            foreach (var el in activities)
             {
-                var activities = from a in db.Activities
-                    select a;
-
-                foreach (var el in activities)
+                Activities activity = new Activities();
+                try
                 {
                     activity.ActivityId = el.ActivityId;
                     activity.ActivityName = el.ActivityName;
                     activity.Code = el.Code;
                     activity.TimeCodeId = el.TimeCodeId;
+                    activity.ProjectId = el.ProjectId;
 
                     sendData.ActivityTillDatabas(activity);
                 }
-            }
-            catch (Exception ex)
-            {
-                logger.ErrorMessage(ex);
+                catch (Exception ex)
+                {
+                    logger.ErrorMessage(ex);
+                }
             }
         }
 
@@ -550,7 +591,7 @@ namespace UcsVismaTid
                               !price.PriceListPeriod.DateEnd.HasValue &&
                               price.ProgramUserGroup == programUserGroup
                         select price.Price;
-                    Console.WriteLine(project.ProjectId);
+
                     var test = db.Pricings.Where(x => x.PriceListPeriod.PriceListId == customer.PriceListId
                                                       && !x.PriceListPeriod.DateEnd.HasValue &&
                                                       x.ProgramUserGroup == programUserGroup)

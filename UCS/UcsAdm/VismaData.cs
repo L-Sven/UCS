@@ -107,7 +107,6 @@ namespace UcsAdm
             //Stänger företaget
             Adk.Api.AdkClose();
         }
-        
 
         private void GetResultatEnhet()
         {
