@@ -92,6 +92,7 @@ namespace UcsVismaTid
                     t.DateOfReport == null ? new SqlParameter("@DatumFörRapport", DBNull.Value) : new SqlParameter("@DatumFörRapport", t.DateOfReport));
                 cmdAddTimeReport.Parameters.Add(new SqlParameter("@TidsRapportID", t.TimeReportId));
                 cmdAddTimeReport.Parameters.Add(t.ActivityId == null ? new SqlParameter("@AktivitetsID", DBNull.Value) : new SqlParameter("@AktivitetsID", t.ActivityId));
+                cmdAddTimeReport.Parameters.Add(t.AmountToInvoice == null ? new SqlParameter("@AmountToInvoice", DBNull.Value) : new SqlParameter("@AmountToInvoice", t.AmountToInvoice));
 
                 sqlCon2.Open();
                 cmdAddTimeReport.ExecuteNonQuery();

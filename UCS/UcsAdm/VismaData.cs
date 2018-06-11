@@ -65,7 +65,6 @@ namespace UcsAdm
             }
 
 
-
             // Anropar metd som hämtar data om alla resultatenheter
             GetResultatEnhet();
             Console.WriteLine("Resultatenhet klar!");

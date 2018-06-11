@@ -23,3 +23,15 @@ C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsAdm\obj\Debug\UcsAdm.cspr
 C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsAdm\obj\Debug\UcsAdm.csproj.CopyComplete
 C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsAdm\obj\Debug\UcsAdm.exe
 C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsAdm\obj\Debug\UcsAdm.pdb
+C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsAdm\bin\Debug\NLog.xsd
+C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsAdm\bin\Debug\NLog.config
+C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsAdm\bin\Debug\App.config
+C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsAdm\bin\Debug\UcsAdm.exe.config
+C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsAdm\bin\Debug\UcsAdm.exe
+C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsAdm\bin\Debug\UcsAdm.pdb
+C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsAdm\bin\Debug\NLog.xml
+C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsAdm\obj\Debug\UcsAdm.csprojAssemblyReference.cache
+C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsAdm\obj\Debug\UcsAdm.csproj.CoreCompileInputs.cache
+C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsAdm\obj\Debug\UcsAdm.csproj.CopyComplete
+C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsAdm\obj\Debug\UcsAdm.exe
+C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsAdm\obj\Debug\UcsAdm.pdb
