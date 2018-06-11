@@ -90,6 +90,15 @@ namespace UcsVismaTid
     partial void InsertProjectHdr(ProjectHdr instance);
     partial void UpdateProjectHdr(ProjectHdr instance);
     partial void DeleteProjectHdr(ProjectHdr instance);
+    partial void InsertInvoice(Invoice instance);
+    partial void UpdateInvoice(Invoice instance);
+    partial void DeleteInvoice(Invoice instance);
+    partial void InsertInvoiceSettingRowDetail(InvoiceSettingRowDetail instance);
+    partial void UpdateInvoiceSettingRowDetail(InvoiceSettingRowDetail instance);
+    partial void DeleteInvoiceSettingRowDetail(InvoiceSettingRowDetail instance);
+    partial void InsertItem(Item instance);
+    partial void UpdateItem(Item instance);
+    partial void DeleteItem(Item instance);
     #endregion
 		
 		public VismaTidDataDataContext() : 
@@ -281,6 +290,30 @@ namespace UcsVismaTid
 				return this.GetTable<ProjectHdr>();
 			}
 		}
+		
+		public System.Data.Linq.Table<Invoice> Invoices
+		{
+			get
+			{
+				return this.GetTable<Invoice>();
+			}
+		}
+		
+		public System.Data.Linq.Table<InvoiceSettingRowDetail> InvoiceSettingRowDetails
+		{
+			get
+			{
+				return this.GetTable<InvoiceSettingRowDetail>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Item> Items
+		{
+			get
+			{
+				return this.GetTable<Item>();
+			}
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TimeReport")]
@@ -379,6 +412,8 @@ namespace UcsVismaTid
 		
 		private EntityRef<Customer> _Customer;
 		
+		private EntityRef<Invoice> _Invoice;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -471,6 +506,7 @@ namespace UcsVismaTid
 			this._BookResultUnit = default(EntityRef<BookResultUnit>);
 			this._Activity = default(EntityRef<Activity>);
 			this._Customer = default(EntityRef<Customer>);
+			this._Invoice = default(EntityRef<Invoice>);
 			OnCreated();
 		}
 		
@@ -1069,6 +1105,10 @@ namespace UcsVismaTid
 			{
 				if ((this._InvoiceId != value))
 				{
+					if (this._Invoice.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
 					this.OnInvoiceIdChanging(value);
 					this.SendPropertyChanging();
 					this._InvoiceId = value;
@@ -1478,6 +1518,40 @@ namespace UcsVismaTid
 						this._CustomerId = default(Nullable<int>);
 					}
 					this.SendPropertyChanged("Customer");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Invoice_TimeReport", Storage="_Invoice", ThisKey="InvoiceId", OtherKey="InvoiceId", IsForeignKey=true)]
+		public Invoice Invoice
+		{
+			get
+			{
+				return this._Invoice.Entity;
+			}
+			set
+			{
+				Invoice previousValue = this._Invoice.Entity;
+				if (((previousValue != value) 
+							|| (this._Invoice.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Invoice.Entity = null;
+						previousValue.TimeReports.Remove(this);
+					}
+					this._Invoice.Entity = value;
+					if ((value != null))
+					{
+						value.TimeReports.Add(this);
+						this._InvoiceId = value.InvoiceId;
+					}
+					else
+					{
+						this._InvoiceId = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Invoice");
 				}
 			}
 		}
@@ -2335,6 +2409,8 @@ namespace UcsVismaTid
 		
 		private EntitySet<Activity> _Activities;
 		
+		private EntitySet<InvoiceSettingRowDetail> _InvoiceSettingRowDetails;
+		
 		private EntityRef<ProgramUser> _ProgramUser;
 		
 		private EntityRef<PriceList> _PriceList;
@@ -2438,6 +2514,7 @@ namespace UcsVismaTid
 			this._TimeReports = new EntitySet<TimeReport>(new Action<TimeReport>(this.attach_TimeReports), new Action<TimeReport>(this.detach_TimeReports));
 			this._Participants = new EntitySet<Participant>(new Action<Participant>(this.attach_Participants), new Action<Participant>(this.detach_Participants));
 			this._Activities = new EntitySet<Activity>(new Action<Activity>(this.attach_Activities), new Action<Activity>(this.detach_Activities));
+			this._InvoiceSettingRowDetails = new EntitySet<InvoiceSettingRowDetail>(new Action<InvoiceSettingRowDetail>(this.attach_InvoiceSettingRowDetails), new Action<InvoiceSettingRowDetail>(this.detach_InvoiceSettingRowDetails));
 			this._ProgramUser = default(EntityRef<ProgramUser>);
 			this._PriceList = default(EntityRef<PriceList>);
 			this._PriceList1 = default(EntityRef<PriceList>);
@@ -3310,6 +3387,19 @@ namespace UcsVismaTid
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Project_InvoiceSettingRowDetail", Storage="_InvoiceSettingRowDetails", ThisKey="ProjectId", OtherKey="ProjectId")]
+		public EntitySet<InvoiceSettingRowDetail> InvoiceSettingRowDetails
+		{
+			get
+			{
+				return this._InvoiceSettingRowDetails;
+			}
+			set
+			{
+				this._InvoiceSettingRowDetails.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ProgramUser_Project", Storage="_ProgramUser", ThisKey="ProgramUserId", OtherKey="ProgramUserId", IsForeignKey=true)]
 		public ProgramUser ProgramUser
 		{
@@ -3569,6 +3659,18 @@ namespace UcsVismaTid
 			this.SendPropertyChanging();
 			entity.Project = null;
 		}
+		
+		private void attach_InvoiceSettingRowDetails(InvoiceSettingRowDetail entity)
+		{
+			this.SendPropertyChanging();
+			entity.Project = this;
+		}
+		
+		private void detach_InvoiceSettingRowDetails(InvoiceSettingRowDetail entity)
+		{
+			this.SendPropertyChanging();
+			entity.Project = null;
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ProgramUser")]
@@ -3647,6 +3749,12 @@ namespace UcsVismaTid
 		
 		private EntitySet<Customer> _Customers;
 		
+		private EntitySet<Invoice> _Invoices;
+		
+		private EntitySet<Invoice> _Invoices1;
+		
+		private EntitySet<Invoice> _Invoices2;
+		
 		private EntityRef<ProgramUserGroup> _ProgramUserGroup;
 		
 		private EntityRef<BookResultUnit> _BookResultUnit;
@@ -3722,6 +3830,9 @@ namespace UcsVismaTid
 			this._Pricings = new EntitySet<Pricing>(new Action<Pricing>(this.attach_Pricings), new Action<Pricing>(this.detach_Pricings));
 			this._Participants = new EntitySet<Participant>(new Action<Participant>(this.attach_Participants), new Action<Participant>(this.detach_Participants));
 			this._Customers = new EntitySet<Customer>(new Action<Customer>(this.attach_Customers), new Action<Customer>(this.detach_Customers));
+			this._Invoices = new EntitySet<Invoice>(new Action<Invoice>(this.attach_Invoices), new Action<Invoice>(this.detach_Invoices));
+			this._Invoices1 = new EntitySet<Invoice>(new Action<Invoice>(this.attach_Invoices1), new Action<Invoice>(this.detach_Invoices1));
+			this._Invoices2 = new EntitySet<Invoice>(new Action<Invoice>(this.attach_Invoices2), new Action<Invoice>(this.detach_Invoices2));
 			this._ProgramUserGroup = default(EntityRef<ProgramUserGroup>);
 			this._BookResultUnit = default(EntityRef<BookResultUnit>);
 			OnCreated();
@@ -4386,6 +4497,45 @@ namespace UcsVismaTid
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ProgramUser_Invoice", Storage="_Invoices", ThisKey="ProgramUserId", OtherKey="ApprovedId")]
+		public EntitySet<Invoice> Invoices
+		{
+			get
+			{
+				return this._Invoices;
+			}
+			set
+			{
+				this._Invoices.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ProgramUser_Invoice1", Storage="_Invoices1", ThisKey="ProgramUserId", OtherKey="ExportedId")]
+		public EntitySet<Invoice> Invoices1
+		{
+			get
+			{
+				return this._Invoices1;
+			}
+			set
+			{
+				this._Invoices1.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ProgramUser_Invoice2", Storage="_Invoices2", ThisKey="ProgramUserId", OtherKey="ReferenceId")]
+		public EntitySet<Invoice> Invoices2
+		{
+			get
+			{
+				return this._Invoices2;
+			}
+			set
+			{
+				this._Invoices2.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ProgramUserGroup_ProgramUser", Storage="_ProgramUserGroup", ThisKey="ProgramUserGroupId", OtherKey="ProgramUserGroupId", IsForeignKey=true)]
 		public ProgramUserGroup ProgramUserGroup
 		{
@@ -4556,6 +4706,42 @@ namespace UcsVismaTid
 		{
 			this.SendPropertyChanging();
 			entity.ProgramUser = null;
+		}
+		
+		private void attach_Invoices(Invoice entity)
+		{
+			this.SendPropertyChanging();
+			entity.ProgramUser = this;
+		}
+		
+		private void detach_Invoices(Invoice entity)
+		{
+			this.SendPropertyChanging();
+			entity.ProgramUser = null;
+		}
+		
+		private void attach_Invoices1(Invoice entity)
+		{
+			this.SendPropertyChanging();
+			entity.ProgramUser1 = this;
+		}
+		
+		private void detach_Invoices1(Invoice entity)
+		{
+			this.SendPropertyChanging();
+			entity.ProgramUser1 = null;
+		}
+		
+		private void attach_Invoices2(Invoice entity)
+		{
+			this.SendPropertyChanging();
+			entity.ProgramUser2 = this;
+		}
+		
+		private void detach_Invoices2(Invoice entity)
+		{
+			this.SendPropertyChanging();
+			entity.ProgramUser2 = null;
 		}
 	}
 	
@@ -6375,6 +6561,8 @@ namespace UcsVismaTid
 		
 		private EntitySet<ProgramUser> _ProgramUsers;
 		
+		private EntitySet<InvoiceSettingRowDetail> _InvoiceSettingRowDetails;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -6393,6 +6581,7 @@ namespace UcsVismaTid
 		{
 			this._TimeReports = new EntitySet<TimeReport>(new Action<TimeReport>(this.attach_TimeReports), new Action<TimeReport>(this.detach_TimeReports));
 			this._ProgramUsers = new EntitySet<ProgramUser>(new Action<ProgramUser>(this.attach_ProgramUsers), new Action<ProgramUser>(this.detach_ProgramUsers));
+			this._InvoiceSettingRowDetails = new EntitySet<InvoiceSettingRowDetail>(new Action<InvoiceSettingRowDetail>(this.attach_InvoiceSettingRowDetails), new Action<InvoiceSettingRowDetail>(this.detach_InvoiceSettingRowDetails));
 			OnCreated();
 		}
 		
@@ -6502,6 +6691,19 @@ namespace UcsVismaTid
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="BookResultUnit_InvoiceSettingRowDetail", Storage="_InvoiceSettingRowDetails", ThisKey="BookResultUnitId", OtherKey="ResUnitId")]
+		public EntitySet<InvoiceSettingRowDetail> InvoiceSettingRowDetails
+		{
+			get
+			{
+				return this._InvoiceSettingRowDetails;
+			}
+			set
+			{
+				this._InvoiceSettingRowDetails.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -6541,6 +6743,18 @@ namespace UcsVismaTid
 		}
 		
 		private void detach_ProgramUsers(ProgramUser entity)
+		{
+			this.SendPropertyChanging();
+			entity.BookResultUnit = null;
+		}
+		
+		private void attach_InvoiceSettingRowDetails(InvoiceSettingRowDetail entity)
+		{
+			this.SendPropertyChanging();
+			entity.BookResultUnit = this;
+		}
+		
+		private void detach_InvoiceSettingRowDetails(InvoiceSettingRowDetail entity)
 		{
 			this.SendPropertyChanging();
 			entity.BookResultUnit = null;
@@ -7568,6 +7782,8 @@ namespace UcsVismaTid
 		
 		private EntitySet<Project> _Projects;
 		
+		private EntitySet<Invoice> _Invoices;
+		
 		private EntityRef<CustomerCategory> _CustomerCategory;
 		
 		private EntityRef<PriceList> _PriceList1;
@@ -7722,6 +7938,7 @@ namespace UcsVismaTid
 		{
 			this._TimeReports = new EntitySet<TimeReport>(new Action<TimeReport>(this.attach_TimeReports), new Action<TimeReport>(this.detach_TimeReports));
 			this._Projects = new EntitySet<Project>(new Action<Project>(this.attach_Projects), new Action<Project>(this.detach_Projects));
+			this._Invoices = new EntitySet<Invoice>(new Action<Invoice>(this.attach_Invoices), new Action<Invoice>(this.detach_Invoices));
 			this._CustomerCategory = default(EntityRef<CustomerCategory>);
 			this._PriceList1 = default(EntityRef<PriceList>);
 			this._ProgramUser = default(EntityRef<ProgramUser>);
@@ -9146,6 +9363,19 @@ namespace UcsVismaTid
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Customer_Invoice", Storage="_Invoices", ThisKey="CustomerId", OtherKey="CustomerId")]
+		public EntitySet<Invoice> Invoices
+		{
+			get
+			{
+				return this._Invoices;
+			}
+			set
+			{
+				this._Invoices.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CustomerCategory_Customer", Storage="_CustomerCategory", ThisKey="CustomerCategoryId", OtherKey="CustomerCategoryId", IsForeignKey=true)]
 		public CustomerCategory CustomerCategory
 		{
@@ -9287,6 +9517,18 @@ namespace UcsVismaTid
 		}
 		
 		private void detach_Projects(Project entity)
+		{
+			this.SendPropertyChanging();
+			entity.Customer = null;
+		}
+		
+		private void attach_Invoices(Invoice entity)
+		{
+			this.SendPropertyChanging();
+			entity.Customer = this;
+		}
+		
+		private void detach_Invoices(Invoice entity)
 		{
 			this.SendPropertyChanging();
 			entity.Customer = null;
@@ -9710,6 +9952,1471 @@ namespace UcsVismaTid
 		{
 			this.SendPropertyChanging();
 			entity.ProjectHdr = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Invoice")]
+	public partial class Invoice : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _InvoiceId;
+		
+		private System.Nullable<int> _InvoiceNo;
+		
+		private System.Nullable<int> _InvoicePartNo;
+		
+		private System.Nullable<int> _AccountingOrderNo;
+		
+		private System.Nullable<int> _CustomerId;
+		
+		private System.DateTime _CreatedDate;
+		
+		private System.Nullable<System.DateTime> _FromDate;
+		
+		private System.DateTime _EndDate;
+		
+		private string _InvoiceHeaderText;
+		
+		private System.Nullable<System.DateTime> _ApprovedDate;
+		
+		private System.Nullable<int> _ApprovedId;
+		
+		private System.Nullable<System.DateTime> _ExportedDate;
+		
+		private System.Nullable<int> _ExportedId;
+		
+		private bool _ChangedTxt;
+		
+		private bool _ShowExtraInvoiceText;
+		
+		private bool _DetailLevelAccountsYear;
+		
+		private bool _DetailLevelProject;
+		
+		private bool _DetailLevelActivity;
+		
+		private bool _DetailLevelProgramUser;
+		
+		private bool _DetailLevelDate;
+		
+		private bool _DetailLevelPartSumAccountsYear;
+		
+		private bool _DetailLevelPartSumProject;
+		
+		private bool _DetailLevelPartSumActivity;
+		
+		private bool _DetailLevelPartSumProgramUser;
+		
+		private bool _ExtraFUTextInserted;
+		
+		private System.Nullable<int> _TypeOfInvoiceing;
+		
+		private System.Nullable<int> _TypeOfInvoice;
+		
+		private int _ExportInvoiceAs;
+		
+		private System.Nullable<int> _ReferenceId;
+		
+		private string _YourReference;
+		
+		private EntitySet<TimeReport> _TimeReports;
+		
+		private EntitySet<InvoiceSettingRowDetail> _InvoiceSettingRowDetails;
+		
+		private EntityRef<ProgramUser> _ProgramUser;
+		
+		private EntityRef<Customer> _Customer;
+		
+		private EntityRef<ProgramUser> _ProgramUser1;
+		
+		private EntityRef<ProgramUser> _ProgramUser2;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnInvoiceIdChanging(int value);
+    partial void OnInvoiceIdChanged();
+    partial void OnInvoiceNoChanging(System.Nullable<int> value);
+    partial void OnInvoiceNoChanged();
+    partial void OnInvoicePartNoChanging(System.Nullable<int> value);
+    partial void OnInvoicePartNoChanged();
+    partial void OnAccountingOrderNoChanging(System.Nullable<int> value);
+    partial void OnAccountingOrderNoChanged();
+    partial void OnCustomerIdChanging(System.Nullable<int> value);
+    partial void OnCustomerIdChanged();
+    partial void OnCreatedDateChanging(System.DateTime value);
+    partial void OnCreatedDateChanged();
+    partial void OnFromDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnFromDateChanged();
+    partial void OnEndDateChanging(System.DateTime value);
+    partial void OnEndDateChanged();
+    partial void OnInvoiceHeaderTextChanging(string value);
+    partial void OnInvoiceHeaderTextChanged();
+    partial void OnApprovedDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnApprovedDateChanged();
+    partial void OnApprovedIdChanging(System.Nullable<int> value);
+    partial void OnApprovedIdChanged();
+    partial void OnExportedDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnExportedDateChanged();
+    partial void OnExportedIdChanging(System.Nullable<int> value);
+    partial void OnExportedIdChanged();
+    partial void OnChangedTxtChanging(bool value);
+    partial void OnChangedTxtChanged();
+    partial void OnShowExtraInvoiceTextChanging(bool value);
+    partial void OnShowExtraInvoiceTextChanged();
+    partial void OnDetailLevelAccountsYearChanging(bool value);
+    partial void OnDetailLevelAccountsYearChanged();
+    partial void OnDetailLevelProjectChanging(bool value);
+    partial void OnDetailLevelProjectChanged();
+    partial void OnDetailLevelActivityChanging(bool value);
+    partial void OnDetailLevelActivityChanged();
+    partial void OnDetailLevelProgramUserChanging(bool value);
+    partial void OnDetailLevelProgramUserChanged();
+    partial void OnDetailLevelDateChanging(bool value);
+    partial void OnDetailLevelDateChanged();
+    partial void OnDetailLevelPartSumAccountsYearChanging(bool value);
+    partial void OnDetailLevelPartSumAccountsYearChanged();
+    partial void OnDetailLevelPartSumProjectChanging(bool value);
+    partial void OnDetailLevelPartSumProjectChanged();
+    partial void OnDetailLevelPartSumActivityChanging(bool value);
+    partial void OnDetailLevelPartSumActivityChanged();
+    partial void OnDetailLevelPartSumProgramUserChanging(bool value);
+    partial void OnDetailLevelPartSumProgramUserChanged();
+    partial void OnExtraFUTextInsertedChanging(bool value);
+    partial void OnExtraFUTextInsertedChanged();
+    partial void OnTypeOfInvoiceingChanging(System.Nullable<int> value);
+    partial void OnTypeOfInvoiceingChanged();
+    partial void OnTypeOfInvoiceChanging(System.Nullable<int> value);
+    partial void OnTypeOfInvoiceChanged();
+    partial void OnExportInvoiceAsChanging(int value);
+    partial void OnExportInvoiceAsChanged();
+    partial void OnReferenceIdChanging(System.Nullable<int> value);
+    partial void OnReferenceIdChanged();
+    partial void OnYourReferenceChanging(string value);
+    partial void OnYourReferenceChanged();
+    #endregion
+		
+		public Invoice()
+		{
+			this._TimeReports = new EntitySet<TimeReport>(new Action<TimeReport>(this.attach_TimeReports), new Action<TimeReport>(this.detach_TimeReports));
+			this._InvoiceSettingRowDetails = new EntitySet<InvoiceSettingRowDetail>(new Action<InvoiceSettingRowDetail>(this.attach_InvoiceSettingRowDetails), new Action<InvoiceSettingRowDetail>(this.detach_InvoiceSettingRowDetails));
+			this._ProgramUser = default(EntityRef<ProgramUser>);
+			this._Customer = default(EntityRef<Customer>);
+			this._ProgramUser1 = default(EntityRef<ProgramUser>);
+			this._ProgramUser2 = default(EntityRef<ProgramUser>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InvoiceId", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int InvoiceId
+		{
+			get
+			{
+				return this._InvoiceId;
+			}
+			set
+			{
+				if ((this._InvoiceId != value))
+				{
+					this.OnInvoiceIdChanging(value);
+					this.SendPropertyChanging();
+					this._InvoiceId = value;
+					this.SendPropertyChanged("InvoiceId");
+					this.OnInvoiceIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InvoiceNo", DbType="Int")]
+		public System.Nullable<int> InvoiceNo
+		{
+			get
+			{
+				return this._InvoiceNo;
+			}
+			set
+			{
+				if ((this._InvoiceNo != value))
+				{
+					this.OnInvoiceNoChanging(value);
+					this.SendPropertyChanging();
+					this._InvoiceNo = value;
+					this.SendPropertyChanged("InvoiceNo");
+					this.OnInvoiceNoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InvoicePartNo", DbType="Int")]
+		public System.Nullable<int> InvoicePartNo
+		{
+			get
+			{
+				return this._InvoicePartNo;
+			}
+			set
+			{
+				if ((this._InvoicePartNo != value))
+				{
+					this.OnInvoicePartNoChanging(value);
+					this.SendPropertyChanging();
+					this._InvoicePartNo = value;
+					this.SendPropertyChanged("InvoicePartNo");
+					this.OnInvoicePartNoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountingOrderNo", DbType="Int")]
+		public System.Nullable<int> AccountingOrderNo
+		{
+			get
+			{
+				return this._AccountingOrderNo;
+			}
+			set
+			{
+				if ((this._AccountingOrderNo != value))
+				{
+					this.OnAccountingOrderNoChanging(value);
+					this.SendPropertyChanging();
+					this._AccountingOrderNo = value;
+					this.SendPropertyChanged("AccountingOrderNo");
+					this.OnAccountingOrderNoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CustomerId", DbType="Int")]
+		public System.Nullable<int> CustomerId
+		{
+			get
+			{
+				return this._CustomerId;
+			}
+			set
+			{
+				if ((this._CustomerId != value))
+				{
+					if (this._Customer.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCustomerIdChanging(value);
+					this.SendPropertyChanging();
+					this._CustomerId = value;
+					this.SendPropertyChanged("CustomerId");
+					this.OnCustomerIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedDate", DbType="SmallDateTime NOT NULL")]
+		public System.DateTime CreatedDate
+		{
+			get
+			{
+				return this._CreatedDate;
+			}
+			set
+			{
+				if ((this._CreatedDate != value))
+				{
+					this.OnCreatedDateChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedDate = value;
+					this.SendPropertyChanged("CreatedDate");
+					this.OnCreatedDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FromDate", DbType="SmallDateTime")]
+		public System.Nullable<System.DateTime> FromDate
+		{
+			get
+			{
+				return this._FromDate;
+			}
+			set
+			{
+				if ((this._FromDate != value))
+				{
+					this.OnFromDateChanging(value);
+					this.SendPropertyChanging();
+					this._FromDate = value;
+					this.SendPropertyChanged("FromDate");
+					this.OnFromDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EndDate", DbType="SmallDateTime NOT NULL")]
+		public System.DateTime EndDate
+		{
+			get
+			{
+				return this._EndDate;
+			}
+			set
+			{
+				if ((this._EndDate != value))
+				{
+					this.OnEndDateChanging(value);
+					this.SendPropertyChanging();
+					this._EndDate = value;
+					this.SendPropertyChanged("EndDate");
+					this.OnEndDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InvoiceHeaderText", DbType="VarChar(255) NOT NULL", CanBeNull=false)]
+		public string InvoiceHeaderText
+		{
+			get
+			{
+				return this._InvoiceHeaderText;
+			}
+			set
+			{
+				if ((this._InvoiceHeaderText != value))
+				{
+					this.OnInvoiceHeaderTextChanging(value);
+					this.SendPropertyChanging();
+					this._InvoiceHeaderText = value;
+					this.SendPropertyChanged("InvoiceHeaderText");
+					this.OnInvoiceHeaderTextChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ApprovedDate", DbType="SmallDateTime")]
+		public System.Nullable<System.DateTime> ApprovedDate
+		{
+			get
+			{
+				return this._ApprovedDate;
+			}
+			set
+			{
+				if ((this._ApprovedDate != value))
+				{
+					this.OnApprovedDateChanging(value);
+					this.SendPropertyChanging();
+					this._ApprovedDate = value;
+					this.SendPropertyChanged("ApprovedDate");
+					this.OnApprovedDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ApprovedId", DbType="Int")]
+		public System.Nullable<int> ApprovedId
+		{
+			get
+			{
+				return this._ApprovedId;
+			}
+			set
+			{
+				if ((this._ApprovedId != value))
+				{
+					if (this._ProgramUser.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnApprovedIdChanging(value);
+					this.SendPropertyChanging();
+					this._ApprovedId = value;
+					this.SendPropertyChanged("ApprovedId");
+					this.OnApprovedIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExportedDate", DbType="SmallDateTime")]
+		public System.Nullable<System.DateTime> ExportedDate
+		{
+			get
+			{
+				return this._ExportedDate;
+			}
+			set
+			{
+				if ((this._ExportedDate != value))
+				{
+					this.OnExportedDateChanging(value);
+					this.SendPropertyChanging();
+					this._ExportedDate = value;
+					this.SendPropertyChanged("ExportedDate");
+					this.OnExportedDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExportedId", DbType="Int")]
+		public System.Nullable<int> ExportedId
+		{
+			get
+			{
+				return this._ExportedId;
+			}
+			set
+			{
+				if ((this._ExportedId != value))
+				{
+					if (this._ProgramUser1.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnExportedIdChanging(value);
+					this.SendPropertyChanging();
+					this._ExportedId = value;
+					this.SendPropertyChanged("ExportedId");
+					this.OnExportedIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ChangedTxt", DbType="Bit NOT NULL")]
+		public bool ChangedTxt
+		{
+			get
+			{
+				return this._ChangedTxt;
+			}
+			set
+			{
+				if ((this._ChangedTxt != value))
+				{
+					this.OnChangedTxtChanging(value);
+					this.SendPropertyChanging();
+					this._ChangedTxt = value;
+					this.SendPropertyChanged("ChangedTxt");
+					this.OnChangedTxtChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ShowExtraInvoiceText", DbType="Bit NOT NULL")]
+		public bool ShowExtraInvoiceText
+		{
+			get
+			{
+				return this._ShowExtraInvoiceText;
+			}
+			set
+			{
+				if ((this._ShowExtraInvoiceText != value))
+				{
+					this.OnShowExtraInvoiceTextChanging(value);
+					this.SendPropertyChanging();
+					this._ShowExtraInvoiceText = value;
+					this.SendPropertyChanged("ShowExtraInvoiceText");
+					this.OnShowExtraInvoiceTextChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DetailLevelAccountsYear", DbType="Bit NOT NULL")]
+		public bool DetailLevelAccountsYear
+		{
+			get
+			{
+				return this._DetailLevelAccountsYear;
+			}
+			set
+			{
+				if ((this._DetailLevelAccountsYear != value))
+				{
+					this.OnDetailLevelAccountsYearChanging(value);
+					this.SendPropertyChanging();
+					this._DetailLevelAccountsYear = value;
+					this.SendPropertyChanged("DetailLevelAccountsYear");
+					this.OnDetailLevelAccountsYearChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DetailLevelProject", DbType="Bit NOT NULL")]
+		public bool DetailLevelProject
+		{
+			get
+			{
+				return this._DetailLevelProject;
+			}
+			set
+			{
+				if ((this._DetailLevelProject != value))
+				{
+					this.OnDetailLevelProjectChanging(value);
+					this.SendPropertyChanging();
+					this._DetailLevelProject = value;
+					this.SendPropertyChanged("DetailLevelProject");
+					this.OnDetailLevelProjectChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DetailLevelActivity", DbType="Bit NOT NULL")]
+		public bool DetailLevelActivity
+		{
+			get
+			{
+				return this._DetailLevelActivity;
+			}
+			set
+			{
+				if ((this._DetailLevelActivity != value))
+				{
+					this.OnDetailLevelActivityChanging(value);
+					this.SendPropertyChanging();
+					this._DetailLevelActivity = value;
+					this.SendPropertyChanged("DetailLevelActivity");
+					this.OnDetailLevelActivityChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DetailLevelProgramUser", DbType="Bit NOT NULL")]
+		public bool DetailLevelProgramUser
+		{
+			get
+			{
+				return this._DetailLevelProgramUser;
+			}
+			set
+			{
+				if ((this._DetailLevelProgramUser != value))
+				{
+					this.OnDetailLevelProgramUserChanging(value);
+					this.SendPropertyChanging();
+					this._DetailLevelProgramUser = value;
+					this.SendPropertyChanged("DetailLevelProgramUser");
+					this.OnDetailLevelProgramUserChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DetailLevelDate", DbType="Bit NOT NULL")]
+		public bool DetailLevelDate
+		{
+			get
+			{
+				return this._DetailLevelDate;
+			}
+			set
+			{
+				if ((this._DetailLevelDate != value))
+				{
+					this.OnDetailLevelDateChanging(value);
+					this.SendPropertyChanging();
+					this._DetailLevelDate = value;
+					this.SendPropertyChanged("DetailLevelDate");
+					this.OnDetailLevelDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DetailLevelPartSumAccountsYear", DbType="Bit NOT NULL")]
+		public bool DetailLevelPartSumAccountsYear
+		{
+			get
+			{
+				return this._DetailLevelPartSumAccountsYear;
+			}
+			set
+			{
+				if ((this._DetailLevelPartSumAccountsYear != value))
+				{
+					this.OnDetailLevelPartSumAccountsYearChanging(value);
+					this.SendPropertyChanging();
+					this._DetailLevelPartSumAccountsYear = value;
+					this.SendPropertyChanged("DetailLevelPartSumAccountsYear");
+					this.OnDetailLevelPartSumAccountsYearChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DetailLevelPartSumProject", DbType="Bit NOT NULL")]
+		public bool DetailLevelPartSumProject
+		{
+			get
+			{
+				return this._DetailLevelPartSumProject;
+			}
+			set
+			{
+				if ((this._DetailLevelPartSumProject != value))
+				{
+					this.OnDetailLevelPartSumProjectChanging(value);
+					this.SendPropertyChanging();
+					this._DetailLevelPartSumProject = value;
+					this.SendPropertyChanged("DetailLevelPartSumProject");
+					this.OnDetailLevelPartSumProjectChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DetailLevelPartSumActivity", DbType="Bit NOT NULL")]
+		public bool DetailLevelPartSumActivity
+		{
+			get
+			{
+				return this._DetailLevelPartSumActivity;
+			}
+			set
+			{
+				if ((this._DetailLevelPartSumActivity != value))
+				{
+					this.OnDetailLevelPartSumActivityChanging(value);
+					this.SendPropertyChanging();
+					this._DetailLevelPartSumActivity = value;
+					this.SendPropertyChanged("DetailLevelPartSumActivity");
+					this.OnDetailLevelPartSumActivityChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DetailLevelPartSumProgramUser", DbType="Bit NOT NULL")]
+		public bool DetailLevelPartSumProgramUser
+		{
+			get
+			{
+				return this._DetailLevelPartSumProgramUser;
+			}
+			set
+			{
+				if ((this._DetailLevelPartSumProgramUser != value))
+				{
+					this.OnDetailLevelPartSumProgramUserChanging(value);
+					this.SendPropertyChanging();
+					this._DetailLevelPartSumProgramUser = value;
+					this.SendPropertyChanged("DetailLevelPartSumProgramUser");
+					this.OnDetailLevelPartSumProgramUserChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtraFUTextInserted", DbType="Bit NOT NULL")]
+		public bool ExtraFUTextInserted
+		{
+			get
+			{
+				return this._ExtraFUTextInserted;
+			}
+			set
+			{
+				if ((this._ExtraFUTextInserted != value))
+				{
+					this.OnExtraFUTextInsertedChanging(value);
+					this.SendPropertyChanging();
+					this._ExtraFUTextInserted = value;
+					this.SendPropertyChanged("ExtraFUTextInserted");
+					this.OnExtraFUTextInsertedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TypeOfInvoiceing", DbType="Int")]
+		public System.Nullable<int> TypeOfInvoiceing
+		{
+			get
+			{
+				return this._TypeOfInvoiceing;
+			}
+			set
+			{
+				if ((this._TypeOfInvoiceing != value))
+				{
+					this.OnTypeOfInvoiceingChanging(value);
+					this.SendPropertyChanging();
+					this._TypeOfInvoiceing = value;
+					this.SendPropertyChanged("TypeOfInvoiceing");
+					this.OnTypeOfInvoiceingChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TypeOfInvoice", DbType="Int")]
+		public System.Nullable<int> TypeOfInvoice
+		{
+			get
+			{
+				return this._TypeOfInvoice;
+			}
+			set
+			{
+				if ((this._TypeOfInvoice != value))
+				{
+					this.OnTypeOfInvoiceChanging(value);
+					this.SendPropertyChanging();
+					this._TypeOfInvoice = value;
+					this.SendPropertyChanged("TypeOfInvoice");
+					this.OnTypeOfInvoiceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExportInvoiceAs", DbType="Int NOT NULL")]
+		public int ExportInvoiceAs
+		{
+			get
+			{
+				return this._ExportInvoiceAs;
+			}
+			set
+			{
+				if ((this._ExportInvoiceAs != value))
+				{
+					this.OnExportInvoiceAsChanging(value);
+					this.SendPropertyChanging();
+					this._ExportInvoiceAs = value;
+					this.SendPropertyChanged("ExportInvoiceAs");
+					this.OnExportInvoiceAsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReferenceId", DbType="Int")]
+		public System.Nullable<int> ReferenceId
+		{
+			get
+			{
+				return this._ReferenceId;
+			}
+			set
+			{
+				if ((this._ReferenceId != value))
+				{
+					if (this._ProgramUser2.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnReferenceIdChanging(value);
+					this.SendPropertyChanging();
+					this._ReferenceId = value;
+					this.SendPropertyChanged("ReferenceId");
+					this.OnReferenceIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_YourReference", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string YourReference
+		{
+			get
+			{
+				return this._YourReference;
+			}
+			set
+			{
+				if ((this._YourReference != value))
+				{
+					this.OnYourReferenceChanging(value);
+					this.SendPropertyChanging();
+					this._YourReference = value;
+					this.SendPropertyChanged("YourReference");
+					this.OnYourReferenceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Invoice_TimeReport", Storage="_TimeReports", ThisKey="InvoiceId", OtherKey="InvoiceId")]
+		public EntitySet<TimeReport> TimeReports
+		{
+			get
+			{
+				return this._TimeReports;
+			}
+			set
+			{
+				this._TimeReports.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Invoice_InvoiceSettingRowDetail", Storage="_InvoiceSettingRowDetails", ThisKey="InvoiceId", OtherKey="InvoiceId")]
+		public EntitySet<InvoiceSettingRowDetail> InvoiceSettingRowDetails
+		{
+			get
+			{
+				return this._InvoiceSettingRowDetails;
+			}
+			set
+			{
+				this._InvoiceSettingRowDetails.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ProgramUser_Invoice", Storage="_ProgramUser", ThisKey="ApprovedId", OtherKey="ProgramUserId", IsForeignKey=true)]
+		public ProgramUser ProgramUser
+		{
+			get
+			{
+				return this._ProgramUser.Entity;
+			}
+			set
+			{
+				ProgramUser previousValue = this._ProgramUser.Entity;
+				if (((previousValue != value) 
+							|| (this._ProgramUser.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ProgramUser.Entity = null;
+						previousValue.Invoices.Remove(this);
+					}
+					this._ProgramUser.Entity = value;
+					if ((value != null))
+					{
+						value.Invoices.Add(this);
+						this._ApprovedId = value.ProgramUserId;
+					}
+					else
+					{
+						this._ApprovedId = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("ProgramUser");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Customer_Invoice", Storage="_Customer", ThisKey="CustomerId", OtherKey="CustomerId", IsForeignKey=true)]
+		public Customer Customer
+		{
+			get
+			{
+				return this._Customer.Entity;
+			}
+			set
+			{
+				Customer previousValue = this._Customer.Entity;
+				if (((previousValue != value) 
+							|| (this._Customer.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Customer.Entity = null;
+						previousValue.Invoices.Remove(this);
+					}
+					this._Customer.Entity = value;
+					if ((value != null))
+					{
+						value.Invoices.Add(this);
+						this._CustomerId = value.CustomerId;
+					}
+					else
+					{
+						this._CustomerId = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Customer");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ProgramUser_Invoice1", Storage="_ProgramUser1", ThisKey="ExportedId", OtherKey="ProgramUserId", IsForeignKey=true)]
+		public ProgramUser ProgramUser1
+		{
+			get
+			{
+				return this._ProgramUser1.Entity;
+			}
+			set
+			{
+				ProgramUser previousValue = this._ProgramUser1.Entity;
+				if (((previousValue != value) 
+							|| (this._ProgramUser1.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ProgramUser1.Entity = null;
+						previousValue.Invoices1.Remove(this);
+					}
+					this._ProgramUser1.Entity = value;
+					if ((value != null))
+					{
+						value.Invoices1.Add(this);
+						this._ExportedId = value.ProgramUserId;
+					}
+					else
+					{
+						this._ExportedId = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("ProgramUser1");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ProgramUser_Invoice2", Storage="_ProgramUser2", ThisKey="ReferenceId", OtherKey="ProgramUserId", IsForeignKey=true)]
+		public ProgramUser ProgramUser2
+		{
+			get
+			{
+				return this._ProgramUser2.Entity;
+			}
+			set
+			{
+				ProgramUser previousValue = this._ProgramUser2.Entity;
+				if (((previousValue != value) 
+							|| (this._ProgramUser2.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ProgramUser2.Entity = null;
+						previousValue.Invoices2.Remove(this);
+					}
+					this._ProgramUser2.Entity = value;
+					if ((value != null))
+					{
+						value.Invoices2.Add(this);
+						this._ReferenceId = value.ProgramUserId;
+					}
+					else
+					{
+						this._ReferenceId = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("ProgramUser2");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_TimeReports(TimeReport entity)
+		{
+			this.SendPropertyChanging();
+			entity.Invoice = this;
+		}
+		
+		private void detach_TimeReports(TimeReport entity)
+		{
+			this.SendPropertyChanging();
+			entity.Invoice = null;
+		}
+		
+		private void attach_InvoiceSettingRowDetails(InvoiceSettingRowDetail entity)
+		{
+			this.SendPropertyChanging();
+			entity.Invoice = this;
+		}
+		
+		private void detach_InvoiceSettingRowDetails(InvoiceSettingRowDetail entity)
+		{
+			this.SendPropertyChanging();
+			entity.Invoice = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.InvoiceSettingRowDetail")]
+	public partial class InvoiceSettingRowDetail : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _InvoiceSettingRowDetailId;
+		
+		private int _InvoiceId;
+		
+		private System.Nullable<int> _ResUnitId;
+		
+		private System.Nullable<int> _ProjectId;
+		
+		private string _ItemNo;
+		
+		private System.Nullable<decimal> _Amount;
+		
+		private string _InvoiceTxt;
+		
+		private EntityRef<Invoice> _Invoice;
+		
+		private EntityRef<Project> _Project;
+		
+		private EntityRef<BookResultUnit> _BookResultUnit;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnInvoiceSettingRowDetailIdChanging(int value);
+    partial void OnInvoiceSettingRowDetailIdChanged();
+    partial void OnInvoiceIdChanging(int value);
+    partial void OnInvoiceIdChanged();
+    partial void OnResUnitIdChanging(System.Nullable<int> value);
+    partial void OnResUnitIdChanged();
+    partial void OnProjectIdChanging(System.Nullable<int> value);
+    partial void OnProjectIdChanged();
+    partial void OnItemNoChanging(string value);
+    partial void OnItemNoChanged();
+    partial void OnAmountChanging(System.Nullable<decimal> value);
+    partial void OnAmountChanged();
+    partial void OnInvoiceTxtChanging(string value);
+    partial void OnInvoiceTxtChanged();
+    #endregion
+		
+		public InvoiceSettingRowDetail()
+		{
+			this._Invoice = default(EntityRef<Invoice>);
+			this._Project = default(EntityRef<Project>);
+			this._BookResultUnit = default(EntityRef<BookResultUnit>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InvoiceSettingRowDetailId", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int InvoiceSettingRowDetailId
+		{
+			get
+			{
+				return this._InvoiceSettingRowDetailId;
+			}
+			set
+			{
+				if ((this._InvoiceSettingRowDetailId != value))
+				{
+					this.OnInvoiceSettingRowDetailIdChanging(value);
+					this.SendPropertyChanging();
+					this._InvoiceSettingRowDetailId = value;
+					this.SendPropertyChanged("InvoiceSettingRowDetailId");
+					this.OnInvoiceSettingRowDetailIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InvoiceId", DbType="Int NOT NULL")]
+		public int InvoiceId
+		{
+			get
+			{
+				return this._InvoiceId;
+			}
+			set
+			{
+				if ((this._InvoiceId != value))
+				{
+					if (this._Invoice.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnInvoiceIdChanging(value);
+					this.SendPropertyChanging();
+					this._InvoiceId = value;
+					this.SendPropertyChanged("InvoiceId");
+					this.OnInvoiceIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ResUnitId", DbType="Int")]
+		public System.Nullable<int> ResUnitId
+		{
+			get
+			{
+				return this._ResUnitId;
+			}
+			set
+			{
+				if ((this._ResUnitId != value))
+				{
+					if (this._BookResultUnit.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnResUnitIdChanging(value);
+					this.SendPropertyChanging();
+					this._ResUnitId = value;
+					this.SendPropertyChanged("ResUnitId");
+					this.OnResUnitIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProjectId", DbType="Int")]
+		public System.Nullable<int> ProjectId
+		{
+			get
+			{
+				return this._ProjectId;
+			}
+			set
+			{
+				if ((this._ProjectId != value))
+				{
+					if (this._Project.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnProjectIdChanging(value);
+					this.SendPropertyChanging();
+					this._ProjectId = value;
+					this.SendPropertyChanged("ProjectId");
+					this.OnProjectIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ItemNo", DbType="VarChar(16) NOT NULL", CanBeNull=false)]
+		public string ItemNo
+		{
+			get
+			{
+				return this._ItemNo;
+			}
+			set
+			{
+				if ((this._ItemNo != value))
+				{
+					this.OnItemNoChanging(value);
+					this.SendPropertyChanging();
+					this._ItemNo = value;
+					this.SendPropertyChanged("ItemNo");
+					this.OnItemNoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Amount", DbType="Decimal(14,2)")]
+		public System.Nullable<decimal> Amount
+		{
+			get
+			{
+				return this._Amount;
+			}
+			set
+			{
+				if ((this._Amount != value))
+				{
+					this.OnAmountChanging(value);
+					this.SendPropertyChanging();
+					this._Amount = value;
+					this.SendPropertyChanged("Amount");
+					this.OnAmountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InvoiceTxt", DbType="VarChar(2000) NOT NULL", CanBeNull=false)]
+		public string InvoiceTxt
+		{
+			get
+			{
+				return this._InvoiceTxt;
+			}
+			set
+			{
+				if ((this._InvoiceTxt != value))
+				{
+					this.OnInvoiceTxtChanging(value);
+					this.SendPropertyChanging();
+					this._InvoiceTxt = value;
+					this.SendPropertyChanged("InvoiceTxt");
+					this.OnInvoiceTxtChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Invoice_InvoiceSettingRowDetail", Storage="_Invoice", ThisKey="InvoiceId", OtherKey="InvoiceId", IsForeignKey=true)]
+		public Invoice Invoice
+		{
+			get
+			{
+				return this._Invoice.Entity;
+			}
+			set
+			{
+				Invoice previousValue = this._Invoice.Entity;
+				if (((previousValue != value) 
+							|| (this._Invoice.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Invoice.Entity = null;
+						previousValue.InvoiceSettingRowDetails.Remove(this);
+					}
+					this._Invoice.Entity = value;
+					if ((value != null))
+					{
+						value.InvoiceSettingRowDetails.Add(this);
+						this._InvoiceId = value.InvoiceId;
+					}
+					else
+					{
+						this._InvoiceId = default(int);
+					}
+					this.SendPropertyChanged("Invoice");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Project_InvoiceSettingRowDetail", Storage="_Project", ThisKey="ProjectId", OtherKey="ProjectId", IsForeignKey=true)]
+		public Project Project
+		{
+			get
+			{
+				return this._Project.Entity;
+			}
+			set
+			{
+				Project previousValue = this._Project.Entity;
+				if (((previousValue != value) 
+							|| (this._Project.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Project.Entity = null;
+						previousValue.InvoiceSettingRowDetails.Remove(this);
+					}
+					this._Project.Entity = value;
+					if ((value != null))
+					{
+						value.InvoiceSettingRowDetails.Add(this);
+						this._ProjectId = value.ProjectId;
+					}
+					else
+					{
+						this._ProjectId = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Project");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="BookResultUnit_InvoiceSettingRowDetail", Storage="_BookResultUnit", ThisKey="ResUnitId", OtherKey="BookResultUnitId", IsForeignKey=true)]
+		public BookResultUnit BookResultUnit
+		{
+			get
+			{
+				return this._BookResultUnit.Entity;
+			}
+			set
+			{
+				BookResultUnit previousValue = this._BookResultUnit.Entity;
+				if (((previousValue != value) 
+							|| (this._BookResultUnit.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._BookResultUnit.Entity = null;
+						previousValue.InvoiceSettingRowDetails.Remove(this);
+					}
+					this._BookResultUnit.Entity = value;
+					if ((value != null))
+					{
+						value.InvoiceSettingRowDetails.Add(this);
+						this._ResUnitId = value.BookResultUnitId;
+					}
+					else
+					{
+						this._ResUnitId = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("BookResultUnit");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Item")]
+	public partial class Item : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private string _ItemName;
+		
+		private string _ItemNo;
+		
+		private System.Nullable<decimal> _CalcPriceUnit;
+		
+		private System.Nullable<decimal> _PriceUnit;
+		
+		private string _Unit;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnItemNameChanging(string value);
+    partial void OnItemNameChanged();
+    partial void OnItemNoChanging(string value);
+    partial void OnItemNoChanged();
+    partial void OnCalcPriceUnitChanging(System.Nullable<decimal> value);
+    partial void OnCalcPriceUnitChanged();
+    partial void OnPriceUnitChanging(System.Nullable<decimal> value);
+    partial void OnPriceUnitChanged();
+    partial void OnUnitChanging(string value);
+    partial void OnUnitChanged();
+    #endregion
+		
+		public Item()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ItemName", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string ItemName
+		{
+			get
+			{
+				return this._ItemName;
+			}
+			set
+			{
+				if ((this._ItemName != value))
+				{
+					this.OnItemNameChanging(value);
+					this.SendPropertyChanging();
+					this._ItemName = value;
+					this.SendPropertyChanged("ItemName");
+					this.OnItemNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ItemNo", DbType="VarChar(16) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		public string ItemNo
+		{
+			get
+			{
+				return this._ItemNo;
+			}
+			set
+			{
+				if ((this._ItemNo != value))
+				{
+					this.OnItemNoChanging(value);
+					this.SendPropertyChanging();
+					this._ItemNo = value;
+					this.SendPropertyChanged("ItemNo");
+					this.OnItemNoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CalcPriceUnit", DbType="Decimal(14,2)")]
+		public System.Nullable<decimal> CalcPriceUnit
+		{
+			get
+			{
+				return this._CalcPriceUnit;
+			}
+			set
+			{
+				if ((this._CalcPriceUnit != value))
+				{
+					this.OnCalcPriceUnitChanging(value);
+					this.SendPropertyChanging();
+					this._CalcPriceUnit = value;
+					this.SendPropertyChanged("CalcPriceUnit");
+					this.OnCalcPriceUnitChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PriceUnit", DbType="Decimal(14,2)")]
+		public System.Nullable<decimal> PriceUnit
+		{
+			get
+			{
+				return this._PriceUnit;
+			}
+			set
+			{
+				if ((this._PriceUnit != value))
+				{
+					this.OnPriceUnitChanging(value);
+					this.SendPropertyChanging();
+					this._PriceUnit = value;
+					this.SendPropertyChanged("PriceUnit");
+					this.OnPriceUnitChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Unit", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string Unit
+		{
+			get
+			{
+				return this._Unit;
+			}
+			set
+			{
+				if ((this._Unit != value))
+				{
+					this.OnUnitChanging(value);
+					this.SendPropertyChanging();
+					this._Unit = value;
+					this.SendPropertyChanged("Unit");
+					this.OnUnitChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
 		}
 	}
 }

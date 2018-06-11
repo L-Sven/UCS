@@ -27,20 +27,3 @@ C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsVismaTid\obj\Debug\UcsVis
 C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsVismaTid\obj\Debug\UcsVismaTid.exe
 C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsVismaTid\obj\Debug\UcsVismaTid.pdb
 C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsVismaTid\bin\Debug\NLog.dll
-<<<<<<< HEAD
-C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsVismaTid\obj\Debug\UcsVismaTid.csprojAssemblyReference.cache
-C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsVismaTid\obj\Debug\UcsVismaTid.csproj.CoreCompileInputs.cache
-=======
-C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsVismaTid\bin\Debug\UcsVismaTid.exe.CodeAnalysisLog.xml
-C:\Users\sven_\OneDrive\Dokument\Sourcetree\UCS\UCS\UcsVismaTid\bin\Debug\UcsVismaTid.exe.lastcodeanalysissucceeded
->>>>>>> a4b3236de4f3db60355a4cc401ab50c2d2923ca7
-C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsVismaTid\bin\Debug\App.config
-C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsVismaTid\bin\Debug\NLog.config
-C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsVismaTid\bin\Debug\UcsVismaTid.exe.config
-C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsVismaTid\bin\Debug\UcsVismaTid.exe
-C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsVismaTid\bin\Debug\UcsVismaTid.pdb
-C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsVismaTid\bin\Debug\NLog.dll
-C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsVismaTid\bin\Debug\NLog.xml
-C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsVismaTid\obj\Debug\UcsVismaTid.csproj.CopyComplete
-C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsVismaTid\obj\Debug\UcsVismaTid.exe
-C:\users\sijoh0500\Work Folders\Documents\NytGithubTest\UCS\UcsVismaTid\obj\Debug\UcsVismaTid.pdb

@@ -127,7 +127,6 @@ namespace UcsVismaTid
 
             try
             {
-                //Vi använder LINQ TO SQL för detta ändamål. Bör dock uppdateras till Entity Framework do LINQ TO SQL inte underhålls längre!
                 var timeReport = from report in db.TimeReports
                     select report;
 
@@ -174,39 +173,29 @@ namespace UcsVismaTid
                     price = element.Project.Customer.HourlyPrice.Value;
                 }
             }
-            if(element.CustomerId != null)
+            else if (element.CustomerId != null)
             {
                 if (element.Customer.PriceListId != null)
                 {
                     var pricelistID = element.Customer.PriceListId;
-                    price = db.Pricings.Where(x => x.PriceListPeriod.PriceListId == pricelistID).Select(x => x.Price).Single();
+                    price = db.Pricings.Where(x => x.PriceListPeriod.PriceListId == pricelistID).Select(x => x.Price)
+                        .Single();
+                }
+            }
+            else
+            {
+                var items = db.InvoiceSettingRowDetails.Where(x => x.InvoiceId == element.Invoice.InvoiceId)
+                    .Select(x => x.ItemNo);
+
+                foreach (var item in items)
+                {
+                    price = db.Items.Where(x => x.ItemNo == item).Select(x => x.CalcPriceUnit).Single();
+                    return price = price * element.Quantity;
                 }
             }
             
-
             if (element.HourToInvoice != null)
                 price = price * element.HourToInvoice;
-
-
-
-
-            //foreach (var el in db.Pricings)
-            //{
-            //    //Här avgörs det hur vi ska ta reda på price. I första hand genom activityID, i andra hand genom projectID
-
-            //    if (el.ActivityId == element.ActivityId && el.ProjectId == element.ProjectId && el.ProgramUserId == element.ProgramUserId)
-            //    {
-            //        price = el.Price;
-            //        break;
-            //    }
-            //    if (el.ActivityId == element.ActivityId && el.ProjectId == element.ProjectId)
-            //    {
-            //        price = el.Price;
-            //        break;
-            //    }
-            //}
-
-
 
             return price;
         }

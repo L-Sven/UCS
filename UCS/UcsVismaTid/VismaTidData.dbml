@@ -47,6 +47,7 @@
       <Association Name="BookResultUnit_TimeReport" Member="BookResultUnit" ThisKey="BookResultUnitId" OtherKey="BookResultUnitId" Type="BookResultUnit" IsForeignKey="true" />
       <Association Name="Activity_TimeReport" Member="Activity" ThisKey="ActivityId" OtherKey="ActivityId" Type="Activity" IsForeignKey="true" />
       <Association Name="Customer_TimeReport" Member="Customer" ThisKey="CustomerId" OtherKey="CustomerId" Type="Customer" IsForeignKey="true" />
+      <Association Name="Invoice_TimeReport" Member="Invoice" ThisKey="InvoiceId" OtherKey="InvoiceId" Type="Invoice" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.TimeCode" Member="TimeCodes">
@@ -129,6 +130,7 @@
       <Association Name="Project_TimeReport" Member="TimeReports" ThisKey="ProjectId" OtherKey="ProjectId" Type="TimeReport" />
       <Association Name="Project_Participant" Member="Participants" ThisKey="ProjectId" OtherKey="ProjectId" Type="Participant" />
       <Association Name="Project_Activity" Member="Activities" ThisKey="ProjectId" OtherKey="ProjectId" Type="Activity" />
+      <Association Name="Project_InvoiceSettingRowDetail" Member="InvoiceSettingRowDetails" ThisKey="ProjectId" OtherKey="ProjectId" Type="InvoiceSettingRowDetail" />
       <Association Name="ProgramUser_Project" Member="ProgramUser" ThisKey="ProgramUserId" OtherKey="ProgramUserId" Type="ProgramUser" IsForeignKey="true" />
       <Association Name="PriceList_Project" Member="PriceList" ThisKey="ProjectPriceListId" OtherKey="PriceListId" Type="PriceList" IsForeignKey="true" />
       <Association Name="PriceList_Project1" Member="PriceList1" ThisKey="StdPriceListId" OtherKey="PriceListId" Type="PriceList" IsForeignKey="true" />
@@ -174,6 +176,9 @@
       <Association Name="ProgramUser_Pricing" Member="Pricings" ThisKey="ProgramUserId" OtherKey="ProgramUserId" Type="Pricing" />
       <Association Name="ProgramUser_Participant" Member="Participants" ThisKey="ProgramUserId" OtherKey="ProgramUserId" Type="Participant" />
       <Association Name="ProgramUser_Customer" Member="Customers" ThisKey="ProgramUserId" OtherKey="ProgramUserId" Type="Customer" />
+      <Association Name="ProgramUser_Invoice" Member="Invoices" ThisKey="ProgramUserId" OtherKey="ApprovedId" Type="Invoice" />
+      <Association Name="ProgramUser_Invoice1" Member="Invoices1" ThisKey="ProgramUserId" OtherKey="ExportedId" Type="Invoice" />
+      <Association Name="ProgramUser_Invoice2" Member="Invoices2" ThisKey="ProgramUserId" OtherKey="ReferenceId" Type="Invoice" />
       <Association Name="ProgramUserGroup_ProgramUser" Member="ProgramUserGroup" ThisKey="ProgramUserGroupId" OtherKey="ProgramUserGroupId" Type="ProgramUserGroup" IsForeignKey="true" />
       <Association Name="BookResultUnit_ProgramUser" Member="BookResultUnit" ThisKey="ResUnitId" OtherKey="BookResultUnitId" Type="BookResultUnit" IsForeignKey="true" />
     </Type>
@@ -272,6 +277,7 @@
       <Column Name="Active" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Association Name="BookResultUnit_TimeReport" Member="TimeReports" ThisKey="BookResultUnitId" OtherKey="BookResultUnitId" Type="TimeReport" />
       <Association Name="BookResultUnit_ProgramUser" Member="ProgramUsers" ThisKey="BookResultUnitId" OtherKey="ResUnitId" Type="ProgramUser" />
+      <Association Name="BookResultUnit_InvoiceSettingRowDetail" Member="InvoiceSettingRowDetails" ThisKey="BookResultUnitId" OtherKey="ResUnitId" Type="InvoiceSettingRowDetail" />
     </Type>
   </Table>
   <Table Name="dbo.Activity" Member="Activities">
@@ -388,6 +394,7 @@
       <Column Name="CreditCheckCName" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
       <Association Name="Customer_TimeReport" Member="TimeReports" ThisKey="CustomerId" OtherKey="CustomerId" Type="TimeReport" />
       <Association Name="Customer_Project" Member="Projects" ThisKey="CustomerId" OtherKey="CustomerId" Type="Project" />
+      <Association Name="Customer_Invoice" Member="Invoices" ThisKey="CustomerId" OtherKey="CustomerId" Type="Invoice" />
       <Association Name="CustomerCategory_Customer" Member="CustomerCategory" ThisKey="CustomerCategoryId" OtherKey="CustomerCategoryId" Type="CustomerCategory" IsForeignKey="true" />
       <Association Name="PriceList_Customer" Member="PriceList1" ThisKey="PriceListId" OtherKey="PriceListId" Type="PriceList" IsForeignKey="true" />
       <Association Name="ProgramUser_Customer" Member="ProgramUser" ThisKey="ProgramUserId" OtherKey="ProgramUserId" Type="ProgramUser" IsForeignKey="true" />
@@ -413,6 +420,69 @@
       <Column Name="StdActivitySelection" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="ItemText" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
       <Association Name="ProjectHdr_Project" Member="Projects" ThisKey="ProjectHdrId" OtherKey="ProjectHdrId" Type="Project" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Invoice" Member="Invoices">
+    <Type Name="Invoice">
+      <Column Name="InvoiceId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="InvoiceNo" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="InvoicePartNo" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="AccountingOrderNo" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CustomerId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreatedDate" Type="System.DateTime" DbType="SmallDateTime NOT NULL" CanBeNull="false" />
+      <Column Name="FromDate" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="EndDate" Type="System.DateTime" DbType="SmallDateTime NOT NULL" CanBeNull="false" />
+      <Column Name="InvoiceHeaderText" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="ApprovedDate" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="ApprovedId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ExportedDate" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="ExportedId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ChangedTxt" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="ShowExtraInvoiceText" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DetailLevelAccountsYear" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DetailLevelProject" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DetailLevelActivity" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DetailLevelProgramUser" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DetailLevelDate" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DetailLevelPartSumAccountsYear" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DetailLevelPartSumProject" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DetailLevelPartSumActivity" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DetailLevelPartSumProgramUser" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="ExtraFUTextInserted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="TypeOfInvoiceing" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="TypeOfInvoice" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ExportInvoiceAs" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ReferenceId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="YourReference" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="Invoice_TimeReport" Member="TimeReports" ThisKey="InvoiceId" OtherKey="InvoiceId" Type="TimeReport" />
+      <Association Name="Invoice_InvoiceSettingRowDetail" Member="InvoiceSettingRowDetails" ThisKey="InvoiceId" OtherKey="InvoiceId" Type="InvoiceSettingRowDetail" />
+      <Association Name="ProgramUser_Invoice" Member="ProgramUser" ThisKey="ApprovedId" OtherKey="ProgramUserId" Type="ProgramUser" IsForeignKey="true" />
+      <Association Name="Customer_Invoice" Member="Customer" ThisKey="CustomerId" OtherKey="CustomerId" Type="Customer" IsForeignKey="true" />
+      <Association Name="ProgramUser_Invoice1" Member="ProgramUser1" ThisKey="ExportedId" OtherKey="ProgramUserId" Type="ProgramUser" IsForeignKey="true" />
+      <Association Name="ProgramUser_Invoice2" Member="ProgramUser2" ThisKey="ReferenceId" OtherKey="ProgramUserId" Type="ProgramUser" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.InvoiceSettingRowDetail" Member="InvoiceSettingRowDetails">
+    <Type Name="InvoiceSettingRowDetail">
+      <Column Name="InvoiceSettingRowDetailId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="InvoiceId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ResUnitId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ProjectId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ItemNo" Type="System.String" DbType="VarChar(16) NOT NULL" CanBeNull="false" />
+      <Column Name="Amount" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="InvoiceTxt" Type="System.String" DbType="VarChar(2000) NOT NULL" CanBeNull="false" />
+      <Association Name="Invoice_InvoiceSettingRowDetail" Member="Invoice" ThisKey="InvoiceId" OtherKey="InvoiceId" Type="Invoice" IsForeignKey="true" />
+      <Association Name="Project_InvoiceSettingRowDetail" Member="Project" ThisKey="ProjectId" OtherKey="ProjectId" Type="Project" IsForeignKey="true" />
+      <Association Name="BookResultUnit_InvoiceSettingRowDetail" Member="BookResultUnit" ThisKey="ResUnitId" OtherKey="BookResultUnitId" Type="BookResultUnit" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Item" Member="Items">
+    <Type Name="Item">
+      <Column Name="ItemName" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="ItemNo" Type="System.String" DbType="VarChar(16) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="CalcPriceUnit" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="PriceUnit" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="Unit" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
     </Type>
   </Table>
 </Database>
