@@ -184,7 +184,8 @@ namespace UcsVismaTid
                         .Single();
                 }
             }
-            else
+            
+            if(price == null)
             {
                 var items = db.InvoiceSettingRowDetails.Where(x => x.InvoiceId == element.Invoice.InvoiceId)
                     .Select(x => x.ItemNo);
@@ -618,6 +619,11 @@ namespace UcsVismaTid
                 }
             }
 
+        }
+
+        public void GetInvoiceData()
+        {
+            
         }
     }
 }

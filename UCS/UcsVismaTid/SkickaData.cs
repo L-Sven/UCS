@@ -96,8 +96,7 @@ namespace UcsVismaTid
                          cmdAddTimeReport.Parameters.Add(new SqlParameter("@TidsRapportID", t[i].TimeReportId));
                          cmdAddTimeReport.Parameters.Add(t[i].ActivityId == null ? new SqlParameter("@AktivitetsID", DBNull.Value) : new SqlParameter("@AktivitetsID", t[i].ActivityId));
                          cmdAddTimeReport.Parameters.Add(t[i].AmountToInvoice == null ? new SqlParameter("@AmountToInvoice", DBNull.Value) : new SqlParameter("@AmountToInvoice", t[i].AmountToInvoice));
-
-                         //sqlCon2.Open();
+                         
                          cmdAddTimeReport.ExecuteNonQuery();
                          cmdAddTimeReport.Parameters.Clear();
                      }
@@ -105,17 +104,11 @@ namespace UcsVismaTid
                      {
                          logger.ErrorMessage(ex);
                      }
-                     //finally
-                     //{
-                     //    sqlCon2.Close();
-                     //}
                  }
              });
+
             sqlCon2.Close();
             
-
-            
-
         }
 
         public void ProgramUsersTillDatabas(ProgramUsers pU)

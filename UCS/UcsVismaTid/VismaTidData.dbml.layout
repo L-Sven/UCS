@@ -14,7 +14,7 @@
         <elementListCompartment Id="b5d6d0d7-a206-4f52-bce3-8b92572b927b" absoluteBounds="0.51500000000000012, 2.46, 1.9700000000000002, 3.3262125651041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(1.5625 : 2); (1.5625 : 0.95)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(1.5625 : 2); (1.5625 : 0.95)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/VismaTidDataDataContext/TimeCode/TimeCode_TimeReport" />
       <nodes>
         <classShapeMoniker Id="09fa1bde-5a81-46bc-aac0-0d0dc81a3b55" />
@@ -33,7 +33,7 @@
         <elementListCompartment Id="680fb47a-eb02-428f-91c8-e8aa576e7c43" absoluteBounds="3.2650000000000006, 1.085, 1.9700000000000002, 7.941446940104167" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(3.25 : 0.7875); (2.95833333333333 : 0.787499999999999 : JumpStart); (2.79166666666667 : 0.7875 : JumpEnd); (2.625 : 0.7875)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(3.25 : 0.7875); (2.625 : 0.7875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/VismaTidDataDataContext/Project/Project_TimeReport" />
       <nodes>
         <classShapeMoniker Id="678c59da-f475-4e74-b140-080101fcced7" />
@@ -46,7 +46,7 @@
         <elementListCompartment Id="7641edd2-3bc4-4021-b597-aa8088f90812" absoluteBounds="5.7650000000000006, 1.96, 1.9700000000000002, 5.6338297526041661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(5.75 : 1.7562525); (4.94270458333333 : 1.7562525 : JumpStart); (4.77603791666667 : 1.7562525 : JumpEnd); (4.48958083333333 : 1.7562525 : JumpStart); (4.32291416666667 : 1.7562525 : JumpEnd); (4.10676783333333 : 1.7562525 : JumpStart); (3.94010116666667 : 1.7562525 : JumpEnd); (3.75129808333333 : 1.7562525 : JumpStart); (3.58463141666667 : 1.7562525 : JumpEnd); (3.48958333333333 : 1.7562525 : JumpStart); (3.29166666666667 : 1.7562525 : JumpEnd); (3.08333333333333 : 1.7562525 : JumpStart); (2.54166666666667 : 1.7562525 : JumpEnd); (2.1250025 : 1.7562525); (2.1250025 : 0.95)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(5.75 : 1.7562525); (3.45833333333333 : 1.7562525 : JumpStart); (3.29166666666667 : 1.7562525 : JumpEnd); (2.83333333333333 : 1.7562525 : JumpStart); (2.66666666666667 : 1.7562525 : JumpEnd); (2.1250025 : 1.7562525); (2.1250025 : 0.95)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/VismaTidDataDataContext/ProgramUser/ProgramUser_TimeReport" />
       <nodes>
         <classShapeMoniker Id="11238c6c-fe78-4975-9a3a-3777eb4a4d20" />
@@ -172,7 +172,7 @@
         <elementListCompartment Id="097cd6cf-73f7-4db2-b432-567ea43e0f27" absoluteBounds="2.2649999999999997, 3.585, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(5.75 : 1.88437875); (4.94270458333333 : 1.88437875 : JumpStart); (4.77603791666667 : 1.88437875 : JumpEnd); (4.48958083333333 : 1.88437875 : JumpStart); (4.32291416666667 : 1.88437875 : JumpEnd); (4.10676783333333 : 1.88437875 : JumpStart); (3.94010116666667 : 1.88437875 : JumpEnd); (3.75129808333333 : 1.88437875 : JumpStart); (3.58463141666667 : 1.88437875 : JumpEnd); (3.48958333333333 : 1.88437875 : JumpStart); (3.29166666666667 : 1.88437875 : JumpEnd); (2.9375 : 1.88437875); (2.9375 : 3.125)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(5.75 : 1.88437875); (4.94270458333333 : 1.88437875 : JumpStart); (4.77603791666667 : 1.88437875 : JumpEnd); (4.48958083333333 : 1.88437875 : JumpStart); (4.32291416666667 : 1.88437875 : JumpEnd); (4.10676783333333 : 1.88437875 : JumpStart); (3.94010116666667 : 1.88437875 : JumpEnd); (3.48958333333333 : 1.88437875 : JumpStart); (3.29166666666667 : 1.88437875 : JumpEnd); (2.9375 : 1.88437875); (2.9375 : 3.125)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/VismaTidDataDataContext/ProgramUser/ProgramUser_Participant" />
       <nodes>
         <classShapeMoniker Id="11238c6c-fe78-4975-9a3a-3777eb4a4d20" />
@@ -198,7 +198,7 @@
         <elementListCompartment Id="0180cfc4-2b94-4403-87c0-0f902bbe8f7e" absoluteBounds="8.265, 4.71, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(8.25 : 4.59961538461538); (7.875 : 4.59961538461538); (7.875 : 3.7); (5.33333333333333 : 3.7 : JumpStart); (5.16666666666667 : 3.7 : JumpEnd); (5.08333333333333 : 3.7 : JumpStart); (4.76041666666667 : 3.7 : JumpEnd); (4.5 : 3.7); (4.5 : 2.875); (3.48958333333333 : 2.875 : JumpStart); (3.22916666666667 : 2.875 : JumpEnd); (3.02083333333333 : 2.875 : JumpStart); (2.85416666666667 : 2.875 : JumpEnd); (2.75 : 2.875); (2.75 : 1.325); (2.48958658333333 : 1.325 : JumpStart); (2.32291991666667 : 1.325 : JumpEnd); (2.20833583333333 : 1.325 : JumpStart); (2.04166916666667 : 1.325 : JumpEnd); (1.64583333333333 : 1.325 : JumpStart); (1.47916666666667 : 1.325 : JumpEnd); (1.062498 : 1.325); (1.062498 : 0.95)]" fixedFrom="NotFixed" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(8.25 : 4.59961538461538); (7.875 : 4.59961538461538); (7.875 : 3.7); (4.5 : 3.7); (4.5 : 2.875); (2.75 : 2.875); (2.75 : 1.325); (1.062498 : 1.325); (1.062498 : 0.95)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/VismaTidDataDataContext/BookResultUnit/BookResultUnit_TimeReport" />
       <nodes>
         <classShapeMoniker Id="f0b8405d-6f80-4906-86d0-9bcea3d51f69" />
@@ -218,7 +218,7 @@
         <elementListCompartment Id="e1cff877-2df0-47ce-b828-f875a8764809" absoluteBounds="3.015, 5.71, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(3 : 5.475); (2.33333333333333 : 5.475 : JumpStart); (2.16666666666667 : 5.475 : JumpEnd); (1.83333333333333 : 5.475 : JumpStart); (1.66666666666667 : 5.475 : JumpEnd); (1.375 : 5.475); (1.375 : 2.7); (1.54166666666667 : 2.7 : JumpStart); (1.70833333333333 : 2.7 : JumpEnd); (2.625 : 2.7); (2.625 : 1.45); (2.40625325 : 1.45); (2.40625325 : 0.95)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(3 : 5.475); (1.375 : 5.475); (1.375 : 2.7); (2.625 : 2.7); (2.625 : 1.45); (2.40625325 : 1.45); (2.40625325 : 0.95)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/VismaTidDataDataContext/Activity/Activity_TimeReport" />
       <nodes>
         <classShapeMoniker Id="a8884056-774c-4394-893d-b7685ca2c3a6" />
@@ -232,14 +232,14 @@
         <classShapeMoniker Id="4bfbb33d-eea6-483e-898f-5c0514f0a9d5" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(4.0234345 : 1.075); (4.0234345 : 2.125); (3.48958333333333 : 2.125 : JumpStart); (3.22916666666667 : 2.125 : JumpEnd); (3.125 : 2.125); (3.125 : 2.9375); (3.02083333333333 : 2.9375 : JumpStart); (2.85416666666667 : 2.9375 : JumpEnd); (2.20833333333333 : 2.9375 : JumpStart); (2.04166666666667 : 2.9375 : JumpEnd); (2 : 2.9375); (2 : 5.331248); (2.16666666666667 : 5.331248 : JumpStart); (2.33333333333333 : 5.331248 : JumpEnd); (3 : 5.331248)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(4.0234345 : 1.075); (4.0234345 : 2.125); (3.48958333333333 : 2.125 : JumpStart); (3.29166666666667 : 2.125 : JumpEnd); (3.125 : 2.125); (3.125 : 2.9375); (2 : 2.9375); (2 : 5.331248); (3 : 5.331248)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/VismaTidDataDataContext/Project/Project_Activity" />
       <nodes>
         <classShapeMoniker Id="678c59da-f475-4e74-b140-080101fcced7" />
         <classShapeMoniker Id="a8884056-774c-4394-893d-b7685ca2c3a6" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(0.9375 : 2.45); (0.9375 : 5.6187525); (1.07291666666667 : 5.6187525 : JumpStart); (1.23958333333333 : 5.6187525 : JumpEnd); (1.66666666666667 : 5.6187525 : JumpStart); (1.83333333333333 : 5.6187525 : JumpEnd); (2.16666666666667 : 5.6187525 : JumpStart); (2.33333333333333 : 5.6187525 : JumpEnd); (3 : 5.6187525)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(0.9375 : 2.45); (0.9375 : 5.6187525); (3 : 5.6187525)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/VismaTidDataDataContext/TimeCode/TimeCode_Activity" />
       <nodes>
         <classShapeMoniker Id="09fa1bde-5a81-46bc-aac0-0d0dc81a3b55" />
@@ -271,21 +271,21 @@
         <elementListCompartment Id="2bb566b7-afcc-421f-a110-94dcf24c5545" absoluteBounds="5.89, 5.085, 1.9700000000000002, 13.5181884765625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(5.875 : 4.8320313125); (5.33333333333333 : 4.8320313125 : JumpStart); (5.16666666666667 : 4.8320313125 : JumpEnd); (4.92708333333333 : 4.8320313125 : JumpStart); (4.76041666666667 : 4.8320313125 : JumpEnd); (2.08333333333333 : 4.8320313125 : JumpStart); (1.91666666666667 : 4.8320313125 : JumpEnd); (1.83333333333333 : 4.8320313125 : JumpStart); (1.66666666666667 : 4.8320313125 : JumpEnd); (1.625 : 4.8320313125); (1.625 : 2.575); (2.54166666666667 : 2.575 : JumpStart); (2.70833333333333 : 2.575 : JumpEnd); (2.8125 : 2.575); (2.8125 : 1.2); (2.48958658333333 : 1.2 : JumpStart); (2.32291991666667 : 1.2 : JumpEnd); (2.20833583333333 : 1.2 : JumpStart); (2.04166916666667 : 1.2 : JumpEnd); (1.84375125 : 1.2); (1.84375125 : 0.95)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(5.875 : 4.8320313125); (5.33333333333333 : 4.8320313125 : JumpStart); (5.16666666666667 : 4.8320313125 : JumpEnd); (2.08333333333333 : 4.8320313125 : JumpStart); (1.91666666666667 : 4.8320313125 : JumpEnd); (1.625 : 4.8320313125); (1.625 : 2.575); (2.54166666666667 : 2.575 : JumpStart); (2.70833333333333 : 2.575 : JumpEnd); (2.8125 : 2.575); (2.8125 : 1.2); (2.48958658333333 : 1.2 : JumpStart); (2.32291991666667 : 1.2 : JumpEnd); (2.20833583333333 : 1.2 : JumpStart); (2.04166916666667 : 1.2 : JumpEnd); (1.84375125 : 1.2); (1.84375125 : 0.95)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/VismaTidDataDataContext/Customer/Customer_TimeReport" />
       <nodes>
         <classShapeMoniker Id="3f58a60c-5618-4f90-9171-1695cad790f7" />
         <classShapeMoniker Id="43701005-c051-4e2d-9809-d655a2e26b9f" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(5.875 : 4.670310125); (5.33333333333333 : 4.670310125 : JumpStart); (5.16666666666667 : 4.670310125 : JumpEnd); (5 : 4.670310125); (5 : 2.98125); (4.58333333333333 : 2.98125 : JumpStart); (4.41666666666667 : 2.98125 : JumpEnd); (3.375 : 2.98125); (3.375 : 1.45); (3.58463141666667 : 1.45 : JumpStart); (3.75129808333333 : 1.45 : JumpEnd); (3.94010116666667 : 1.45 : JumpStart); (4.10676783333333 : 1.45 : JumpEnd); (4.37890425 : 1.45); (4.37890425 : 1.075)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(5.875 : 4.670310125); (5 : 4.670310125); (5 : 2.98125); (4.58333333333333 : 2.98125 : JumpStart); (4.41666666666667 : 2.98125 : JumpEnd); (3.375 : 2.98125); (3.375 : 1.45); (4.37890425 : 1.45); (4.37890425 : 1.075)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/VismaTidDataDataContext/Customer/Customer_Project" />
       <nodes>
         <classShapeMoniker Id="3f58a60c-5618-4f90-9171-1695cad790f7" />
         <classShapeMoniker Id="678c59da-f475-4e74-b140-080101fcced7" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(8.375 : 5.66429768880208); (8.36458333333333 : 5.66429768880208 : JumpStart); (8.19791666666667 : 5.66429768880208 : JumpEnd); (8.183 : 5.66429768880208); (8.183 : 4.993752); (7.875 : 4.993752)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(8.375 : 5.66429768880208); (8.183 : 5.66429768880208); (8.183 : 4.993752); (7.875 : 4.993752)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/VismaTidDataDataContext/CustomerCategory/CustomerCategory_Customer" />
       <nodes>
         <classShapeMoniker Id="e364f083-7fde-4b9e-8ca0-b61a54a8be79" />
@@ -312,7 +312,7 @@
         <elementListCompartment Id="d9920380-ff74-455a-a116-8cb07467d32e" absoluteBounds="5.89, 5.835, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(5.875 : 6.16429768880208); (5.25 : 6.16429768880208); (5.25 : 2.95); (3.375 : 2.95); (3.375 : 1.325); (3.58463141666667 : 1.325 : JumpStart); (3.75129808333333 : 1.325 : JumpEnd); (3.94010116666667 : 1.325 : JumpStart); (4.10676783333333 : 1.325 : JumpEnd); (4.29557091666667 : 1.325 : JumpStart); (4.48958083333333 : 1.325 : JumpEnd); (4.734374 : 1.325); (4.734374 : 1.075)]" fixedFrom="NotFixed" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(5.875 : 6.16429768880208); (5.25 : 6.16429768880208); (5.25 : 2.95); (3.375 : 2.95); (3.375 : 1.325); (3.94010116666667 : 1.325 : JumpStart); (4.10676783333333 : 1.325 : JumpEnd); (4.29557091666667 : 1.325 : JumpStart); (4.46223758333333 : 1.325 : JumpEnd); (4.734374 : 1.325); (4.734374 : 1.075)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/VismaTidDataDataContext/ProjectCategory/ProjectCategory_Project" />
       <nodes>
         <classShapeMoniker Id="73b9511a-30ea-449d-a2ed-0c03701665f2" />
@@ -325,7 +325,7 @@
         <elementListCompartment Id="2f225a5e-97a1-4ae0-9d7c-12fa58162b5b" absoluteBounds="2.64, 4.46, 1.9700000000000002, 1.7878011067708335" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(3.625 : 4); (3.625 : 3.825); (2.125 : 3.825); (2.125 : 2.7625); (2.66666666666667 : 2.7625 : JumpStart); (2.83333333333333 : 2.7625 : JumpEnd); (3 : 2.7625); (3 : 0.962502); (3.25 : 0.962502)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(3.625 : 4); (3.625 : 3.825); (2.125 : 3.825); (2.125 : 2.7625); (2.66666666666667 : 2.7625 : JumpStart); (2.83333333333333 : 2.7625 : JumpEnd); (3 : 2.7625); (3 : 0.962502); (3.25 : 0.962502)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/VismaTidDataDataContext/ProjectHdr/ProjectHdr_Project" />
       <nodes>
         <classShapeMoniker Id="af3b04bf-307e-4f31-83e2-d165ceb10415" />
@@ -338,35 +338,35 @@
         <elementListCompartment Id="9ea84322-390e-4b44-b09c-ba6c1f8d421f" absoluteBounds="0.51500000000000012, 6.46, 1.9700000000000002, 6.0184326171875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(1.15625 : 6); (1.15625 : 2.6375); (2.66666666666667 : 2.6375 : JumpStart); (2.83333333333333 : 2.6375 : JumpEnd); (2.875 : 2.6375); (2.875 : 0.612498); (2.625 : 0.612498)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(1.15625 : 6); (1.15625 : 2.6375); (2.66666666666667 : 2.6375 : JumpStart); (2.83333333333333 : 2.6375 : JumpEnd); (2.875 : 2.6375); (2.875 : 0.612498); (2.625 : 0.612498)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/VismaTidDataDataContext/Invoice/Invoice_TimeReport" />
       <nodes>
         <classShapeMoniker Id="8ac4b7ba-f1a7-4750-a5e6-abf2969b23f6" />
         <classShapeMoniker Id="43701005-c051-4e2d-9809-d655a2e26b9f" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(5.75 : 1.62812625); (4.94270458333333 : 1.62812625 : JumpStart); (4.77603791666667 : 1.62812625 : JumpEnd); (4.48958083333333 : 1.62812625 : JumpStart); (4.32291416666667 : 1.62812625 : JumpEnd); (4.10676783333333 : 1.62812625 : JumpStart); (3.94010116666667 : 1.62812625 : JumpEnd); (3.75129808333333 : 1.62812625 : JumpStart); (3.58463141666667 : 1.62812625 : JumpEnd); (3.48958333333333 : 1.62812625 : JumpStart); (3.29166666666667 : 1.62812625 : JumpEnd); (3.08333333333333 : 1.62812625 : JumpStart); (2.54166666666667 : 1.62812625 : JumpEnd); (2.20833583333333 : 1.62812625 : JumpStart); (2.04166916666667 : 1.62812625 : JumpEnd); (1.64583333333333 : 1.62812625 : JumpStart); (1.47916666666667 : 1.62812625 : JumpEnd); (0.4375 : 1.62812625); (0.4375 : 5.90625); (1.07291666666667 : 5.90625 : JumpStart); (1.23958333333333 : 5.90625 : JumpEnd); (1.703125 : 5.90625); (1.703125 : 6)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(5.75 : 1.62812625); (3.45833333333333 : 1.62812625 : JumpStart); (3.29166666666667 : 1.62812625 : JumpEnd); (2.83333333333333 : 1.62812625 : JumpStart); (2.66666666666667 : 1.62812625 : JumpEnd); (0.4375 : 1.62812625); (0.4375 : 5.90625); (1.703125 : 5.90625); (1.703125 : 6)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/VismaTidDataDataContext/ProgramUser/ProgramUser_Invoice" />
       <nodes>
         <classShapeMoniker Id="11238c6c-fe78-4975-9a3a-3777eb4a4d20" />
         <classShapeMoniker Id="8ac4b7ba-f1a7-4750-a5e6-abf2969b23f6" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(5.875 : 4.9937525); (5.33333333333333 : 4.9937525 : JumpStart); (5.16666666666667 : 4.9937525 : JumpEnd); (4.92708333333333 : 4.9937525 : JumpStart); (4.76041666666667 : 4.9937525 : JumpEnd); (2.25 : 4.9937525); (2.25 : 6)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(5.875 : 4.9937525); (5.33333333333333 : 4.9937525 : JumpStart); (5.16666666666667 : 4.9937525 : JumpEnd); (2.25 : 4.9937525); (2.25 : 6)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/VismaTidDataDataContext/Customer/Customer_Invoice" />
       <nodes>
         <classShapeMoniker Id="3f58a60c-5618-4f90-9171-1695cad790f7" />
         <classShapeMoniker Id="8ac4b7ba-f1a7-4750-a5e6-abf2969b23f6" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(5.75 : 1.91563125); (4.94270458333333 : 1.91563125 : JumpStart); (4.77603791666667 : 1.91563125 : JumpEnd); (4.48958083333333 : 1.91563125 : JumpStart); (4.32291416666667 : 1.91563125 : JumpEnd); (4.10676783333333 : 1.91563125 : JumpStart); (3.94010116666667 : 1.91563125 : JumpEnd); (3.75129808333333 : 1.91563125 : JumpStart); (3.58463141666667 : 1.91563125 : JumpEnd); (3.48958333333333 : 1.91563125 : JumpStart); (3.29166666666667 : 1.91563125 : JumpEnd); (3.08333333333333 : 1.91563125 : JumpStart); (2.54166666666667 : 1.91563125 : JumpEnd); (1.64583333333333 : 1.91563125 : JumpStart); (1.47916666666667 : 1.91563125 : JumpEnd); (0.375 : 1.91563125); (0.375 : 5.84375); (0.796873 : 5.84375); (0.796873 : 6)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(5.75 : 1.91563125); (4.94270458333333 : 1.91563125 : JumpStart); (4.77603791666667 : 1.91563125 : JumpEnd); (3.48958333333333 : 1.91563125 : JumpStart); (3.29166666666667 : 1.91563125 : JumpEnd); (2.83333333333333 : 1.91563125 : JumpStart); (2.54166666666667 : 1.91563125 : JumpEnd); (1.64583333333333 : 1.91563125 : JumpStart); (1.47916666666667 : 1.91563125 : JumpEnd); (0.375 : 1.91563125); (0.375 : 5.84375); (0.796873 : 5.84375); (0.796873 : 6)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/VismaTidDataDataContext/ProgramUser/ProgramUser_Invoice1" />
       <nodes>
         <classShapeMoniker Id="11238c6c-fe78-4975-9a3a-3777eb4a4d20" />
         <classShapeMoniker Id="8ac4b7ba-f1a7-4750-a5e6-abf2969b23f6" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(5.75 : 1.85312625); (4.94270458333333 : 1.85312625 : JumpStart); (4.77603791666667 : 1.85312625 : JumpEnd); (4.48958083333333 : 1.85312625 : JumpStart); (4.32291416666667 : 1.85312625 : JumpEnd); (4.10676783333333 : 1.85312625 : JumpStart); (3.94010116666667 : 1.85312625 : JumpEnd); (3.75129808333333 : 1.85312625 : JumpStart); (3.58463141666667 : 1.85312625 : JumpEnd); (3.48958333333333 : 1.85312625 : JumpStart); (3.29166666666667 : 1.85312625 : JumpEnd); (3.08333333333333 : 1.85312625 : JumpStart); (2.54166666666667 : 1.85312625 : JumpEnd); (1.64583333333333 : 1.85312625 : JumpStart); (1.47916666666667 : 1.85312625 : JumpEnd); (0.520833333333333 : 1.85312625 : JumpStart); (0.354166666666667 : 1.85312625 : JumpEnd); (0.3125 : 1.85312625); (0.3125 : 5.9375); (1.9765625 : 5.9375); (1.9765625 : 6)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(5.75 : 1.85312625); (4.94270458333333 : 1.85312625 : JumpStart); (4.77603791666667 : 1.85312625 : JumpEnd); (4.48958083333333 : 1.85312625 : JumpStart); (4.32291416666667 : 1.85312625 : JumpEnd); (4.10676783333333 : 1.85312625 : JumpStart); (3.94010116666667 : 1.85312625 : JumpEnd); (3.75129808333333 : 1.85312625 : JumpStart); (3.58463141666667 : 1.85312625 : JumpEnd); (3.48958333333333 : 1.85312625 : JumpStart); (3.29166666666667 : 1.85312625 : JumpEnd); (3.08333333333333 : 1.85312625 : JumpStart); (2.54166666666667 : 1.85312625 : JumpEnd); (1.64583333333333 : 1.85312625 : JumpStart); (1.47916666666667 : 1.85312625 : JumpEnd); (0.520833333333333 : 1.85312625 : JumpStart); (0.354166666666667 : 1.85312625 : JumpEnd); (0.3125 : 1.85312625); (0.3125 : 5.9375); (1.9765625 : 5.9375); (1.9765625 : 6)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/VismaTidDataDataContext/ProgramUser/ProgramUser_Invoice2" />
       <nodes>
         <classShapeMoniker Id="11238c6c-fe78-4975-9a3a-3777eb4a4d20" />
@@ -379,31 +379,31 @@
         <elementListCompartment Id="b610482c-d0e5-4da9-84ca-6266869cbbb8" absoluteBounds="3.515, 7.5850000000000009, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(2.5 : 8.20274983723958); (3.5 : 8.20274983723958)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(2.5 : 8.20274983723958); (3.5 : 8.20274983723958)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/VismaTidDataDataContext/Invoice/Invoice_InvoiceSettingRowDetail" />
       <nodes>
         <classShapeMoniker Id="8ac4b7ba-f1a7-4750-a5e6-abf2969b23f6" />
         <classShapeMoniker Id="a5daf84f-d221-4d59-9a85-5f467ea8e5c4" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(3.66796475 : 1.075); (3.66796475 : 2); (3.48958333333333 : 2 : JumpStart); (3.32291666666667 : 2 : JumpEnd); (3.3125 : 2); (3.3125 : 3.0625); (2.20833333333333 : 3.0625 : JumpStart); (1.91666666666667 : 3.0625 : JumpEnd); (1.75 : 3.0625); (1.75 : 5.75); (2.16666666666667 : 5.75 : JumpStart); (2.33333333333333 : 5.75 : JumpEnd); (2.75 : 5.75); (2.75 : 7.63262291861979); (3.5 : 7.63262291861979)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(3.66796475 : 1.075); (3.66796475 : 2); (3.48958333333333 : 2 : JumpStart); (3.32291666666667 : 2 : JumpEnd); (3.3125 : 2); (3.3125 : 3.0625); (2.20833333333333 : 3.0625 : JumpStart); (1.91666666666667 : 3.0625 : JumpEnd); (1.75 : 3.0625); (1.75 : 5.75); (2.16666666666667 : 5.75 : JumpStart); (2.33333333333333 : 5.75 : JumpEnd); (2.75 : 5.75); (2.75 : 7.63262291861979); (3.5 : 7.63262291861979)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/VismaTidDataDataContext/Project/Project_InvoiceSettingRowDetail" />
       <nodes>
         <classShapeMoniker Id="678c59da-f475-4e74-b140-080101fcced7" />
         <classShapeMoniker Id="a5daf84f-d221-4d59-9a85-5f467ea8e5c4" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(8.28125 : 4.7); (8.28125 : 8.20274983723958); (5.5 : 8.20274983723958)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(8.28125 : 4.7); (8.28125 : 8.20274983723958); (5.5 : 8.20274983723958)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/VismaTidDataDataContext/BookResultUnit/BookResultUnit_InvoiceSettingRowDetail" />
       <nodes>
         <classShapeMoniker Id="f0b8405d-6f80-4906-86d0-9bcea3d51f69" />
         <classShapeMoniker Id="a5daf84f-d221-4d59-9a85-5f467ea8e5c4" />
       </nodes>
     </associationConnector>
-    <classShape Id="3c094925-def1-4dc6-8711-843e902d535d" absoluteBounds="5.625, 10.25, 2, 1.7708968098958331">
+    <classShape Id="3c094925-def1-4dc6-8711-843e902d535d" absoluteBounds="6.875, 9.5, 2, 1.7708968098958331">
       <DataClassMoniker Name="/VismaTidDataDataContext/Item" />
       <nestedChildShapes>
-        <elementListCompartment Id="4b73a47a-571f-43cd-a42a-f5caabcad244" absoluteBounds="5.64, 10.71, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="4b73a47a-571f-43cd-a42a-f5caabcad244" absoluteBounds="6.89, 9.96, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
   </nestedChildShapes>
