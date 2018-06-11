@@ -129,8 +129,30 @@ namespace UcsVismaTid
             {
                 var timeReport = from report in db.TimeReports
                     select report;
+                var l = timeReport.ToArray();
 
-                foreach (var element in timeReport)
+                for (int i = 0; i < l.Count(); i++)
+                {
+                    timeReports.TimeReportId = l[i].TimeReportId;
+                    timeReports.ProjectId = l[i].ProjectId;
+                    timeReports.HourToInvoice = l[i].HourToInvoice;
+                    timeReports.HourOfReport = l[i].HourOfReport;
+                    timeReports.ProgramUserId = l[i].ProgramUserId;
+                    timeReports.TimeCodeId = l[i].TimeCodeId;
+                    timeReports.DateOfReport = l[i].DateOfReport;
+                    timeReports.ResultUnitId = l[i].BookResultUnitId;
+                    timeReports.ActivityId = l[i].ActivityId;
+                    timeReports.AmountToInvoice = CalculateAmountToInvoice(l[i]);
+
+                    if (l[i].ProgramUserId == 160297)
+                    {
+                        Console.WriteLine("Hej!");
+                    }
+
+                    tList.Add(timeReports);
+                }
+
+                /*foreach (var element in timeReport)
                 {
                     timeReports.TimeReportId = element.TimeReportId;
                     timeReports.ProjectId = element.ProjectId;
@@ -150,7 +172,7 @@ namespace UcsVismaTid
 
                     tList.Add(timeReports);
                     //sendData.TimeReportTillDatabas(timeReports);
-                }
+                }*/
             }
             catch (Exception ex)
             {
