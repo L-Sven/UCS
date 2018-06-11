@@ -69,42 +69,52 @@ namespace UcsVismaTid
             }
         }
         
-        public void TimeReportTillDatabas(TimeReports t)
+        public void TimeReportTillDatabas(/*TimeReports t*/ List<TimeReports> t)
         {
             var sqlCon2 = new SqlConnection(sqlConTid.ConnectionString);
-            SqlCommand cmdAddTimeReport = new SqlCommand("sp_VismaTid_add_tidsrapportering", sqlCon2);
+            sqlCon2.Open();
+            Parallel.For(0, t.Count, new ParallelOptions { MaxDegreeOfParallelism = 6 }, (i) =>
+             {
+                 using (SqlCommand cmdAddTimeReport = new SqlCommand("sp_VismaTid_add_tidsrapportering", sqlCon2))
+                 {
+                     try
+                     {
+                         cmdAddTimeReport.CommandType = CommandType.StoredProcedure;
 
-            try
-            {
-                cmdAddTimeReport.CommandType = CommandType.StoredProcedure;
+                         cmdAddTimeReport.Parameters.Add(
+                             t[i].TimeCodeId == null ? new SqlParameter("@TidskodID", DBNull.Value) : new SqlParameter("@TidskodID", t[i].TimeCodeId));
+                         cmdAddTimeReport.Parameters.Add(
+                             t[i].ProjectId == null ? new SqlParameter("@ProjektID", DBNull.Value) : new SqlParameter("@ProjektID", t[i].ProjectId));
+                         cmdAddTimeReport.Parameters.Add(
+                             t[i].HourToInvoice == null ? new SqlParameter("@FaktureradeTimmar", DBNull.Value) : new SqlParameter("@FaktureradeTimmar", t[i].HourToInvoice));
+                         cmdAddTimeReport.Parameters.Add(
+                             t[i].HourOfReport == null ? new SqlParameter("@AntalArbetadeTimmar", DBNull.Value) : new SqlParameter("@AntalArbetadeTimmar", t[i].HourOfReport));
+                         cmdAddTimeReport.Parameters.Add(
+                             t[i].ProgramUserId == null ? new SqlParameter("@AnställdID", DBNull.Value) : new SqlParameter("@AnställdID", t[i].ProgramUserId));
+                         cmdAddTimeReport.Parameters.Add(
+                             t[i].DateOfReport == null ? new SqlParameter("@DatumFörRapport", DBNull.Value) : new SqlParameter("@DatumFörRapport", t[i].DateOfReport));
+                         cmdAddTimeReport.Parameters.Add(new SqlParameter("@TidsRapportID", t[i].TimeReportId));
+                         cmdAddTimeReport.Parameters.Add(t[i].ActivityId == null ? new SqlParameter("@AktivitetsID", DBNull.Value) : new SqlParameter("@AktivitetsID", t[i].ActivityId));
+                         cmdAddTimeReport.Parameters.Add(t[i].AmountToInvoice == null ? new SqlParameter("@AmountToInvoice", DBNull.Value) : new SqlParameter("@AmountToInvoice", t[i].AmountToInvoice));
 
-                cmdAddTimeReport.Parameters.Add(
-                    t.TimeCodeId == null ? new SqlParameter("@TidskodID", DBNull.Value) : new SqlParameter("@TidskodID", t.TimeCodeId));
-                cmdAddTimeReport.Parameters.Add(
-                    t.ProjectId == null ? new SqlParameter("@ProjektID", DBNull.Value) : new SqlParameter("@ProjektID", t.ProjectId));
-                cmdAddTimeReport.Parameters.Add(
-                    t.HourToInvoice == null ? new SqlParameter("@FaktureradeTimmar", DBNull.Value) : new SqlParameter("@FaktureradeTimmar", t.HourToInvoice));
-                cmdAddTimeReport.Parameters.Add(
-                    t.HourOfReport == null ? new SqlParameter("@AntalArbetadeTimmar", DBNull.Value) : new SqlParameter("@AntalArbetadeTimmar", t.HourOfReport));
-                cmdAddTimeReport.Parameters.Add(
-                    t.ProgramUserId == null ? new SqlParameter("@AnställdID", DBNull.Value) : new SqlParameter("@AnställdID", t.ProgramUserId));
-                cmdAddTimeReport.Parameters.Add(
-                    t.DateOfReport == null ? new SqlParameter("@DatumFörRapport", DBNull.Value) : new SqlParameter("@DatumFörRapport", t.DateOfReport));
-                cmdAddTimeReport.Parameters.Add(new SqlParameter("@TidsRapportID", t.TimeReportId));
-                cmdAddTimeReport.Parameters.Add(t.ActivityId == null ? new SqlParameter("@AktivitetsID", DBNull.Value) : new SqlParameter("@AktivitetsID", t.ActivityId));
-                cmdAddTimeReport.Parameters.Add(t.AmountToInvoice == null ? new SqlParameter("@AmountToInvoice", DBNull.Value) : new SqlParameter("@AmountToInvoice", t.AmountToInvoice));
+                         //sqlCon2.Open();
+                         cmdAddTimeReport.ExecuteNonQuery();
+                         cmdAddTimeReport.Parameters.Clear();
+                     }
+                     catch (Exception ex)
+                     {
+                         logger.ErrorMessage(ex);
+                     }
+                     //finally
+                     //{
+                     //    sqlCon2.Close();
+                     //}
+                 }
+             });
+            sqlCon2.Close();
+            
 
-                sqlCon2.Open();
-                cmdAddTimeReport.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                logger.ErrorMessage(ex);
-            }
-            finally
-            {
-                sqlCon2.Close();
-            }
+            
 
         }
 

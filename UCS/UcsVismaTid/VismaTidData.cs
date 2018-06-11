@@ -124,7 +124,7 @@ namespace UcsVismaTid
         private void GetTimeReport()
         {
             TimeReports timeReports = new TimeReports();
-
+            List<TimeReports> tList = new List<TimeReports>();
             try
             {
                 var timeReport = from report in db.TimeReports
@@ -143,18 +143,20 @@ namespace UcsVismaTid
                     timeReports.ActivityId = element.ActivityId;
                     timeReports.AmountToInvoice = CalculateAmountToInvoice(element);
 
-                    if (element.TimeReportId == 166457)
+                    if (element.ProgramUserId == 160297)
                     {
                         Console.WriteLine("Hej!");
                     }
 
-                    sendData.TimeReportTillDatabas(timeReports);
+                    tList.Add(timeReports);
+                    //sendData.TimeReportTillDatabas(timeReports);
                 }
             }
             catch (Exception ex)
             {
                 logger.ErrorMessage(ex);
             }
+            sendData.TimeReportTillDatabas(tList);
         }
 
         private decimal? CalculateAmountToInvoice(TimeReport element)
