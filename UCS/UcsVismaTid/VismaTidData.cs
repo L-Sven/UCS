@@ -22,38 +22,38 @@ namespace UcsVismaTid
 
         public VismaTidData()
         {
-            //GetActivity();
-            //Console.WriteLine("Aktiviteter klar!");
-            //GetWorkdaysWholeYear();
-            //Console.WriteLine("Arbetsdagar klar!");
+            GetActivity();
+            Console.WriteLine("Aktiviteter klar!");
+            GetWorkdaysWholeYear();
+            Console.WriteLine("Arbetsdagar klar!");
             GetTimeReport();
             Console.WriteLine("Tidsrapport klar!");
-            //GetProgramUsers();
-            //Console.WriteLine("Anställda klar!");
-            //GetProgramUsersGroup();
-            //Console.WriteLine("Anställdagrupper klar!");
-            //GetProject();
-            //Console.WriteLine("Projekt klar!");
-            //GetTimeCode();
-            //Console.WriteLine("Tidskoder klar!");
-            //GetPricing();
-            //Console.WriteLine("Priser klar!");
-            //GetPriceList();
-            //Console.WriteLine("Prislistor klar!");
-            //GetPriceListPeriod();
-            //Console.WriteLine("Prislistaperioder klar!");
-            //GetParticipants();
-            //Console.WriteLine("Deltagare klar!");
-            //GetProgramUserCalcPrice();
-            //Console.WriteLine("AnställdaKalkpris klar!");
-            //GetCustomer();
-            //Console.WriteLine("Kunder klar");
-            //GetCustomerCategory();
-            //Console.WriteLine("Kundkategori klar!");
-            //GetProjectCategory();
-            //Console.WriteLine("Projektkategori klar!");
-            //GetResultUnit();
-            //Console.WriteLine("Resultatenhet klar!");
+            GetProgramUsers();
+            Console.WriteLine("Anställda klar!");
+            GetProgramUsersGroup();
+            Console.WriteLine("Anställdagrupper klar!");
+            GetProject();
+            Console.WriteLine("Projekt klar!");
+            GetTimeCode();
+            Console.WriteLine("Tidskoder klar!");
+            GetPricing();
+            Console.WriteLine("Priser klar!");
+            GetPriceList();
+            Console.WriteLine("Prislistor klar!");
+            GetPriceListPeriod();
+            Console.WriteLine("Prislistaperioder klar!");
+            GetParticipants();
+            Console.WriteLine("Deltagare klar!");
+            GetProgramUserCalcPrice();
+            Console.WriteLine("AnställdaKalkpris klar!");
+            GetCustomer();
+            Console.WriteLine("Kunder klar");
+            GetCustomerCategory();
+            Console.WriteLine("Kundkategori klar!");
+            GetProjectCategory();
+            Console.WriteLine("Projektkategori klar!");
+            GetResultUnit();
+            Console.WriteLine("Resultatenhet klar!");
 
             Console.WriteLine("Programmet har kört färdig!");
         }
@@ -124,35 +124,15 @@ namespace UcsVismaTid
         private void GetTimeReport()
         {
             TimeReports timeReports = new TimeReports();
+
+            //För att uttnyttja Parallellism så lagrar vi alla tidsrapporter i en list som skickas till databasmetoden.
             List<TimeReports> tList = new List<TimeReports>();
             try
             {
                 var timeReport = from report in db.TimeReports
                     select report;
-                var l = timeReport.ToArray();
 
-                for (int i = 0; i < l.Count(); i++)
-                {
-                    timeReports.TimeReportId = l[i].TimeReportId;
-                    timeReports.ProjectId = l[i].ProjectId;
-                    timeReports.HourToInvoice = l[i].HourToInvoice;
-                    timeReports.HourOfReport = l[i].HourOfReport;
-                    timeReports.ProgramUserId = l[i].ProgramUserId;
-                    timeReports.TimeCodeId = l[i].TimeCodeId;
-                    timeReports.DateOfReport = l[i].DateOfReport;
-                    timeReports.ResultUnitId = l[i].BookResultUnitId;
-                    timeReports.ActivityId = l[i].ActivityId;
-                    timeReports.AmountToInvoice = CalculateAmountToInvoice(l[i]);
-
-                    if (l[i].ProgramUserId == 160297)
-                    {
-                        Console.WriteLine("Hej!");
-                    }
-
-                    tList.Add(timeReports);
-                }
-
-                /*foreach (var element in timeReport)
+                foreach (var element in timeReport)
                 {
                     timeReports.TimeReportId = element.TimeReportId;
                     timeReports.ProjectId = element.ProjectId;
@@ -165,14 +145,9 @@ namespace UcsVismaTid
                     timeReports.ActivityId = element.ActivityId;
                     timeReports.AmountToInvoice = CalculateAmountToInvoice(element);
 
-                    if (element.ProgramUserId == 160297)
-                    {
-                        Console.WriteLine("Hej!");
-                    }
-
                     tList.Add(timeReports);
                     //sendData.TimeReportTillDatabas(timeReports);
-                }*/
+                }
             }
             catch (Exception ex)
             {
@@ -183,7 +158,8 @@ namespace UcsVismaTid
 
         private decimal? CalculateAmountToInvoice(TimeReport element)
         {
-            //Vi räknar ut priset för tidsrapporten direkt här.
+            //Vi räknar ut priset för tidsrapporten direkt här, beroende på vad det finns för information att räkna ut priset ifrån.
+            //Prioriteringen är att först räknas det ut från projektet, om det inte finns så tas det från kunden, och sist från fakturan.
             decimal? price = 0.00M;
 
             if(element.ProjectId != null)
@@ -194,7 +170,7 @@ namespace UcsVismaTid
                 }
                 else if (element.Project.Customer.HourlyPrice != null)
                 {
-                    price = element.Project.Customer.HourlyPrice.Value;
+                     price = element.Project.Customer.HourlyPrice.Value;
                 }
             }
             else if (element.CustomerId != null)
@@ -206,8 +182,7 @@ namespace UcsVismaTid
                         .Single();
                 }
             }
-            
-            if(price == null)
+            else
             {
                 var items = db.InvoiceSettingRowDetails.Where(x => x.InvoiceId == element.Invoice.InvoiceId)
                     .Select(x => x.ItemNo);
@@ -215,10 +190,12 @@ namespace UcsVismaTid
                 foreach (var item in items)
                 {
                     price = db.Items.Where(x => x.ItemNo == item).Select(x => x.CalcPriceUnit).Single();
-                    return price = price * element.Quantity;
+                    return price * element.Quantity;
                 }
             }
             
+            //Sist så räknar vi ut den totala summan med hjälp av antalet fakturerade timmar per tidsrapport.
+            //Denna uträkning skapar en märklig bugg i PowerBI, varför vi gör uträkningen här direkt.
             if (element.HourToInvoice != null)
                 price = price * element.HourToInvoice;
 
@@ -641,11 +618,6 @@ namespace UcsVismaTid
                 }
             }
 
-        }
-
-        public void GetInvoiceData()
-        {
-            
         }
     }
 }

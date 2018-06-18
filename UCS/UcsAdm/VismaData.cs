@@ -65,27 +65,27 @@ namespace UcsAdm
             }
 
 
-            // Anropar metd som hämtar data om alla resultatenheter
-            GetResultatEnhet();
-            Console.WriteLine("Resultatenhet klar!");
+            //// Anropar metd som hämtar data om alla resultatenheter
+            //GetResultatEnhet();
+            //Console.WriteLine("Resultatenhet klar!");
 
-            // Anropar metod som hämtar data om alla artikelgrupper
-            GetArtikelGrupper();
-            Console.WriteLine("Artikelgrupper klar!");
+            //// Anropar metod som hämtar data om alla artikelgrupper
+            //GetArtikelGrupper();
+            //Console.WriteLine("Artikelgrupper klar!");
 
-            // Anropar metod som hämtar data om alla artiklar 
-            GetArtikelData();
-            Console.WriteLine("Artikeldata klar!");
+            //// Anropar metod som hämtar data om alla artiklar 
+            //GetArtikelData();
+            //Console.WriteLine("Artikeldata klar!");
 
-            // Anropar metod som hämtar data om alla kundfakturor   
-            GetKundFakturaHuvudData();
-            Console.WriteLine("Kundfakturadata klar!");
+            //// Anropar metod som hämtar data om alla kundfakturor   
+            //GetKundFakturaHuvudData();
+            //Console.WriteLine("Kundfakturadata klar!");
 
-            //Anropar metod som hämtar data om alla leverantörsfakturor
-            GetLevFakturaHuvudData();
-            Console.WriteLine("Leverantörsfakturadata klar!");
+            ////Anropar metod som hämtar data om alla leverantörsfakturor
+            //GetLevFakturaHuvudData();
+            //Console.WriteLine("Leverantörsfakturadata klar!");
 
-            // Anropar metod som hämtar data om alla avtal
+            //Anropar metod som hämtar data om alla avtal
             GetAvtal();
             Console.WriteLine("Avtal klar!");
 
@@ -158,6 +158,8 @@ namespace UcsAdm
         
         private void GetAvtal()
         {
+            sendData.EmptyRowsInAgreementForecast();
+
             try
             {
                 AdkOpen();
@@ -192,6 +194,7 @@ namespace UcsAdm
                     String kundReferens = new String(' ', 50);
                     String resultatEnhet = new String(' ', 6);
                     int makulerat = new int();
+                    int avtalAvslutat = new int();
 
                     bool slutDatumFinns = false;
                     bool kommenteratSlutDatumFinns = false;
@@ -203,249 +206,267 @@ namespace UcsAdm
                     logger.ErrorMessage(error);
                     error = Adk.Api.AdkGetBool(pData, Adk.Api.ADK_AGREEMENT_HEAD_DOCUMENT_CANCELLED, ref makulerat);
                     logger.ErrorMessage(error);
+                    error = Adk.Api.AdkGetBool(pData, Adk.Api.ADK_AGREEMENT_HEAD_COMPLETED, ref avtalAvslutat);
+                    logger.ErrorMessage(error);
 
-                    if (makulerat != 1)
+                    if (avtalAvslutat == 0)
                     {
-                        // Kontroll för att enbart hämta data efter det startdatum som hämtats från App.config
-                        if (!hasDate || DateTime.Parse(avtalsDatum) >= DateTime.Parse(_appStartDatum))
+                        if (makulerat == 0)
                         {
-                            error = Adk.Api.AdkGetDouble(pData,
-                                Adk.Api.ADK_AGREEMENT_HEAD_DOCUMENT_NUMBER,
-                                ref dokumentNummer);
-                            logger.ErrorMessage(error);
-                            error = Adk.Api.AdkGetStr(pData,
-                                Adk.Api.ADK_AGREEMENT_HEAD_CUSTOMER_NUMBER,
-                                ref kundNummer, 16);
-                            logger.ErrorMessage(error);
-                            error = Adk.Api.AdkGetDate(pData,
-                                Adk.Api.ADK_AGREEMENT_HEAD_DATE_START,
-                                ref date);
-                            logger.ErrorMessage(error);
-                            error = Adk.Api.AdkLongToDate(date,
-                                ref startDatum, 16);
-                            logger.ErrorMessage(error);
-                            error = Adk.Api.AdkGetDate(pData,
-                                Adk.Api.ADK_AGREEMENT_HEAD_DATE_END,
-                                ref endDate);
-                            logger.ErrorMessage(error);
-                            error = Adk.Api.AdkGetStr(pData,
-                                Adk.Api.ADK_AGREEMENT_HEAD_LOCAL_REMARK,
-                                ref kommentarsFält, 120);
-                            logger.ErrorMessage(error);
-
-                            error = Adk.Api.AdkGetDate(pData,
-                                Adk.Api.ADK_AGREEMENT_HEAD_PERIOD_START,
-                                ref periodTemp);
-                            logger.ErrorMessage(error);
-                            error = Adk.Api.AdkLongToDate(periodTemp,
-                                ref periodStart, 16);
-                            logger.ErrorMessage(error);
-                            error = Adk.Api.AdkGetDate(pData,
-                                Adk.Api.ADK_AGREEMENT_HEAD_PERIOD_END,
-                                ref periodTemp);
-                            logger.ErrorMessage(error);
-                            error = Adk.Api.AdkLongToDate(periodTemp,
-                                ref periodEnd, 16);
-                            logger.ErrorMessage(error);
-                            error = Adk.Api.AdkGetDouble(pData,
-                                Adk.Api.ADK_AGREEMENT_HEAD_INTERVAL,
-                                ref intervall);
-                            logger.ErrorMessage(error);
-                            error = Adk.Api.AdkGetDate(pData,
-                                Adk.Api.ADK_AGREEMENT_HEAD_DATE_END,
-                                ref date);
-                            logger.ErrorMessage(error);
-
-                            error = Adk.Api.AdkGetStr(pData,
-                                Adk.Api.ADK_AGREEMENT_HEAD_CUSTOMER_NAME,
-                                ref kundNamn, 50);
-                            logger.ErrorMessage(error);
-                            error = Adk.Api.AdkGetStr(pData,
-                                Adk.Api.ADK_AGREEMENT_HEAD_COUNTRY,
-                                ref kundLand, 24);
-                            logger.ErrorMessage(error);
-                            error = Adk.Api.AdkGetStr(pData,
-                                Adk.Api.ADK_AGREEMENT_HEAD_CITY,
-                                ref kundStad, 24);
-                            logger.ErrorMessage(error);
-                            error = Adk.Api.AdkGetStr(pData,
-                                Adk.Api.ADK_AGREEMENT_HEAD_CUSTOMER_REFERENCE_NAME,
-                                ref kundReferens, 50);
-                            logger.ErrorMessage(error);
-                            error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_AGREEMENT_HEAD_PROFIT_CENTRE,
-                                ref resultatEnhet, 6);
-                            logger.ErrorMessage(error);
-
-                            // Kontroll om det finns ett angivet slutdatum på avtalet
-                            if (date != 0)
+                            // Kontroll för att enbart hämta data efter det startdatum som hämtats från App.config
+                            if (!hasDate || DateTime.Parse(avtalsDatum) >= DateTime.Parse(_appStartDatum))
                             {
-                                error = Adk.Api.AdkLongToDate(date,
-                                    ref avtalsDatumSlut, 16);
+                                error = Adk.Api.AdkGetDouble(pData,
+                                    Adk.Api.ADK_AGREEMENT_HEAD_DOCUMENT_NUMBER,
+                                    ref dokumentNummer);
                                 logger.ErrorMessage(error);
-                                slutDatumFinns = true;
-                            }
+                                error = Adk.Api.AdkGetStr(pData,
+                                    Adk.Api.ADK_AGREEMENT_HEAD_CUSTOMER_NUMBER,
+                                    ref kundNummer, 16);
+                                logger.ErrorMessage(error);
+                                error = Adk.Api.AdkGetDate(pData,
+                                    Adk.Api.ADK_AGREEMENT_HEAD_DATE_START,
+                                    ref date);
+                                logger.ErrorMessage(error);
+                                error = Adk.Api.AdkLongToDate(date,
+                                    ref startDatum, 16);
+                                logger.ErrorMessage(error);
+                                error = Adk.Api.AdkGetDate(pData,
+                                    Adk.Api.ADK_AGREEMENT_HEAD_DATE_END,
+                                    ref endDate);
+                                logger.ErrorMessage(error);
+                                error = Adk.Api.AdkGetStr(pData,
+                                    Adk.Api.ADK_AGREEMENT_HEAD_LOCAL_REMARK,
+                                    ref kommentarsFält, 120);
+                                logger.ErrorMessage(error);
 
-                            if (date == 0 || DateTime.Parse(avtalsDatumSlut) > DateTime.Today)
-                            {
-                                if (date == 0
-                                ) //Finns inget slutdatum på avtalet tilldelar vi det ett temporärt värde som gör att den nollställs i Stored proceduren.
+                                error = Adk.Api.AdkGetDate(pData,
+                                    Adk.Api.ADK_AGREEMENT_HEAD_PERIOD_START,
+                                    ref periodTemp);
+                                logger.ErrorMessage(error);
+                                error = Adk.Api.AdkLongToDate(periodTemp,
+                                    ref periodStart, 16);
+                                logger.ErrorMessage(error);
+                                error = Adk.Api.AdkGetDate(pData,
+                                    Adk.Api.ADK_AGREEMENT_HEAD_PERIOD_END,
+                                    ref periodTemp);
+                                logger.ErrorMessage(error);
+                                error = Adk.Api.AdkLongToDate(periodTemp,
+                                    ref periodEnd, 16);
+                                logger.ErrorMessage(error);
+                                error = Adk.Api.AdkGetDouble(pData,
+                                    Adk.Api.ADK_AGREEMENT_HEAD_INTERVAL,
+                                    ref intervall);
+                                logger.ErrorMessage(error);
+                                error = Adk.Api.AdkGetDate(pData,
+                                    Adk.Api.ADK_AGREEMENT_HEAD_DATE_END,
+                                    ref date);
+                                logger.ErrorMessage(error);
+
+                                error = Adk.Api.AdkGetStr(pData,
+                                    Adk.Api.ADK_AGREEMENT_HEAD_CUSTOMER_NAME,
+                                    ref kundNamn, 50);
+                                logger.ErrorMessage(error);
+                                error = Adk.Api.AdkGetStr(pData,
+                                    Adk.Api.ADK_AGREEMENT_HEAD_COUNTRY,
+                                    ref kundLand, 24);
+                                logger.ErrorMessage(error);
+                                error = Adk.Api.AdkGetStr(pData,
+                                    Adk.Api.ADK_AGREEMENT_HEAD_CITY,
+                                    ref kundStad, 24);
+                                logger.ErrorMessage(error);
+                                error = Adk.Api.AdkGetStr(pData,
+                                    Adk.Api.ADK_AGREEMENT_HEAD_CUSTOMER_REFERENCE_NAME,
+                                    ref kundReferens, 50);
+                                logger.ErrorMessage(error);
+                                error = Adk.Api.AdkGetStr(pData, Adk.Api.ADK_AGREEMENT_HEAD_PROFIT_CENTRE,
+                                    ref resultatEnhet, 6);
+                                logger.ErrorMessage(error);
+
+                                // Kontroll om det finns ett angivet slutdatum på avtalet
+                                if (date != 0)
                                 {
-                                    avtalsDatumSlut = "1111-11-11";
+                                    error = Adk.Api.AdkLongToDate(date,
+                                        ref avtalsDatumSlut, 16);
+                                    logger.ErrorMessage(error);
+                                    slutDatumFinns = true;
                                 }
 
-                                String datum = new String(' ', 10);
-                                string errorText;
-
-                                try
+                                if (date == 0 || DateTime.Parse(avtalsDatumSlut) > DateTime.Today)
                                 {
-                                    // Hantering av kommentarsfältet på avtalet
-                                    if (kommentarsFält != "" /*|| avtalsDatumSlut == ""*/)
+                                    if (date == 0
+                                    ) //Finns inget slutdatum på avtalet tilldelar vi det ett temporärt värde som gör att den nollställs i Stored proceduren.
                                     {
-                                        Console.WriteLine(kommentarsFält.Length);
-                                        string[] data = kommentarsFält.Split('#');
+                                        avtalsDatumSlut = "1111-11-11";
+                                    }
 
-                                        //Vi tar arrayens första element, trimmar bort mellanslaget i början samt tar de första tio tecken.
-                                        //För detta måste formatet vara yyyy-mm-dd.
-                                        //För uppsägningstid och förlängningstiden så måste tar vi bort mellanslaget från båda samt tar bara ett tecken.
-                                        datum = data[1].TrimStart(' ').Substring(0, 10);
-                                        int uppsägningstid = int.Parse(data[2].TrimStart(' ').Substring(0, 1));
-                                        int förlängningstid = int.Parse(data[3].TrimStart(' ').Substring(0, 1));
-                                        DateTime temp = new DateTime();
+                                    String datum = new String(' ', 10);
+                                    string errorText;
 
-                                        if (DateTime.TryParse(datum, out temp))
+                                    try
+                                    {
+                                        // Hantering av kommentarsfältet på avtalet
+                                        if (kommentarsFält != "" /*|| avtalsDatumSlut == ""*/)
                                         {
-                                            a.KommenteratSlutDatum = datum;
-                                            kommenteratSlutDatumFinns = true;
+                                            Console.WriteLine(kommentarsFält.Length);
+                                            string[] data = kommentarsFält.Split('#');
+
+                                            //Vi tar arrayens första element, trimmar bort mellanslaget i början samt tar de första tio tecken.
+                                            //För detta måste formatet vara yyyy-mm-dd.
+                                            //För uppsägningstid och förlängningstiden så måste tar vi bort mellanslaget från båda samt tar bara ett tecken.
+                                            datum = data[1].TrimStart(' ').Substring(0, 10);
+                                            int uppsägningstid = int.Parse(data[2].TrimStart(' ').Substring(0, 1));
+                                            int förlängningstid = int.Parse(data[3].TrimStart(' ').Substring(0, 1));
+                                            DateTime temp = new DateTime();
+
+                                            if (DateTime.TryParse(datum, out temp))
+                                            {
+                                                a.KommenteratSlutDatum = datum;
+                                                kommenteratSlutDatumFinns = true;
+                                            }
+                                            else
+                                            {
+                                                errorText = " Avtal med dokumentnummer " + dokumentNummer +
+                                                            " har inget giltigt slutdatum";
+                                                logger.ErrorMessage(errorText);
+                                            }
+
+
+
+                                            if (uppsägningstid > 0 && uppsägningstid <= 12)
+                                            {
+                                                a.Uppsägningstid = uppsägningstid;
+
+                                            }
+                                            else
+                                            {
+                                                errorText = " Avtal med dokumentnummer " + dokumentNummer +
+                                                            " har ingen giltig uppsägningstid";
+                                                logger.ErrorMessage(errorText);
+                                            }
+
+
+                                            if (förlängningstid > 0 && förlängningstid <= 12)
+                                            {
+                                                a.Förlängningstid = förlängningstid;
+
+                                            }
+                                            else
+                                            {
+                                                errorText = " Avtal med dokumentnummer " + dokumentNummer +
+                                                            " har ingen giltig förlängningstid";
+                                                logger.ErrorMessage(errorText);
+                                            }
+
+
                                         }
                                         else
                                         {
                                             errorText = " Avtal med dokumentnummer " + dokumentNummer +
-                                                        " har inget giltigt slutdatum";
+                                                        " har ingen kommentar";
                                             logger.ErrorMessage(errorText);
+
                                         }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        logger.ErrorMessage(
+                                            ex + " TRY CATCH ERROR! | Avtalnummer: " + dokumentNummer + ". Felaktig kommentarsfält.");
 
+                                    }
 
+                                    a.DokumentNummer = dokumentNummer;
+                                    a.AvtalsDatum = avtalsDatum;
+                                    a.AvtalsDatumSlut = avtalsDatumSlut;
+                                    a.StartDatum = startDatum;
+                                    a.KundNummer = kundNummer;
+                                    a.ResultatEnhet = resultatEnhet;
+                                    a.Kommentarsfält = kommentarsFält;
 
-                                        if (uppsägningstid > 0 && uppsägningstid <= 12)
+                                    a.FakturaIntervall = intervall;
+                                    a.PeriodStart = periodStart;
+                                    a.PeriodEnd = periodEnd;
+
+                                    a.KundNamn = kundNamn;
+                                    a.KundStad = kundStad;
+                                    a.KundLand = kundLand;
+                                    a.KundReferens = kundReferens;
+
+                                    //För att kunna göra en prognos på 1 år skapar vi alla datum vi behöver direkt här
+                                    List<string> avtalPrognosList = new List<string>();
+
+                                    //Bortkommenterat då det förstör prognosen.
+                                    //if (DateTime.Parse(periodStart).Year < DateTime.Today.Year)
+                                    //{
+                                    //    periodStart = DateTime.Parse(periodStart).AddYears(1).ToShortDateString();
+                                    //}
+
+                                    //Vi delar intervallen med antal månadern på ett år, dvs att är intervall 3 månader
+                                    //så behöver vi 12/3 = 4 prognosdatum. Så vi lägger dem till den ursprungliga periodStart datumet och addera hela tiden.
+                                    //Vi använder dock 24 månader för att fylla på med extra data för att förhindra möjligheten att felaktig prognos uppstår.
+                                    int antalPrognoser = 24 / (int)intervall;
+                                    string localDateString = periodStart;
+                                    string localDateStringEnd = periodEnd;
+                                    for (int i = 0; i < antalPrognoser; i++)
+                                    {
+                                        // Första gången det i snurran läggs nästa periodstart in om datumet förekommer efter dagens datum
+                                        // Annars kommer man inte räkna med en prognos på nästa periodstart, utan direkt öka den med en intervall-enhet
+                                        //if (i == 0 && DateTime.Parse(periodStart) >= DateTime.Today)
+                                        //{
+                                        //    avtalPrognosList.Add(periodStart);
+                                        //}
+
+                                        while (DateTime.Parse(localDateString) <= DateTime.Today)
                                         {
-                                            a.Uppsägningstid = uppsägningstid;
-
+                                            localDateString = DateTime.Parse(periodStart).AddMonths((int)intervall).ToShortDateString();
                                         }
+
+                                        // Kontroll som inte lägger till prognosperiod efter slutdatum för avtalet
+                                        if (slutDatumFinns || kommenteratSlutDatumFinns)
+                                        {
+                                            // Kollar om nästa period ligger efter avtalsslutet
+                                            if (slutDatumFinns && DateTime.Parse(localDateString) >
+                                                DateTime.Parse(avtalsDatumSlut))
+                                            {
+                                                break;
+                                            }
+                                            // Kollar om nästa period ligger efter det avtalsslutet i kommentarsfältet
+                                            if (kommenteratSlutDatumFinns && DateTime.Parse(localDateString) >
+                                                     DateTime.Parse(a.KommenteratSlutDatum))
+                                            {
+                                                break;
+                                            }
+
+                                            // Om nästa period inte ligger utanför något slutdatum adderas datumet till prognoslistan
+                                            else
+                                            {
+                                                avtalPrognosList.Add(localDateString);
+                                            }
+                                        }
+
+                                        // Om det inte finns något slutdatum för avtalet adderas datumet till prognoslistan
                                         else
                                         {
-                                            errorText = " Avtal med dokumentnummer " + dokumentNummer +
-                                                        " har ingen giltig uppsägningstid";
-                                            logger.ErrorMessage(errorText);
+                                            avtalPrognosList.Add(localDateString);
                                         }
-
-
-                                        if (förlängningstid > 0 && förlängningstid <= 12)
-                                        {
-                                            a.Förlängningstid = förlängningstid;
-
-                                        }
-                                        else
-                                        {
-                                            errorText = " Avtal med dokumentnummer " + dokumentNummer +
-                                                        " har ingen giltig förlängningstid";
-                                            logger.ErrorMessage(errorText);
-                                        }
-
-
                                     }
-                                    else
+
+                                    // Hämtar avtalsraderna på avtalet
+                                    GetAvtalRad(a, pData);
+
+                                    foreach (var element in a.ListAvtalsRad)
                                     {
-                                        errorText = " Avtal med dokumentnummer " + dokumentNummer +
-                                                    " har ingen kommentar";
-                                        logger.ErrorMessage(errorText);
-
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    logger.ErrorMessage(
-                                        ex + " Avtalnummer: " + dokumentNummer + ". Felaktig kommentarsfält.");
-
-                                }
-
-                                a.DokumentNummer = dokumentNummer;
-                                a.AvtalsDatum = avtalsDatum;
-                                a.AvtalsDatumSlut = avtalsDatumSlut;
-                                a.StartDatum = startDatum;
-                                a.KundNummer = kundNummer;
-                                a.ResultatEnhet = resultatEnhet;
-                                a.Kommentarsfält = kommentarsFält;
-
-                                a.FakturaIntervall = intervall;
-                                a.PeriodStart = periodStart;
-                                a.PeriodEnd = periodEnd;
-
-                                a.KundNamn = kundNamn;
-                                a.KundStad = kundStad;
-                                a.KundLand = kundLand;
-                                a.KundReferens = kundReferens;
-
-                                //För att kunna göra en prognos på 1 år skapar vi alla datum vi behöver direkt här
-                                List<string> avtalPrognosList = new List<string>();
-
-                                //Vi delar intervallen med antal månadern på ett år, dvs att är intervall 3 månader
-                                //så behöver vi 12/3 = 4 prognosdatum. Så vi lägger dem till den ursprungliga periodStart datumet och addera hela tiden.
-                                for (int i = 0; i < 12 / intervall; i++)
-                                {
-                                    // Första gången det i snurran läggs nästa periodstart in om datumet förekommer efter dagens datum
-                                    // Annars kommer man inte räkna med en prognos på nästa periodstart, utan direkt öka den med en intervall-enhet
-                                    if (i == 0 && DateTime.Parse(periodStart) > DateTime.Today)
-                                    {
-                                        avtalPrognosList.Add(periodStart);
+                                        a.BeloppExklMoms += (double)element.BeloppExklMoms;
                                     }
 
-                                    periodStart = DateTime.Parse(periodStart).AddMonths((int) intervall)
-                                        .ToShortDateString();
-
-                                    // Kontroll som inte lägger till prognosperiod efter slutdatum för avtalet
-                                    if (slutDatumFinns || kommenteratSlutDatumFinns)
-                                    {
-                                        // Kollar om nästa period ligger efter avtalsslutet
-                                        if (slutDatumFinns && DateTime.Parse(periodStart) >
-                                            DateTime.Parse(avtalsDatumSlut))
-                                        {
-                                            break;
-                                        }
-                                        // Kollar om nästa period ligger efter det avtalsslutet i kommentarsfältet
-                                        else if (kommenteratSlutDatumFinns && DateTime.Parse(periodStart) >
-                                                 DateTime.Parse(a.KommenteratSlutDatum))
-                                        {
-                                            break;
-                                        }
-
-                                        // Om nästa period inte ligger utanför något slutdatum adderas datumet till prognoslistan
-                                        else
-                                        {
-                                            avtalPrognosList.Add(periodStart);
-                                        }
-                                    }
-
-                                    // Om det inte finns något slutdatum för avtalet adderas datumet till prognoslistan
-                                    else
-                                    {
-                                        avtalPrognosList.Add(periodStart);
-                                    }
+                                    // Skickar avtalet till databasen
+                                    sendData.AvtalTillDatabas(a, avtalPrognosList);
+                                    avtalPrognosList.Clear();
                                 }
-
-                                // Hämtar avtalsraderna på avtalet
-                                GetAvtalRad(a, pData);
-
-                                foreach (var element in a.ListAvtalsRad)
-                                {
-                                    a.BeloppExklMoms += (double) element.BeloppExklMoms;
-                                }
-
-                                // Skickar avtalet till databasen
-                                sendData.AvtalTillDatabas(a, avtalPrognosList);
-                                avtalPrognosList.Clear();
                             }
                         }
                     }
+                    
                     // Sätter vidare pekaren till nästa artikelgrupp
                     error = Adk.Api.AdkNext(pData);
                 }
@@ -481,6 +502,7 @@ namespace UcsAdm
                     String artikelNummer = new String(' ', 16);
                     Double totalKostnad = new Double();
                     String benämning = new String(' ', 60);
+                    String resultatenhet = new String(' ', 14);
 
                     error = Adk.Api.AdkGetStr(radReferens, Adk.Api.ADK_OOI_ROW_ARTICLE_NUMBER, ref artikelNummer, 16);
                     logger.ErrorMessage(error);
@@ -488,11 +510,14 @@ namespace UcsAdm
                     logger.ErrorMessage(error);
                     error = Adk.Api.AdkGetStr(radReferens, Adk.Api.ADK_OOI_ROW_TEXT, ref benämning, 60);
                     logger.ErrorMessage(error);
+                    error = Adk.Api.AdkGetStr(radReferens, Adk.Api.ADK_OOI_ROW_PROFIT_CENTRE, ref resultatenhet, 14);
+                    logger.ErrorMessage(error);
 
                     enAvtalsRad.Benämning = benämning;
                     enAvtalsRad.ArtikelNummer = artikelNummer;
                     enAvtalsRad.RadId = avtalsRadID;
                     enAvtalsRad.BeloppExklMoms = totalKostnad;
+                    enAvtalsRad.Resultatenhet = resultatenhet;
 
                     if ((artikelNummer != string.Empty || artikelNummer != "") && totalKostnad != 0.00)
                     {
@@ -1111,7 +1136,7 @@ namespace UcsAdm
                             totalKostnad = 0;
                             foreach (var rad in kFaktura.fakturaRader)
                             {
-                                totalKostnad += rad.BeloppExklMoms;
+                                totalKostnad += Math.Round(rad.BeloppExklMoms);
                             }
 
                             kFaktura.BeloppExklMoms = Math.Round(totalKostnad, 2);
@@ -1184,7 +1209,7 @@ namespace UcsAdm
 
                         error = Adk.Api.AdkGetDouble(radReferens, Adk.Api.ADK_OOI_ROW_AMOUNT_DOMESTIC_CURRENCY, ref totalKostnad);
                         logger.ErrorMessage(error);
-                        enFakturaRad.BeloppExklMoms = totalKostnad;
+                        enFakturaRad.BeloppExklMoms = Math.Round(totalKostnad);
 
                         error = Adk.Api.AdkGetStr(radReferens, Adk.Api.ADK_OOI_ROW_PROJECT, ref projekt, 6);
                         logger.ErrorMessage(error);
@@ -1200,6 +1225,7 @@ namespace UcsAdm
 
                         error = Adk.Api.AdkGetDouble(radReferens, Adk.Api.ADK_OOI_ROW_CONTRIBUTION_MARGIN, ref täckningsBidrag);
                         logger.ErrorMessage(error);
+                        enFakturaRad.BeloppExklMomsString = "-" + totalKostnad;
                         enFakturaRad.TäckningsBidrag = täckningsBidrag;
 
                         error = Adk.Api.AdkGetStr(radReferens, Adk.Api.ADK_OOI_ROW_PROFIT_CENTRE, ref resultatEnhet, 6);
@@ -1207,12 +1233,12 @@ namespace UcsAdm
                         enFakturaRad.ResultatEnhet = resultatEnhet;
 
                         // Om krediterade faktura
-                        if (kFaktura.FakturaTyp.ToUpper() == "K")
-                        {
-                            enFakturaRad.LevAntal = kvantitet * -1;
-                            enFakturaRad.BeloppExklMoms *= -1;
-                            enFakturaRad.TäckningsBidrag *= -1;
-                        }
+                        //if (kFaktura.FakturaTyp.ToUpper() == "K")
+                        //{
+                        //    enFakturaRad.LevAntal = kvantitet * -1;
+                        //    enFakturaRad.BeloppExklMoms *= -1;
+                        //    enFakturaRad.TäckningsBidrag *= -1;
+                        //}
                         
                         kFaktura.fakturaRader.Add(enFakturaRad);
                     }

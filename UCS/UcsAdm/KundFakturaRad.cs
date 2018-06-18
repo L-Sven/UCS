@@ -19,7 +19,6 @@ namespace UcsAdm
         public double TäckningsGrad { get; set; }
         public double TäckningsBidrag { get; set; }
         public string Benämning { get; set; }
-
-
+        public string BeloppExklMomsString { get; set; } = "";
     }
 }

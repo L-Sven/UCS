@@ -12,5 +12,6 @@ namespace UcsAdm
         public string ArtikelNummer { get; set; }
         public object BeloppExklMoms { get; internal set; }
         public string Benämning { get; set; }
+        public string Resultatenhet { get; set; }
     }
 }

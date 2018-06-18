@@ -28,7 +28,7 @@ namespace UcsAdm
             // Ger Sql-kommandot information om att den ska anropa en stored procedure
             cmdAddAgreement.CommandType = CommandType.StoredProcedure;
 
-            cmdAddAgreement.Parameters.Add(new SqlParameter("@dokumentNummer", a.DokumentNummer));
+            cmdAddAgreement.Parameters.Add(new SqlParameter("@dokumentNummer", a.DokumentNummer.ToString()));
             cmdAddAgreement.Parameters.Add(
                 a.AvtalsDatum == null ? new SqlParameter("@avtalsDatum", DBNull.Value) : new SqlParameter("@avtalsDatum", a.AvtalsDatum));
             cmdAddAgreement.Parameters.Add(new SqlParameter("@startDatum", a.StartDatum));
@@ -89,7 +89,7 @@ namespace UcsAdm
                 try
                 {
                     sqlConAdm.Open();
-                    cmdAddAvtalPrognos.Parameters.Add(new SqlParameter("@avtalID", a.DokumentNummer));
+                    cmdAddAvtalPrognos.Parameters.Add(new SqlParameter("@avtalID", a.DokumentNummer.ToString()));
                     cmdAddAvtalPrognos.Parameters.Add(new SqlParameter("@avtalPrognosDatum", avtalPrognosList[i]));
                     cmdAddAvtalPrognos.ExecuteNonQuery();
                     cmdAddAvtalPrognos.Parameters.Clear();
@@ -112,11 +112,12 @@ namespace UcsAdm
                 // Ger Sql-kommandot information om att den ska anropa en stored procedure
                 cmdAddAgreementRow.CommandType = CommandType.StoredProcedure;
 
-                cmdAddAgreementRow.Parameters.Add(new SqlParameter("@dokumentNummer", a.DokumentNummer));
+                cmdAddAgreementRow.Parameters.Add(new SqlParameter("@dokumentNummer", a.DokumentNummer.ToString()));
                 cmdAddAgreementRow.Parameters.Add(new SqlParameter("@radID", rad.RadId));
                 cmdAddAgreementRow.Parameters.Add(new SqlParameter("@artikelNummer", rad.ArtikelNummer));
                 cmdAddAgreementRow.Parameters.Add(new SqlParameter("@beloppExklMoms", rad.BeloppExklMoms));
                 cmdAddAgreementRow.Parameters.Add(new SqlParameter("@benämning", rad.Benämning));
+                cmdAddAgreementRow.Parameters.Add(new SqlParameter("@resultatEnhetID", rad.Resultatenhet));
 
                 try
                 {
@@ -283,7 +284,7 @@ namespace UcsAdm
                                 cmdAddRow.Parameters.Add(new SqlParameter("@radID", fRad.KundRadID));
                                 cmdAddRow.Parameters.Add(new SqlParameter("@artikelNummer", fRad.ArtikelNummer));
                                 cmdAddRow.Parameters.Add(new SqlParameter("@levAntal", fRad.LevAntal));
-                                cmdAddRow.Parameters.Add(new SqlParameter("@beloppExklMoms", fRad.BeloppExklMoms));
+                                cmdAddRow.Parameters.Add(new SqlParameter("@beloppExklMoms", fRad.BeloppExklMoms.ToString()));
                                 cmdAddRow.Parameters.Add(new SqlParameter("@fakturaNummer", kList[i].FakturaNummer));
                                 cmdAddRow.Parameters.Add(new SqlParameter("@projekt", fRad.Projekt));
                                 cmdAddRow.Parameters.Add(new SqlParameter("@täckningsGrad",
@@ -292,6 +293,8 @@ namespace UcsAdm
                                 cmdAddRow.Parameters.Add(new SqlParameter("@täckningsBidrag",
                                     decimal.Parse(fRad.TäckningsBidrag.ToString())));
                                 cmdAddRow.Parameters.Add(new SqlParameter("@resultatEnhetID", fRad.ResultatEnhet));
+                                cmdAddRow.Parameters.Add(new SqlParameter("@beloppExklMomsString",
+                                    fRad.BeloppExklMomsString));
                             }
                             catch (Exception ex)
                             {
@@ -516,6 +519,25 @@ namespace UcsAdm
                 sqlConAdm.Close();
             }
 
+        }
+
+        public void EmptyRowsInAgreementForecast()
+        {
+            try
+            {
+                string sqlTrunc = "TRUNCATE TABLE AvtalPrognos";
+                SqlCommand cmdEmptyRowsInErrorlog = new SqlCommand(sqlTrunc, sqlConAdm);
+                sqlConAdm.Open();
+                cmdEmptyRowsInErrorlog.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorMessage(ex);
+            }
+            finally
+            {
+                sqlConAdm.Close();
+            }
         }
     }
 }

@@ -22,7 +22,7 @@ namespace UcsVismaTid
 	using System;
 	
 	
-	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="SPCS_Tid_OvnBol2")]
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name= "SPCS_Tid_Ftg1")]
 	public partial class VismaTidDataDataContext : System.Data.Linq.DataContext
 	{
 		
